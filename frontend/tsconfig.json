@@ -20,6 +20,7 @@
       }
     ],
     "paths": {
+      "@/*": ["*"],
       "@/styles/*": ["public/styles/*"],
       "@/components/*": ["components/*"],
       "@/redux/*": ["redux/*"],

@@ -1,8 +1,7 @@
-import nextI18NextConfig from './next-i18next.config';
+import {NextConfig} from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
 
-const nextConfig = {
-  i18n: nextI18NextConfig.i18n,
-  // другие опции
-};
+const nextConfig: NextConfig = {};
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin();
+export default withNextIntl(nextConfig);
