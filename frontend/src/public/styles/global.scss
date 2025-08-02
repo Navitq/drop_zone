@@ -1,0 +1,133 @@
+// SCREEN SIZES TABEL
+// 360
+// 768
+// 1024
+//1739 - 1200
+// 1920 - 1740
+
+* {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+a, a:link, a:visited  {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover  {
+    text-decoration: none;
+}
+
+aside, nav, footer, header, section, main {
+	display: block;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    font-size: inherit;
+	font-weight: inherit;
+}
+
+img, svg {
+	max-width: 100%;
+	height: auto;
+}
+
+input, textarea, button, select {
+	font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background-color: transparent;
+}
+
+input::-ms-clear {
+	display: none;
+}
+
+button, input[type="submit"] {
+    display: inline-block;
+    box-shadow: none;
+    background-color: transparent;
+    background: none;
+    cursor: pointer;
+}
+
+input:focus, input:active,
+button:focus, button:active {
+    outline: none;
+}
+
+button::-moz-focus-inner {
+	padding: 0;
+	border: 0;
+}
+
+label {
+	cursor: pointer;
+}
+
+//fonts
+
+// @font-face {
+//     font-family: "Moderustic_regular";
+//     src: url("../fonts/moderustic/Moderustic-Regular.woff2") format("woff2"),  /* Современный и предпочтительный формат */
+//          url("../fonts/moderustic/Moderustic-Regular.woff") format("woff"),
+//          url("../fonts/moderustic/Moderustic-Regular.ttf") format("truetype"), /* TrueType (нежелателен для веба) */
+//          url("../fonts/moderustic/Moderustic-Regular.otf") format("opentype"); /* OpenType (опционально) */
+//     font-weight: normal;
+//     font-style: normal;
+// }
+
+// @font-face {
+//     font-family: "Moderustic_medium";
+//     src: url("../fonts/moderustic/Moderustic-Medium.woff2") format("woff2"),  /* Современный и предпочтительный формат */
+//          url("../fonts/moderustic/Moderustic-Medium.woff") format("woff"),
+//          url("../fonts/moderustic/Moderustic-Medium.ttf") format("truetype"), /* TrueType (нежелателен для веба) */
+//          url("../fonts/moderustic/Moderustic-Medium.otf") format("opentype"); /* OpenType (опционально) */
+//     font-weight: bold;
+//     font-style: normal;
+// }
+
+// @font-face {
+//     font-family: "Inter_regular";
+//     src: url("../fonts/inter/Inter-Regular.woff2") format("woff2"),  /* Современный и предпочтительный формат */
+//          url("../fonts/inter/Inter-Regular.woff") format("woff"),
+//          url("../fonts/inter/Inter-Regular.ttf") format("truetype"), /* TrueType (нежелателен для веба) */
+//          url("../fonts/inter/Inter-Regular.otf") format("opentype"); /* OpenType (опционально) */
+//     font-weight: normal;
+//     font-style: normal;
+// }
+
+// @font-face {
+//     font-family: "Inter_light";
+//     src: url("../fonts/inter/Inter-ExtraLight.woff2") format("woff2"),  /* Современный и предпочтительный формат */
+//          url("../fonts/inter/Inter-ExtraLight.woff") format("woff"),
+//          url("../fonts/inter/Inter-ExtraLight.ttf") format("truetype"), /* TrueType (нежелателен для веба) */
+//          url("../fonts/inter/Inter-ExtraLight.otf") format("opentype"); /* OpenType (опционально) */
+//     font-weight: lighter;
+//     font-style: normal;
+// }
+
+// @font-face {
+//     font-family: "Inter_extra_light";
+//     src: url("../fonts/inter/Inter-Light.woff2") format("woff2"),  /* Современный и предпочтительный формат */
+//          url("../fonts/inter/Inter-Light.woff") format("woff"),
+//          url("../fonts/inter/Inter-Light.ttf") format("truetype"), /* TrueType (нежелателен для веба) */
+//          url("../fonts/inter/Inter-Light.otf") format("opentype"); /* OpenType (опционально) */
+//     font-weight: lighter;
+//     font-style: normal;
+// }
+
+// $font-header: "Moderustic_regular";
+// $font-sub-header: "Moderustic_medium";
+// $font-text: "Inter_regular";
+// $font-placeholder: "Inter_extra_light";
+// $font-dontusechangename: "Inter_light";
+// //defaut settings ends
