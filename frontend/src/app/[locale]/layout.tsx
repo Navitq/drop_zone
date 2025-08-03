@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '../../i18n/routing';
 import '@/styles/global.scss';
 import Footer from '@/components/Footer';
-import { headBold, headRegular, textRegular } from '@/fonts/fonts'
+import { headBold, headRegular, textRegular, textBold } from '@/fonts/fonts'
 
 export default async function LocaleLayout({
   children,
@@ -17,6 +17,7 @@ export default async function LocaleLayout({
     headBold.variable,
     headRegular.variable,
     textRegular.variable,
+    textBold.variable
   ].join(' ')
 
   // Ensure that the incoming `locale` is valid
@@ -26,15 +27,16 @@ export default async function LocaleLayout({
   }
 
 
-
   return (
     <html lang={locale} className={fontsClass}>
 
       <body>
-        <main>
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
-        </main>
-        <Footer></Footer>
+        <NextIntlClientProvider>
+          <main>
+            {children}
+          </main>
+          <Footer></Footer>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

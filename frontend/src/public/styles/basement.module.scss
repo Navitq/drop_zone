@@ -1,9 +1,11 @@
 .basement {
     display: flex;
     min-height: 374px;
-    width: 100%;
+    max-width: 100%;
     padding-top: 75px;
     margin-top: 60px;
+    margin-right: 90px;
+    margin-left: 90px;
 }
 
 .basementCompanyBlock {
@@ -11,7 +13,8 @@
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-
+    margin-right: 34px;
+    min-width: fit-content;
 }
 
 .basementCompanyBlock::before {
@@ -23,9 +26,8 @@
   height: 200%;
   background-image: url('./../images/drop_zone_footer.png');
   background-size: 317px;
-  background-position: center;
+  background-position: 29px 222px;
   background-repeat: no-repeat;
-  transform: rotate(15deg);
   z-index: -1;
 }
 
@@ -45,4 +47,39 @@
     letter-spacing: 0%;
     vertical-align: middle;
     color: rgba(101, 101, 101, 1);
+    margin-bottom: 34px;
+}
+
+.mainInfo {
+    display: flex;
+}
+
+.pagesBlock {
+    max-width: 215px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.fifteen_sz {
+    font-size: 15px;
+}
+
+.sixteen_sz {
+    font-size: 16px;
+}
+
+.passiveFooterNavStyle {
+    font-family:  var(--font-textRegular);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: rgba(111, 111, 111, 1);
+}
+
+.activeFooterNavStyle {
+    font-family: var(--font-textBold);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 1);
 }

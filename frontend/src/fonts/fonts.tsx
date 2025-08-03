@@ -77,3 +77,29 @@ export const textRegular = localFont({
     ],
     variable: '--font-textRegular',
 })
+
+export const textBold = localFont({
+    src: [
+        {
+            path: './carlito/Carlito-Bold.woff2',
+            weight: '700',
+            style: 'normal',
+        },
+        {
+            path: './carlito/Carlito-Bold.woff',
+            weight: '700',
+            style: 'normal',
+        },
+        {
+            path: './carlito/Carlito-Bold.otf',
+            weight: '700',
+            style: 'normal',
+        },
+        {
+            path: './carlito/Carlito-Bold.ttf',
+            weight: '700',
+            style: 'normal',
+        },
+    ],
+    variable: '--font-textBold',
+})

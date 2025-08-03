@@ -1,5 +1,12 @@
 {
-  "HomePage": {
+  "homePage": {
+    "main_page": "Main Page",
+    "faq": "FAQ",
+    "raffles" : "Raffles",
+    "battles":"Battles",
+    "upgrades": "Upgrades",
+    "contracts": "Contracts",
+
     "title": "Hello world!",
     "about": "Go to the about page"
   }

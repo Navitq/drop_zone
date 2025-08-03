@@ -1,5 +1,13 @@
 {
-  "HomePage": {
+  "homePage": {
+    "main_page": "Главная",
+    "faq": "FAQ",
+    "raffles" : "Розыгрыши",
+    "battles":"Сражения",
+    "upgrades": "Апгрейды",
+    "contracts": "Контракты",
+
+
     "title": "!Привет мир",
     "about": "На страницу О"
   }

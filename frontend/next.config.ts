@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   experimental: {
     globalNotFound: true,
   },
+  reactStrictMode: false,
 };
 
 export default withNextIntl(nextConfig);
