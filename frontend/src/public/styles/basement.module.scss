@@ -52,6 +52,7 @@
 
 .mainInfo {
     display: flex;
+    flex: 1;
 }
 
 .pagesBlock {
@@ -59,6 +60,15 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
+    min-width: fit-content
+}
+
+.footer-links {
+    margin-right: 5px;
+}
+
+.footer-links:last-child {
+    margin-right: 0px;
 }
 
 .fifteen_sz {
@@ -72,12 +82,14 @@
 .passiveFooterNavStyle {
     font-family:  var(--font-textRegular);
     font-weight: 400;
-    font-size: 16px;
     line-height: 100%;
     vertical-align: middle;
     color: rgba(111, 111, 111, 1);
+    margin-bottom: 15px;
 }
-
+.footer-link:last-child .passiveFooterNavStyle {
+    margin-bottom: 0px;
+}
 .activeFooterNavStyle {
     font-family: var(--font-textBold);
     font-weight: 700;
