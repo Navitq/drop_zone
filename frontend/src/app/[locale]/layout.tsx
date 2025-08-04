@@ -4,6 +4,7 @@ import { routing } from '../../i18n/routing';
 import '@/styles/global.scss';
 import Footer from '@/components/Footer';
 import { headBold, headRegular, textRegular, textBold } from '@/fonts/fonts'
+import Header from '@/components/Header';
 
 export default async function LocaleLayout({
   children,
@@ -33,6 +34,7 @@ export default async function LocaleLayout({
       <body>
         <div className='global-container'>
           <NextIntlClientProvider>
+            <Header></Header>
             <main className='global-content'>
               {children}
             </main>
