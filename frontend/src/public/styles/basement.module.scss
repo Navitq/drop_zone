@@ -1,10 +1,12 @@
 .basement {
     display: flex;
-    min-height: 314px;
+    height: 314px;
     max-width: 100%;
     padding-top: 75px;
     margin-top: 60px;
     padding-bottom: 34px;
+    max-width: 1740px;
+    width: 100%;
 }
 
 .basementCompanyBlock {
@@ -22,10 +24,10 @@
   top: -50%;
   left: -50%;
   width: 200%;
-  height: 200%;
+  height: 166%;
   background-image: url('/images/drop_zone_footer.png');
   background-size: 317px;
-  background-position: 29px 115px;
+  background-position: 29px 122px;
   background-repeat: no-repeat;
   z-index: -1;
 }

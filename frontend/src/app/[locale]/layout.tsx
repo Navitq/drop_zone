@@ -33,7 +33,7 @@ export default async function LocaleLayout({
       <body>
         <div className='global-container'>
           <NextIntlClientProvider>
-            <main>
+            <main className='global-content'>
               {children}
             </main>
             <Footer></Footer>
