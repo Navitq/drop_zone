@@ -15,4 +15,6 @@ export const FRONTEND_PATHS: Urls = {
     raffles: '/raffles',
     faq: '/faq',
     upgrades: '/upgrades',
+    privacyPolicy: '/privacy-policy',
+    termsOfService: '/terms-of-service',
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState, useRef } from 'react';
 import StatElem from './StatElem'
 
@@ -7,6 +9,7 @@ interface Message {
     upgrades: number,
     cases: number
 }
+
 
 function DropStat(): React.ReactNode {
     const [messages, setMessages] = useState<Message | null>(null);
@@ -45,10 +48,10 @@ function DropStat(): React.ReactNode {
     return (
 
         <>
-            <StatElem message={messages.} imgPath="" titleKey="" imgAltKey=""></StatElem>
-            <StatElem></StatElem>
-            <StatElem></StatElem>
-            <StatElem></StatElem>
+            <StatElem message={messages ? messages.contracts : null} imgPath="/images/luggage.svg" titleKey="contracts_st" imgAltKey="luggage_st"></StatElem>
+            <StatElem message={messages ? messages.battles : null} imgPath="/images/shooting.svg" titleKey="battles_st" imgAltKey="shooting_st"></StatElem>
+            <StatElem message={messages ? messages.upgrades : null} imgPath="/images/key.svg" titleKey="upgrades_st" imgAltKey="key_st"></StatElem>
+            <StatElem message={messages ? messages.cases : null} imgPath="/images/arrow.svg" titleKey="cases_st" imgAltKey="arrow_st"></StatElem>
         </>
     )
 }

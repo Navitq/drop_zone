@@ -72,9 +72,19 @@ button::-moz-focus-inner {
 label {
 	cursor: pointer;
 }
-
-body {
+html {
     background-color: rgba(20, 20, 23, 1);
+}
+
+body{
+    display: flex;
+    justify-content: center;
+}
+
+.global-container {
+    max-width: 1920px;
+    flex: 1;
+    padding: 0px 30px
 }
 
 //fonts

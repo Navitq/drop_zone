@@ -6,6 +6,22 @@
     "battles":"Battles",
     "upgrades": "Upgrades",
     "contracts": "Contracts",
+    "battles_st":"Battles",
+    "upgrades_st": "Upgrades",
+    "contracts_st": "Contracts",
+    "cases_st": "Open cases",
+    "arrow_st":"Arrow image",
+    "key_st": "Key image",
+    "shooting_st": "Shooting image",
+    "luggage_st": "Luggage image",
+    "we_in_soc_nets": "We are on social networks",
+    "soc_net_vk_alt": "VK social network",
+    "soc_net_telegram_alt": "Telegram social network",
+    "all_queries": "For all inquiries:",
+    "support_email": "support@dropzone.org",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+
 
     "title": "Hello world!",
     "about": "Go to the about page"

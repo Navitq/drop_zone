@@ -1,11 +1,10 @@
 .basement {
     display: flex;
-    min-height: 374px;
+    min-height: 314px;
     max-width: 100%;
     padding-top: 75px;
     margin-top: 60px;
-    margin-right: 90px;
-    margin-left: 90px;
+    padding-bottom: 34px;
 }
 
 .basementCompanyBlock {
@@ -24,9 +23,9 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background-image: url('./../images/drop_zone_footer.png');
+  background-image: url('/images/drop_zone_footer.png');
   background-size: 317px;
-  background-position: 29px 222px;
+  background-position: 29px 115px;
   background-repeat: no-repeat;
   z-index: -1;
 }
@@ -47,7 +46,6 @@
     letter-spacing: 0%;
     vertical-align: middle;
     color: rgba(101, 101, 101, 1);
-    margin-bottom: 34px;
 }
 
 .mainInfo {
@@ -71,10 +69,6 @@
     margin-right: 0px;
 }
 
-.fifteen_sz {
-    font-size: 15px;
-}
-
 .sixteen_sz {
     font-size: 16px;
 }
@@ -94,4 +88,130 @@
     font-family: var(--font-textBold);
     font-weight: 700;
     color: rgba(255, 255, 255, 1);
+}
+
+.footerStats {
+    display: flex;
+    max-width: 640px;
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 30px;
+}
+.statElem {
+    display: flex;
+    max-height: 44px;
+    min-width: fit-content;
+    margin-right: 3px;
+}
+.statElemImgCnt {
+    margin-right: 20px;
+    display: flex;
+    flex: 1;
+}
+
+.statElemTextCnt {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.statElemAmount {
+    font-family: var(--font-headBold);
+    font-size: 30px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+}
+.fifteen_sz {
+    font-size: 15px;
+    margin-bottom: 0px;
+}
+.ourContacts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: fit-content;
+    justify-content: space-between;
+    flex: 1;
+}
+.footerContText {
+    font-family: var(--font-textBold);
+    font-size: 16px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: rgba(135, 135, 135, 1);
+}
+
+.footerContEmail {
+    @extend .footerContText;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 1);
+}
+.socialNetworksCnt {
+    display: flex;
+    height: 65px;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-direction: column;
+    margin-bottom: 25px
+}
+.socNetCnt {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 7px;
+    background-color: rgba(255, 255, 255, 0.05);
+    display: flex;
+    margin-right: 5px;
+}
+.socNetEmailCnt {
+    @extend .socNetCnt;
+    width: fit-content;
+    padding: 0px 33px;
+}
+.socNetCnt:last-child {
+    margin-right: 0px;
+}
+.socNetCntImg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+.socNetImg {
+    border-color: inherit;
+}
+.socialNetworks {
+    display: flex;
+}
+.questionsCnt {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: fit-content;
+    justify-content: space-between;
+    height: 65px;
+}
+.lawPageCnt {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.lawLinks {
+    font-family: var(--font-textRegular);
+    font-size: 15px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1) !important;
+    line-height: 100%;
+    vertical-align: middle;
+    text-decoration: underline !important;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0%;
+}
+.lawLinksCnt {
+    margin-right: 20px;
+}
+.lawLinksCnt:last-child {
+    margin-right: 0px;
 }

@@ -4,6 +4,7 @@ import FooterPageLinks from '@/components/FooterPageLinks'
 
 import bsmnt from '@/public/styles/basement.module.scss'
 import DropStat from '@/components/DropStat'
+import OurContacts from '@/components/OurContacts'
 
 function Footer(): React.ReactNode {
     return (
@@ -26,10 +27,12 @@ function Footer(): React.ReactNode {
                     </div>
                 </div>
             </div>
-            <div>
+            <div className={bsmnt.footerStats}>
                 <DropStat></DropStat>
             </div>
-            <div></div>
+            <div className={bsmnt.ourContacts}>
+                <OurContacts></OurContacts>
+            </div>
         </footer >
     )
 }

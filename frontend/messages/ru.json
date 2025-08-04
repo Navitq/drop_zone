@@ -6,7 +6,21 @@
     "battles":"Сражения",
     "upgrades": "Апгрейды",
     "contracts": "Контракты",
-
+    "battles_st":"Сражений",
+    "upgrades_st": "Апгрейдов",
+    "contracts_st": "Контрактов",
+    "cases_st": "Открытых кейсов",
+    "arrow_st":"Изображение стрелки",
+    "key_st": "Изображение ключа",
+    "shooting_st": "Изображение прицела",
+    "luggage_st": "Изображение багажа",
+    "we_in_soc_nets": "Мы в социальных сетях",
+    "soc_net_vk_alt": "Социальная сеть ВКонтакте",
+    "soc_net_telegram_alt": "Социальная сеть Telegram",
+    "all_queries": "По всем вопросам:",
+    "support_email": "support@dropzone.org",
+    "privacy_policy": "Политика конфиденциальности",
+    "terms_of_service": "Пользовательское соглашение",
 
     "title": "!Привет мир",
     "about": "На страницу О"

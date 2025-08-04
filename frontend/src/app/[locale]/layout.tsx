@@ -31,12 +31,14 @@ export default async function LocaleLayout({
     <html lang={locale} className={fontsClass}>
 
       <body>
-        <NextIntlClientProvider>
-          <main>
-            {children}
-          </main>
-          <Footer></Footer>
-        </NextIntlClientProvider>
+        <div className='global-container'>
+          <NextIntlClientProvider>
+            <main>
+              {children}
+            </main>
+            <Footer></Footer>
+          </NextIntlClientProvider>
+        </div>
       </body>
     </html>
   );
