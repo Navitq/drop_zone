@@ -27,5 +27,20 @@
 
     "title": "!Привет мир",
     "about": "На страницу О"
+  },
+  "header": {
+    "logo_alt": "Логотип DropZone",
+    "nav_point_1": "Главная",
+    "nav_point_5": "Розыгрыши",
+    "nav_point_4": "Сражения",
+    "nav_point_3": "Апгрейд",
+    "nav_point_2": "Контракты",
+    "nav_image_alt_1": "Изображение дома",
+    "nav_image_alt_2": "Изображение багажа",
+    "nav_image_alt_3": "Изображение стрелки",
+    "nav_image_alt_4": "Изображение прицела",
+    "nav_image_alt_5": "Изображение подарка",
+    "active_header_point": "Активная навигационная точка",
+    "promo_code_placeholder": "Введите промокод"
   }
 }

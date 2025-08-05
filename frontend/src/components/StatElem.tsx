@@ -1,4 +1,4 @@
-import React, { use } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl';
 import FooterText from '@/components/FooterText'

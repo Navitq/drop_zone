@@ -29,5 +29,20 @@
 
     "title": "Hello world!",
     "about": "Go to the about page"
+  },
+    "header": {
+    "logo_alt": "DropZone Logo",
+    "nav_point_1": "Home",
+    "nav_point_5": "Raffles",
+    "nav_point_4": "Battles",
+    "nav_point_3": "Upgrades",
+    "nav_point_2": "Contracts",
+    "nav_image_alt_1": "Home image",
+    "nav_image_alt_2": "Luggage image",
+    "nav_image_alt_3": "Arrow image",
+    "nav_image_alt_4": "Shooting image",
+    "nav_image_alt_5": "Gift image",
+    "active_header_point": "Active navigation point",
+    "promo_code_placeholder": "Enter promo code"
   }
 }

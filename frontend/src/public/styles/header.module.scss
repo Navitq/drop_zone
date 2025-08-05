@@ -5,8 +5,122 @@
     margin-right: auto;
     height: 52px;
     background: inherit;
+    display: flex;
+    justify-content: space-between;
 }
 
 .logoCnt {
-    
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex: 1
+}
+
+.logoCntMode {
+    @extend .logoCnt;
+    flex: 0;
+    min-width: fit-content;
+    margin-right: 60px
+}
+
+.navMenuCnt {
+    @extend .logoCnt;
+    max-width: 952px;
+    width: 100%;
+    justify-content: space-around;
+    min-width: fit-content
+}
+
+.navPointCnt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.navPointBlock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.navPointText {
+    font-family: var(--font-textBold);
+    font-size: 20px;
+    line-height: 14px;
+    vertical-align: bottom;
+    color: rgba(223, 223, 223, 1);
+    text-align: center;
+}
+
+.pagePointImg {
+    height: 7px
+}
+
+.navPointBlockCnt {
+    height: 100%;
+    margin-right: 15px;
+}
+
+.navPointBlockCnt:last-child {
+    margin-right: 0;
+}
+
+.navPointTextCnt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-left: 20px;
+    height: 30px;
+}
+
+.navImgSize {
+    max-width: 19px;
+    height: 20px;
+    width: 100%;
+}
+
+.headerDataCnt {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.headerUserInfo {
+    height: 100%;
+    width: fit-content;
+}
+
+.headerPromoCnt {
+    display: flex;
+    height: 100%;
+    max-width: 223px;
+}
+
+
+
+.headerPromo {
+    height: 100%;
+    display: flex;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: rgba(156, 156, 156, 0.5);
+    border-radius: 4px;
+    font-family: var(--font-headBold);
+    font-size: 20px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+    width: 223px;
+}
+
+input.headerPromo::placeholder {
+    font-family: var(--font-headBold);
+    font-size: 20px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+    text-align: center;
 }

@@ -1,3 +1,5 @@
+// eslint-disable
+
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -34,6 +36,7 @@ function DropStat(): React.ReactNode {
     }
 
     useEffect(() => {
+
         return;
 
         createSPConection('/api/sse');
