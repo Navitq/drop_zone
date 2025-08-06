@@ -9,10 +9,14 @@
     justify-content: space-between;
 }
 
-.logoCnt {
+%flexCenter {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
+}
+
+.logoCnt {
+    @extend %flexCenter;
     flex: 1
 }
 
@@ -32,17 +36,13 @@
 }
 
 .navPointCnt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @extend %flexCenter;
     height: 100%;
     flex-shrink: 0;
 }
 
 .navPointBlock {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @extend %flexCenter;
     height: 100%;
 }
 
@@ -69,9 +69,7 @@
 }
 
 .navPointTextCnt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @extend %flexCenter;
     flex-direction: column;
     margin-left: 20px;
     height: 30px;
@@ -92,6 +90,9 @@
 .headerUserInfo {
     height: 100%;
     width: fit-content;
+    margin-left: 15px;
+    @extend %flexCenter;
+
 }
 
 .headerPromoCnt {
@@ -99,8 +100,6 @@
     height: 100%;
     max-width: 223px;
 }
-
-
 
 .headerPromo {
     height: 100%;
@@ -123,4 +122,59 @@ input.headerPromo::placeholder {
     line-height: 100%;
     color: rgba(255, 255, 255, 1);
     text-align: center;
+}
+
+.userData {
+    @extend %flexCenter;
+    margin-left: 20px;
+}
+
+.userTokens {
+    @extend %flexCenter;
+    width: fit-content;
+    margin-right: 20px;
+}
+.addUserTokens {
+    @extend %flexCenter;
+    cursor: pointer;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+.addUserTokens img {
+    width: 20px;
+    height: 20px;
+}
+.userTokensText {
+    font-family: var(--font-textBold);
+    font-size: 20px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+    width: fit-content;
+    white-space: nowrap;
+}
+.userIconCnt {
+    @extend %flexCenter;
+    width: fit-content;
+    height: 100%;
+    flex-shrink: 0;
+}
+.userIcon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 148, 0, 0.5);
+}
+.userIconCnt::before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-image: url('/images/user_menu.svg');
+    left: 0%;
+    bottom: -3px;
+}
+.userIconBlock {
+    position: relative;
+    cursor: pointer;
 }

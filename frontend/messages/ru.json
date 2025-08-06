@@ -41,6 +41,8 @@
     "nav_image_alt_4": "Изображение прицела",
     "nav_image_alt_5": "Изображение подарка",
     "active_header_point": "Активная навигационная точка",
-    "promo_code_placeholder": "Введите промокод"
+    "promo_code_placeholder": "Введите промокод",
+    "get_more_tokens": "Получить больше токенов",
+    "user_icon": "Иконка пользователя"
   }
 }

@@ -43,6 +43,8 @@
     "nav_image_alt_4": "Shooting image",
     "nav_image_alt_5": "Gift image",
     "active_header_point": "Active navigation point",
-    "promo_code_placeholder": "Enter promo code"
+    "promo_code_placeholder": "Enter promo code",
+    "get_more_tokens": "Get more tokens",
+    "user_icon": "User icon"
   }
 }
