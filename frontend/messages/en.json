@@ -21,14 +21,14 @@
     "support_email": "support@dropzone.org",
     "privacy_policy": "Privacy Policy",
     "terms_of_service": "Terms of Service",
+    "season_case_title": "Seasonal cases:"
 
 
 
 
 
 
-    "title": "Hello world!",
-    "about": "Go to the about page"
+
   },
     "header": {
     "logo_alt": "DropZone Logo",
@@ -43,7 +43,7 @@
     "nav_image_alt_4": "Shooting image",
     "nav_image_alt_5": "Gift image",
     "active_header_point": "Active navigation point",
-    "promo_code_placeholder": "Enter promo code",
+    "promo_code_placeholder": "enter promo code",
     "get_more_tokens": "Get more tokens",
     "user_icon": "User icon",
     "logIn": "log in",

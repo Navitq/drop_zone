@@ -21,12 +21,9 @@
     "support_email": "support@dropzone.org",
     "privacy_policy": "Политика конфиденциальности",
     "terms_of_service": "Пользовательское соглашение",
+    "season_case_title": "Сезонный кейсы:"
 
 
-
-
-    "title": "!Привет мир",
-    "about": "На страницу О"
   },
   "header": {
     "logo_alt": "Логотип DropZone",
@@ -41,7 +38,7 @@
     "nav_image_alt_4": "Изображение прицела",
     "nav_image_alt_5": "Изображение подарка",
     "active_header_point": "Активная навигационная точка",
-    "promo_code_placeholder": "Введите промокод",
+    "promo_code_placeholder": "введите промокод",
     "get_more_tokens": "Получить больше токенов",
     "user_icon": "Иконка пользователя",
     "logIn": "войти",

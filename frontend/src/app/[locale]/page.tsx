@@ -1,12 +1,13 @@
-import { useTranslations } from 'next-intl';
-import { Link } from '../../i18n/navigation';
+import style from '@/styles/homePage.module.scss';
+
+// import SeasonCasesBlock from '@/components/SeasonCasesBlock';
+import StandartCase from '@/components/StandartCase';
 
 export default function HomePage() {
-  const t = useTranslations('homePage');
   return (
-    <div>
-      <h1>{t('title')}</h1>
-      <Link href="/about">{t('about')}</Link>
-    </div>
+    <div className={style.homePage}>
+      {/* <SeasonCasesBlock></SeasonCasesBlock> */}
+      <StandartCase></StandartCase>
+    </div >
   );
 }

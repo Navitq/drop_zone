@@ -1,0 +1,33 @@
+%flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stCaseCnt {
+    @extend %flexCenter;
+    max-width: 330px;
+    max-height: 376px;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 20px;
+}
+
+.stCaseImgCnt {
+    max-width: 300px;
+    max-height: 275px;
+}
+
+.caseInfoBlock {
+    @extend %flexCenter;
+    flex-direction: column;
+}
+
+.caseName {
+    font-family: var(--font-headBold);
+    font-size: 25px;
+    line-height: 100%;
+    text-align: center;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+}
