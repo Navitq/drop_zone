@@ -22,6 +22,7 @@
     "paths": {
       "@/*": ["*"],
       "@/styles/*": ["public/styles/*"],
+      "@/lib/*": ["lib/*"],
       "@/components/*": ["components/*"],
       "@/redux/*": ["redux/*"],
       "@/context/*": ["context/*"],

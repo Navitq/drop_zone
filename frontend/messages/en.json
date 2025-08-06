@@ -45,6 +45,10 @@
     "active_header_point": "Active navigation point",
     "promo_code_placeholder": "Enter promo code",
     "get_more_tokens": "Get more tokens",
-    "user_icon": "User icon"
+    "user_icon": "User icon",
+    "logIn": "log in",
+    "steam_log_in_alt": "Steam Log In",
+    "vk_log_in_alt": "VK Log In",
+    "google_log_in_alt": "Google Log In"
   }
 }

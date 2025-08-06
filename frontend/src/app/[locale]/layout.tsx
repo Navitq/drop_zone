@@ -6,6 +6,8 @@ import Footer from '@/components/Footer';
 import { headBold, headRegular, textRegular, textBold } from '@/fonts/fonts'
 import Header from '@/components/Header';
 
+import StoreProvider from '@/app/StoreProvider'
+
 export default async function LocaleLayout({
   children,
   params
@@ -32,15 +34,17 @@ export default async function LocaleLayout({
     <html lang={locale} className={fontsClass}>
 
       <body>
-        <div className='global-container'>
-          <NextIntlClientProvider>
-            <Header></Header>
-            <main className='global-content'>
-              {children}
-            </main>
-            <Footer></Footer>
-          </NextIntlClientProvider>
-        </div>
+        <StoreProvider>
+          <div className='global-container'>
+            <NextIntlClientProvider>
+              <Header></Header>
+              <main className='global-content'>
+                {children}
+              </main>
+              <Footer></Footer>
+            </NextIntlClientProvider>
+          </div>
+        </StoreProvider>
       </body>
     </html>
   );

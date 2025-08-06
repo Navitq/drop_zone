@@ -43,6 +43,10 @@
     "active_header_point": "Активная навигационная точка",
     "promo_code_placeholder": "Введите промокод",
     "get_more_tokens": "Получить больше токенов",
-    "user_icon": "Иконка пользователя"
+    "user_icon": "Иконка пользователя",
+    "logIn": "войти",
+    "steam_log_in_alt": "Войти через Steam",
+    "vk_log_in_alt": "Войти через ВКонтакте",
+    "google_log_in_alt": "Войти через Google"
   }
 }

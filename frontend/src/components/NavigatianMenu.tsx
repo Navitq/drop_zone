@@ -4,16 +4,7 @@ import style from '@/styles/header.module.scss'
 import { FRONTEND_PATHS } from '@/utilites/urls'
 
 function NavigatianMenu(): React.ReactNode {
-    //     interface PointRules {
-    //     width: number;
-    //     height: number;
-    //     cntClass?: string;
-    //     path: string;
-    //     altKey: string;
-    //     imgClass?: string;
-    //     textKey: string;
-    //     linkPath: string;
-    // }
+
     return (
         <nav className={style.navMenuCnt}>
             <LogoNavPoint linkPath={FRONTEND_PATHS.home} textKey={"nav_point_1"}
