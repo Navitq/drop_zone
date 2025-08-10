@@ -3,6 +3,8 @@ interface Urls {
 }
 
 export const BACKEND_PATHS: Urls = {
+    getActualCases: "",
+    getBlogerCases:"",
     getUser: '',
     getPosts: '',
     createPost: '',

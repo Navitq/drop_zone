@@ -3,11 +3,11 @@ import CaseName from '@/components/CaseName'
 import CaseBtn from '@/components/CaseBtn'
 import style from '@/styles/cases.module.scss'
 
-function CaseInfoBlock(): React.ReactNode {
+function CaseInfoBlock(props: { caseNameKey: string, price: number }): React.ReactNode {
     return (
         <div className={style.caseInfoBlock}>
-            <CaseName></CaseName>
-            <CaseBtn></CaseBtn>
+            <CaseName caseName={props.caseNameKey}></CaseName>
+            <CaseBtn price={props.price}></CaseBtn>
         </div>
     )
 }

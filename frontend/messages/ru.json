@@ -21,10 +21,19 @@
     "support_email": "support@dropzone.org",
     "privacy_policy": "Политика конфиденциальности",
     "terms_of_service": "Пользовательское соглашение",
-    "season_case_title": "Сезонный кейсы:"
-
-
+    "season_case_title": "Сезонный кейсы:",
+    "actual_case_title": "Актуальные",
+    "bloger_case_title": "Блогерские",
+    "sort": "сортировать",
+    "srt_popularity": "по популярности",
+    "srt_price_down": "по возрастанию",
+    "srt_name":"по убыванию",
+    "srt_price_up": "по названию"
   },
+
+    "cases":{
+      "example":"Пример кейса"
+    },
   "header": {
     "logo_alt": "Логотип DropZone",
     "nav_point_1": "Главная",

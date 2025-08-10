@@ -1,10 +1,10 @@
 import React from 'react'
 import style from '@/styles/cases.module.scss'
 
-function CaseBtn(): React.ReactNode {
+function CaseBtn(props: { price: number }): React.ReactNode {
     return (
-        <div>
-
+        <div className={style.stCaseBtnCnt}>
+            <button className={style.stCaseBtn}>{`${props.price} Dc`}</button>
         </div>
     )
 }

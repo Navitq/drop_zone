@@ -21,15 +21,18 @@
     "support_email": "support@dropzone.org",
     "privacy_policy": "Privacy Policy",
     "terms_of_service": "Terms of Service",
-    "season_case_title": "Seasonal cases:"
-
-
-
-
-
-
-
+    "season_case_title": "Seasonal cases:",
+    "actual_case_title": "Actual",
+    "bloger_case_title": "Блогерские",
+    "sort": "sort",
+    "srt_popularity": "by popularity",
+    "srt_price_down": "in ascending order",
+    "srt_name":"in descending order",
+    "srt_price_up": "by name"
   },
+    "cases":{
+      "example":"Example case"
+    },
     "header": {
     "logo_alt": "DropZone Logo",
     "nav_point_1": "Home",
