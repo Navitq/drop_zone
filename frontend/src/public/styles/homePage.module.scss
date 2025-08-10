@@ -17,6 +17,7 @@
     @extend %flexCenter;
     justify-content: space-around;
     flex-wrap: wrap;
+    row-gap: 92px;
 }
 
 .actTitleCnt {
@@ -24,4 +25,190 @@
     margin-bottom: 40px;
     margin-top: 60px;
     justify-content: space-between;
+}
+
+.advertisementCnt {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bilbordCnt {
+    position: relative;
+    max-width: 684px;
+    min-height: 231px;
+    width: 100%;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.bdDataCnt {
+    padding: 15px 30px 0px 30px;
+}
+
+.bilbordBg {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    border-radius: 20px;
+}
+
+.bdTitle {
+    font-family: var(--font-headBold);
+    font-size: 34px;
+    color: rgba(255, 255, 255, 1);
+    margin-bottom: 14px;
+    white-space: nowrap;
+}
+
+.bdTimerCell {
+    margin-right: 9px;
+}
+
+.bdTimerCell:last-child {
+    margin-right: 0px;
+}
+
+.bdSubTitle {
+    max-width: 281px;
+    width: 100%;
+    font-family: var(--font-textRegular);
+    font-size: 20px;
+    line-height: 120%;
+    color: rgba(255, 255, 255, 1);
+}
+
+.bdTimerCnt {
+    display: flex;
+    margin-top: 15px;
+}
+
+.bdTimerCell {
+    @extend %flexCenter;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 34px;
+    padding:6px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    min-width: 34px;
+
+}
+
+.bdTimerData {
+    color: rgba(255, 148, 0, 1);
+    font-family: var(--font-textRegular);
+    font-size: 15px;
+}
+
+.bdTimerData, .bdTimerType  {
+    color: rgba(255, 148, 0, 1);
+    font-family: var(--font-textRegular);
+    font-size: 15px;
+    line-height: 15px;
+}
+
+.bdTimerType {
+    font-size: 11px;
+    line-height: 11px;
+}
+
+.bdButtonCnt {
+    @extend %flexCenter;
+    height: 37px;
+    margin: 20px 30px;
+    margin-top: 0px;
+    justify-content: flex-start;
+}
+
+.bdButton {
+    border-radius: 10px;
+    height: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    vertical-align: middle;
+    font-family: var(--font-textBold);
+    font-size: 15px;
+    line-height: 15px;
+    color: rgba(0, 0, 0, 1);
+    background-color: rgba(179, 159, 237, 1);
+}
+
+.smbdBlock {
+    @extend %flexCenter;
+    min-height: 231px;
+    max-width: 332px;
+    width: 100%;
+    padding: 30px 31px 25px 31px;
+    background-color: rgba(35, 35, 35, 1);
+    border-radius: 20px;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.smbdTitle {
+    font-family: var(--font-headBold);
+    font-size: 36px;
+    line-height: 36px;
+    color: rgba(255, 255, 255, 1);
+    text-align: center;
+}
+
+.smbdSubTitle {
+    font-family: var(--font-textRegular);
+    font-size: 22px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+    text-align: center;
+
+}
+
+.smbdBtnTitleCnt {
+    height: 34px;
+}
+
+
+.smbdBtnTitle {
+    height: 100%;
+    padding: 0px 12px;
+    font-family: var(--font-textBold);
+    font-size: 15px;
+    line-height: 15px;
+    color: rgba(0, 0, 0, 1);
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 10px;
+}
+
+.bd_left {
+    .bdDataCnt {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .bdTitle {
+        text-align: right;
+    }
+    .bdSubTitle{
+        text-align: right;
+        line-height: 105%;
+    }
+    .bdButtonCnt{
+        justify-content: flex-end;
+    }
+
+    .bdButton {
+        background-color: rgba(255, 148, 0, 1);
+        font-size: 20px;
+        line-height: 20px;
+        color: rgba(255, 255, 255, 1);
+    }
+
 }

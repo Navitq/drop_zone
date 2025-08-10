@@ -28,7 +28,10 @@
     "srt_popularity": "by popularity",
     "srt_price_down": "in ascending order",
     "srt_name":"in descending order",
-    "srt_price_up": "by name"
+    "srt_price_up": "by name",
+    "bd_day": "day",
+    "bd_hours": "hr",
+    "bd_minutes": "min"
   },
     "cases":{
       "example":"Example case"

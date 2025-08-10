@@ -28,7 +28,10 @@
     "srt_popularity": "по популярности",
     "srt_price_down": "по возрастанию",
     "srt_name":"по убыванию",
-    "srt_price_up": "по названию"
+    "srt_price_up": "по названию",
+    "bd_day": "дня",
+    "bd_hours": "час",
+    "bd_minutes": "мин"
   },
 
     "cases":{
