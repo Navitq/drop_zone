@@ -10,7 +10,9 @@ export default function BackGround(): React.ReactNode {
 
     return isAuthPage ? (
         <div className={style.backgroundBlock}>
-            <div className={style.pictureCnt}></div>
+            <div className={style.pictureCnt}>
+                <div className={style.pictureGrassCnt}></div>
+            </div>
         </div>
     ) : null;
 }
