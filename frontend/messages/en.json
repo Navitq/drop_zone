@@ -31,7 +31,8 @@
     "srt_price_up": "by name",
     "bd_day": "day",
     "bd_hours": "hr",
-    "bd_minutes": "min"
+    "bd_minutes": "min",
+    "faq_title": "Frequently asked questions"
   },
     "cases":{
       "example":"Example case"
@@ -56,5 +57,21 @@
     "steam_log_in_alt": "Steam Log In",
     "vk_log_in_alt": "VK Log In",
     "google_log_in_alt": "Google Log In"
+  },
+  "faq": {
+    "t_item_1": "I topped up my balance, but the money does not appear on the site. What should I do?",
+    "t_item_2": "I have money on my Steam account, but it does not show up here. Why?",
+    "t_item_3": "I can't log in through Steam, the page doesn't load, there is ads in the middle of the page, and the site lags a lot. What should I do?",
+    "t_item_4": "Someone added me on Steam or VK and introduced themselves as a DropZone administrator with a suspicious offer. What should I do?",
+    "t_item_5": "I chose one of three items, but I received a completely different one.",
+    "t_item_6": "I clicked 'Request from Market' in my profile, but I got a Steam error. The trade offer doesn’t arrive. What should I do? When will it arrive?",
+    "t_item_7": "What should I do if it gives a 'Link verification error'?",
+    "txt_item_1": "Please first check if the transaction was successful on the payment system side (for example, in your bank or payment service account). If the money was deducted but the balance on the site did not update, try refreshing the page or logging out and back into your account. If the problem persists for more than 10 minutes, contact our support team with a screenshot or payment receipt — we will promptly check and resolve the issue.",
+    "txt_item_2": "The balance of your Steam account and the balance on our site are different systems. Funds on Steam cannot be automatically transferred or displayed on the Dropzone site. To use the balance on the site, you need to top up your account directly through the payment methods available with us. If you have difficulties topping up, please contact support.",
+    "txt_item_3": "Such problems are often related to technical failures on Steam’s side or your internet provider, as well as the settings of your device or browser. We do not influence Steam's operation and do not control ads on the site. We recommend clearing your browser cache and cookies, trying another browser or device, checking your internet connection, and disabling ad blockers that may interfere with loading. If the problem persists, contact Steam support or your provider. We are always ready to help within our platform.",
+    "txt_item_4": "Be careful! Real Dropzone administrators never write to users with suspicious offers or requests to provide personal data, passwords, or transfer money. This may be a scam attempt. Do not reply to such messages, do not follow links, and do not share personal information. We recommend immediately blocking the user and reporting the suspicious account to the site support or the relevant social network.",
+    "txt_item_5": "If you received a different item than the one you selected, this may be related to technical features of Steam or external services. We recommend contacting our support first — we will help figure it out and, if necessary, advise on further actions.",
+    "txt_item_6": "The error when requesting an exchange from the Steam market is usually related to temporary failures or restrictions on Steam's side, such as account settings, blocks, or Steam Guard mobile authentication requirements. We recommend checking your Steam account exchange settings, making sure there are no restrictions, and trying the request again later. If the problem persists, contact our support — we can help with technical issues related to exchange.",
+    "txt_item_7": "The 'Link verification error' usually occurs due to problems with the correctness or expiration of the link you are using. It is recommended to check if you copied the link correctly, whether it has expired, and whether it meets the site's requirements. If the error persists, try getting a new link or contact our support — we will help solve the problem."
   }
 }
