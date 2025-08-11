@@ -9,9 +9,11 @@ export default function HomePage() {
   return (
     <div className={style.homePage}>
       <SeasonCasesBlock></SeasonCasesBlock>
-      <AdvertisementBlock></AdvertisementBlock>
-      <ActualCases></ActualCases>
-      <BlogerCases></BlogerCases>
+      <div className={style.mainContentSize}>
+        <AdvertisementBlock></AdvertisementBlock>
+        <ActualCases></ActualCases>
+        <BlogerCases></BlogerCases>
+      </div>
     </div >
   );
 }

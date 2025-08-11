@@ -57,6 +57,7 @@
     height: 100%;
     z-index: -1;
     border-radius: 20px;
+
 }
 
 .bdTitle {
@@ -168,13 +169,11 @@
     line-height: 100%;
     color: rgba(255, 255, 255, 1);
     text-align: center;
-
 }
 
 .smbdBtnTitleCnt {
     height: 34px;
 }
-
 
 .smbdBtnTitle {
     height: 100%;
@@ -190,11 +189,34 @@
 .actTitleSeasonCnt {
     margin-top: 0px;
     margin-bottom: 45px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
-
+.actTitleSeasonTxt {
+    max-width: 1800px;
+    padding: 0 30px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
 .bgCaseBlock {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 45px;
+    width: 100%;
+    padding: 0px 25px;
+}
+
+.mainContentSize {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1800px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding: 0px 30px
 }
 
 .bd_left {

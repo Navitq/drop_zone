@@ -14,6 +14,16 @@
     transition: transform 0.3s ease;
 }
 
+.bgCaseCnt {
+    @extend %flexCenter;
+    max-width: 380px;
+    max-height: 411px;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
 .stCaseCnt:hover .stCaseImgCnt {
     transform: scale(1.166);
     z-index: 2;
@@ -23,9 +33,24 @@
     transform: translateY(22px);
 }
 
+.bgCaseCnt:hover .bgCaseImgCnt {
+    transform: scale(1.166);
+    z-index: 2;
+}
+
+.bgCaseCnt:hover .caseInfoBlock {
+    transform: translateY(22px);
+}
+
 .stCaseImgCnt {
     max-width: 300px;
     max-height: 275px;
+    transition: transform 0.3s ease;
+}
+
+.bgCaseImgCnt {
+    max-width: 350px;
+    max-height: 310px;
     transition: transform 0.3s ease;
 }
 
@@ -48,6 +73,10 @@
 .stCaseBtnCnt {
     margin-top: 15px;
     height: 46px;
+}
+
+.bgCaseImgCnt{
+  z-index: -1;
 }
 
 

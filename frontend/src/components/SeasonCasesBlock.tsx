@@ -6,7 +6,9 @@ import SeasonCases from '@/components/SeasonCases'
 function SeasonCasesBlock(): React.ReactNode {
     return (
         <div className={`${style.actTitleCnt} ${style.actTitleSeasonCnt}`}>
-            <TitleHomePage textKey="season_case_title"></TitleHomePage>
+            <div className={style.actTitleSeasonTxt}>
+                <TitleHomePage textKey="season_case_title" />
+            </div>
             <SeasonCases></SeasonCases>
         </div>
 
