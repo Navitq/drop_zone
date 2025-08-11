@@ -34,10 +34,9 @@
     "bd_minutes": "мин",
     "faq_title": "Часто задаваемые вопросы"
   },
-
-    "cases":{
-      "example":"Пример кейса"
-    },
+  "cases":{
+    "example":"Пример кейса"
+  },
   "header": {
     "logo_alt": "Логотип DropZone",
     "nav_point_1": "Главная",

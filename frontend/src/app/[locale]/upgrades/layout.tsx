@@ -1,4 +1,4 @@
-export default function FaqLayout({ children }) {
+export default function UpgradesLayout({ children }) {
     return (
         <>
             {children}
