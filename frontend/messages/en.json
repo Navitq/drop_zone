@@ -32,7 +32,8 @@
     "bd_day": "day",
     "bd_hours": "hr",
     "bd_minutes": "min",
-    "faq_title": "Frequently asked questions"
+    "faq_title": "Frequently asked questions",
+    "t_upgrades": "Upgrades"
   },
     "cases":{
       "example":"Example case"
@@ -73,5 +74,15 @@
     "txt_item_5": "If you received a different item than the one you selected, this may be related to technical features of Steam or external services. We recommend contacting our support first — we will help figure it out and, if necessary, advise on further actions.",
     "txt_item_6": "The error when requesting an exchange from the Steam market is usually related to temporary failures or restrictions on Steam's side, such as account settings, blocks, or Steam Guard mobile authentication requirements. We recommend checking your Steam account exchange settings, making sure there are no restrictions, and trying the request again later. If the problem persists, contact our support — we can help with technical issues related to exchange.",
     "txt_item_7": "The 'Link verification error' usually occurs due to problems with the correctness or expiration of the link you are using. It is recommended to check if you copied the link correctly, whether it has expired, and whether it meets the site's requirements. If the error persists, try getting a new link or contact our support — we will help solve the problem."
+  },
+  "upgrades": {
+    "client_ak": "Picture of a machine gun",
+    "take_object": "Take an item from your inventory to upgrade",
+    "client_money": "Stack of US dollar bills on a table",
+    "take_balance": "Use your balance to upgrade",
+    "pistol_client_tab": "Pistol picture",
+    "money_client_tab": "Money picture",
+    "skins_client_tab": "Skins",
+    "balance_client_tab": "Balance"
   }
 }
