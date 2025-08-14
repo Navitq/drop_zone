@@ -4,6 +4,10 @@
     align-items: center;
 }
 
+.exTabs * {
+    outline: none;
+}
+
 .upgrades {
     @extend %flexCenter;
     max-width: 1800px;
@@ -143,4 +147,75 @@
     display: flex;
     flex-direction: column;
     width: 55px;
+}
+
+
+.exchangeTab {
+    padding: 34px 17px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.exchangeTabText {
+    font-family: var(--font-headRegular);
+    font-size: 16px;
+    text-align: center;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+    writing-mode: vertical-rl; /* вертикальная печать справа налево */
+    transform: rotate(180deg);
+    margin-bottom: 17px;
+    line-height: 16px;
+}
+
+.exchangeTab{
+    @extend %flexCenter;
+    flex-direction: column;
+    border: 0px solid;
+    position: relative;
+    overflow: hidden;
+    border-top-right-radius: 20px;
+    outline: none;
+}
+
+.exchangeTab::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* растянуть на весь блок */
+    border-top-right-radius: 20px;
+    padding: 1px; /* толщина рамки */
+    background: linear-gradient(180deg, #FF8F2D 0%, rgba(255,143,45,0.3) 100%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    border-collapse: collapse;
+    mask-composite: exclude; /* создаёт рамку с градиентом и скруглёнными углами */
+    pointer-events: none;
+}
+
+.exchangeTabCnt {
+    opacity: 0.5;
+}
+
+.radiusClassTab {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 20px;
+}
+
+.radiusClassTab:before {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 20px;
+}
+
+.exTabs :global(.react-tabs__tab--selected) {
+    & .exchangeTab {
+        background: linear-gradient(90deg, rgba(255, 143, 45, 0) 0%, rgba(255, 143, 45, 0.5) 100%);
+    }
+
+    & .exchangeTabCnt {
+        opacity: 1;
+    }
 }

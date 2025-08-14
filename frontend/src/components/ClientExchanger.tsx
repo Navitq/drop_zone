@@ -34,10 +34,11 @@ function ClientExchanger(): React.ReactNode {
 
             <TabList className={style.exTabs}>
                 <Tab className={style.exTabCnt}>
-                    <ExchangeTab titleKey={ } altKey={ } imgPath={ }></ExchangeTab>
-
+                    <ExchangeTab textKey={"skins_client_tab"} altKey={"pistol_client_tab"} width={20} height={20} imageUrl={'/images/upgrade_gun.svg'}></ExchangeTab>
                 </Tab>
-                <Tab>Title 2</Tab>
+                <Tab>
+                    <ExchangeTab radiusClass={"radiusClassTab"} textKey={"balance_client_tab"} altKey={"money_client_tab"} width={20} height={20} imageUrl={'/images/upgrade_money.svg'}></ExchangeTab>
+                </Tab>
             </TabList>
         </Tabs>
     )
