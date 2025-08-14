@@ -84,5 +84,8 @@
     "money_client_tab": "Money picture",
     "skins_client_tab": "skins",
     "balance_client_tab": "balance"
+  },
+  "items": {
+    "add_good": "add"
   }
 }

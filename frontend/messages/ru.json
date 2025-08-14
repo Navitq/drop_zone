@@ -84,5 +84,8 @@
     "money_client_tab": "Изображение стопки монет",
     "skins_client_tab": "скины",
     "balance_client_tab": "баланс"
+  },
+  "items": {
+    "add_good": "добавить"
   }
 }
