@@ -115,3 +115,31 @@
     background-color: rgba(174, 174, 174, 1);
   }
 }
+
+.stItemBtnCnt {
+    width: 100%;
+    height: 29px;
+    border-radius: 7px;
+    background-color: rgba(229, 133, 0, 1);
+    font-family: var(--font-headBold);
+    font-size: 14px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+
+    &:hover {
+        background-color: rgba(255, 163, 36, 1);
+        color: rgba(255, 255, 255, 1);
+    }
+
+    &:active {
+       background-color: rgba(255, 123, 0, 1);
+       color: rgba(255, 255, 255, 1);
+    }
+
+    &:disabled {
+        color: rgba(255, 255, 255, 0.5);
+        background-color: rgba(174, 174, 174, 1);
+    }
+}

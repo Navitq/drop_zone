@@ -1,5 +1,135 @@
+%flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .smItemCnt {
     height: 191px;
     width: 191px;
-    padding: 10px 8px 8px 8px
+    padding: 10px 8px 8px 8px;
+}
+
+.smItemCnt {
+    @extend %flex-center;
+    border-width: 1px;
+    border-style: solid;
+    flex-direction: column;
+    border: 0px solid;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    outline: none;
+    justify-content: space-between;
+    &.usuallItemSmType {
+        background-image: url(/images/blue_item_background.png);
+        &::before {
+            background: linear-gradient(180deg, rgba(0, 81, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+        }
+        .smItemGunPrice {
+            color: rgba(184, 208, 255, 1);
+        }
+        .smItemGunModel {
+            color: rgba(0, 140, 255, 1);
+        }
+    }
+    &.rareItemSmType {
+        background-image: url(/images/violet_item_background.png);
+        border: 1px solid;
+
+
+        &::before {
+            background: linear-gradient(180deg, rgba(212, 0, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+        }
+        .smItemGunPrice {
+            color: rgba(255, 217, 248, 1);
+        }
+        .smItemGunModel {
+            color: rgba(255, 56, 229, 1)
+        }
+    }
+    &.eliteItemSmType {
+        background-image: url(/images/red_item_background.png);
+        &::before {
+            background: linear-gradient(180deg, rgba(221, 36, 38, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
+        }
+        .smItemGunPrice {
+            color: rgba(255, 217, 217, 1);
+        }
+        .smItemGunModel {
+            color: rgba(255, 80, 80, 1);
+        }
+    }
+    &.epicItemSmType {
+        background-image: url(/images/gold_item_background.png);
+        &::before {
+            background: linear-gradient(180deg, rgba(255, 195, 0, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+        }
+        .smItemGunPrice {
+            color: rgba(254, 245, 163, 1);
+        }
+        .smItemGunModel {
+            color: rgba(255, 195, 0, 1);
+        }
+    }
+}
+
+.smItemCnt::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* растянуть на весь блок */
+    border-radius: 10px;
+    padding: 1px; /* толщина рамки */
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    border-collapse: collapse;
+    mask-composite: exclude; /* создаёт рамку с градиентом и скруглёнными углами */
+    pointer-events: none;
+}
+
+.smItemInfoCnt{
+    @extend %flex-center;
+}
+
+.smItemInfoBlck {
+    @extend %flex-center;
+    flex-direction: column;
+    margin-top: 7px;
+    width: 100%;
+}
+
+.smItemImgCnt {
+    @extend %flex-center;
+    flex: 1;
+    width: 100%;
+    img {
+        width: 95%;
+        max-width: 100%;
+    }
+}
+
+.smItemGunModel, .smItemGunStyle, .smItemGunStyle {
+    font-family: var(--font-headRegular);
+    font-size: 14px;
+    text-align: center;
+    line-height: 14px;
+    color: rgba(125, 128, 145, 1);
+}
+
+.smItemGunModel {
+    margin-right: 3px;
+}
+
+.smItemGunStyle, .smItemGunPrice {
+    font-family: var(--font-textRegular);
+    font-size: 14px;
+    line-height: 12px;
+    text-align: center;
+}
+
+.smItemGunPrice {
+    margin-bottom: 7px;
+    margin-top: 7px;
 }
