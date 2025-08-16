@@ -219,3 +219,20 @@
         opacity: 1;
     }
 }
+
+.exchangerSpiner {
+    @extend %flexCenter;
+    svg {
+        max-width: none;
+    }
+
+    .spinerText {
+        font-family: var(--font-headBold);
+        font-size: 32px;
+        color: rgba(255, 255, 255, 1);
+        .spinerText {
+            font-family: var(--font-headRegular);
+            font-size: 20px;
+        }
+    }
+}

@@ -2,7 +2,6 @@ import TitleHomePage from '@/components/TitleHomePage';
 import style from '@/styles/upgrades.module.scss';
 
 import ExchangeBlock from '@/components/ExchangeBlock'
-import ItemSm from '@/components/ItemSm'
 
 export default function UpgradesPage(): React.ReactNode {
 
@@ -14,7 +13,6 @@ export default function UpgradesPage(): React.ReactNode {
             </div>
 
             <ExchangeBlock></ExchangeBlock>
-            <ItemSm gunModel={"MP4"} gunStyle={"Venom"} gunPrice={9.84} imgPath={'/images/example_gun_blue.png'} type={"epic"}></ItemSm>
         </div >
     );
 }
