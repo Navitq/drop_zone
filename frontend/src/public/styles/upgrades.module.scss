@@ -30,13 +30,17 @@
     padding-left: 30px;
     padding-right: 30px;
     width: 100%;
+    margin-bottom: 60px;
 }
 
 .clientExchanger {
     display: flex;
     width: 100%;
+    justify-content: flex-start;
 }
-
+.serverExchangerTop {
+    justify-content: flex-end;
+}
 
 .exClientProp {
     @extend %flexCenter;
@@ -146,7 +150,7 @@
     padding-top: 20px;
     display: flex;
     flex-direction: column;
-    width: 55px;
+    width: 56px;
 }
 
 
@@ -220,8 +224,12 @@
     }
 }
 
+
 .exchangerSpiner {
     @extend %flexCenter;
+    justify-content: flex-start;
+    flex-direction: column;
+    height: 100%;
     svg {
         max-width: none;
     }
@@ -235,4 +243,101 @@
             font-size: 20px;
         }
     }
+}
+
+.serverExchanger {
+    padding-top: 17px;
+}
+
+
+.exchangeTabServerText{
+    font-family: var(--font-headRegular);
+    font-size: 16px;
+    text-align: center;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+    line-height: 16px;
+}
+
+.serverExchangeTab {
+    padding: 0px;
+    height: 44px;
+    border-radius: 0px;
+}
+
+.serverExchangeTab {
+    padding-left: 2px;
+}
+
+
+.exTabs :global(.react-tabs__tab--selected) {
+    & .serverExchangeTab {
+        background: linear-gradient(180deg, rgba(255, 143, 45, 0) 0%, rgba(255, 143, 45, 0.5) 100%);
+
+    }
+
+    & .serverExchangeTab {
+        opacity: 1;
+    }
+}
+
+
+.serverExchangeTab::before {
+    border-top-right-radius: 0px;
+    background: linear-gradient(270deg, rgba(255, 143, 45, 0.3) 0%, #FF8F2D 100%);
+}
+
+.exTabCnt:first-child {
+    & .serverExchangeTab::before  {
+        border-top-left-radius: 20px;
+    }
+    & .serverExchangeTab  {
+        border-top-left-radius: 20px;
+    }
+}
+
+.exTabCnt:last-child {
+    & .serverExchangeTab::before  {
+        border-bottom-left-radius: 20px;
+    }
+    & .serverExchangeTab  {
+        border-bottom-left-radius: 20px;
+    }
+}
+
+.propiety {
+    max-width: 1800px;
+    padding-left: 30px;
+    padding-right: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.clientBlock {
+    @extend %flexCenter;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 855px;
+    width: 100%;
+    padding: 30px 30px;
+    background-color: rgba(255, 255, 255, 0.05);
+    height: 967px;
+    border-radius: 10px;
+}
+
+.exBlockTitleCnt {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.exBlockTitle {
+    font-family: var(--font-headRegular);
+    font-size: 36px;
+    color: rgba(223, 223, 223, 1);
+}
+
+.exClientCnt {
+    width: 100%;
 }

@@ -2,14 +2,16 @@
 
 import React, { useRef, useState } from "react";
 import style from '@/styles/upgrades.module.scss'
+import CaseBtnText from '@/components/CaseBtnText'
+import { useTranslations } from "next-intl";
 
 function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 0 }) {
     const [percent, setPercent] = useState(initialPercent);
     const [rotation, setRotation] = useState(0);
-
+    const t = useTranslations('upgrades')
     const svgRef = useRef(null);
 
-    const padding = 40; // внутренний отступ для тени
+    const padding = 30; // внутренний отступ для тени
     const svgSize = size + padding * 2;
     const center = svgSize / 2;
 
@@ -145,7 +147,7 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
                         fontSize="20px"
                         fontFamily="var(--font-headRegular)"
                     >
-                        custom text
+                        {t('your_chance')}
                     </tspan>
                 </text>
 
@@ -225,11 +227,13 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
             </svg>
 
             {/* кнопка запуска */}
+            <CaseBtnText text={t('upgrade_text')}></CaseBtnText>
             {/* <button
+                className={style.spinerBtn}
                 style={{ color: "#ffffff" }}
                 onClick={() => spin({ from: rotation, to: rotation + 1080, duration: 2000 })}
             >
-                wwww
+
             </button> */}
         </div>
     );

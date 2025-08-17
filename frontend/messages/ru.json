@@ -83,7 +83,12 @@
     "pistol_client_tab": "Изображение пистолета",
     "money_client_tab": "Изображение стопки монет",
     "skins_client_tab": "скины",
-    "balance_client_tab": "баланс"
+    "balance_client_tab": "баланс",
+    "server_ak": "старый ак-47",
+    "get_object": "Выбери предмет, который хочешь получить",
+    "upgrade_text":"апгрейд",
+    "your_chance": "твой шанс",
+    "your_skins":"Твои скины"
   },
   "items": {
     "add_good": "добавить"
