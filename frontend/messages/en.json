@@ -97,7 +97,9 @@
   "raffles": {
     "man_alt": "man picture",
     "image_alt": "picture",
-    "activity_price":"Cost of participation:"
+    "activity_price":"Cost of participation:",
+    "take_part": "take part",
+    "clock_alt": "Clock picture"
   },
   "items": {
     "add_good": "add"

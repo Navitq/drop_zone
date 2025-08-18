@@ -19,9 +19,10 @@
 
 .rafflesCasesCnt {
     @extend %flexCenter;
-    justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
     flex-wrap: wrap;
+    row-gap: 78px;
+    column-gap: 20px
 }
 
 .rafflesCaseCnt {
@@ -29,16 +30,19 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
-    max-width: 854px;
+    max-width: 860px;
     width: 100%;
-    height: 454px;
+    height: 500px;
     padding: 49px 40px;
+    background-size: cover;
+    background-repeat: no-repeat
 }
 
 .rafflesTitleInfo {
     @extend %flexCenter;
     justify-content: space-between;
     align-items: flex-start;
+    margin-bottom: 17px;
     width: 100%;
 }
 
@@ -82,6 +86,8 @@
     @extend %flexCenter;
     justify-content: space-between;
     height: 74px;
+    margin-top: 17px;
+    width: 100%;
 }
 
 .priceInfoCnt {
@@ -105,4 +111,96 @@
     font-size: 36px;
     line-height: 100%;
     text-align: left;
+}
+
+.weaponImg {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.rafflesDuration, .durationImgCnt  {
+    @extend %flexCenter;
+}
+
+.rafflesDuration {
+    height: 30px;
+}
+
+.durationImgCnt {
+    margin-right: 13px;
+}
+
+.timerText {
+    font-family: var(--font-headRegular);
+    font-size: 32px;
+    line-height: 100%;
+}
+
+.rafflesAplliedBtnCnt {
+    padding: 20px 30px;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+.rafflesAplliedBtn {
+    font-family: var(--font-headRegular);
+    font-size: 20px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+}
+
+
+.usuallCaseType {
+    background-image: url(/images/usuall_raffles_background.png);
+    .rafflesPlayerAmount, .weaponModel, .priceInfo, .timerText{
+        color:rgba(0, 140, 255, 1);
+    }
+    .rafflesAplliedBtnCnt {
+        border-color: rgba(0, 140, 255, 1);
+        &:hover {
+            background-color: rgba(0, 140, 255, 0.3);
+        }
+    }
+}
+
+.rareCaseType {
+    background-image: url(/images/rare_raffles_background.png);
+    .rafflesPlayerAmount, .weaponModel, .priceInfo, .timerText{
+        color:rgba(255, 56, 229, 1);
+    }
+    .rafflesAplliedBtnCnt {
+        border-color: rgba(255, 56, 229, 1);
+        &:hover {
+            background-color: rgba(255, 56, 228, 0.3);
+        }
+    }
+}
+
+.eliteCaseType {
+    background-image: url(/images/elite_raffles_background.png);
+    .rafflesPlayerAmount, .weaponModel, .priceInfo, .timerText{
+        color:rgba(255, 80, 80, 1);
+    }
+    .rafflesAplliedBtnCnt {
+        border-color: rgba(255, 80, 80, 1);
+        &:hover {
+            background-color: rgba(255, 80, 80, 0.3);
+        }
+    }
+}
+
+.epicCaseType {
+    background-image: url(/images/epic_raffles_background.png);
+    .rafflesPlayerAmount, .weaponModel, .priceInfo, .timerText{
+        color:rgba(255, 195, 0, 1);
+    }
+    .rafflesAplliedBtnCnt {
+        border-color: rgba(255, 195, 0, 1);
+        &:hover {
+            background-color: rgba(255, 195, 0, 0.3);
+        }
+    }
 }

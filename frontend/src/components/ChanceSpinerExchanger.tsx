@@ -227,7 +227,7 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
             </svg>
 
             {/* кнопка запуска */}
-            <CaseBtnText text={t('upgrade_text')}></CaseBtnText>
+            <CaseBtnText onClick={() => spin({ from: rotation, to: rotation + 1080, duration: 2000 })} text={t('upgrade_text')}></CaseBtnText>
             {/* <button
                 className={style.spinerBtn}
                 style={{ color: "#ffffff" }}

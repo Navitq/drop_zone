@@ -97,7 +97,9 @@
   "raffles": {
     "man_alt": "man picture",
     "image_alt": "изображение",
-    "activity_price":"Стоимость участия:"
+    "activity_price":"Стоимость участия:",
+    "take_part": "участвовать",
+    "clock_alt": "Изображение часов"
   },
   "items": {
     "add_good": "добавить"
