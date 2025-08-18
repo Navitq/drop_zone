@@ -33,7 +33,8 @@
     "bd_hours": "hr",
     "bd_minutes": "min",
     "faq_title": "Frequently asked questions",
-    "t_upgrades": "Upgrades"
+    "t_upgrades": "Upgrades",
+    "t_raffles": "Raffles"
   },
     "cases":{
       "example":"Example case"
@@ -92,6 +93,11 @@
     "get_our_skins": "Skins you can get",
     "search_by_data": "search",
     "search_by_price": "price"
+  },
+  "raffles": {
+    "man_alt": "man picture",
+    "image_alt": "picture",
+    "activity_price":"Cost of participation:"
   },
   "items": {
     "add_good": "add"

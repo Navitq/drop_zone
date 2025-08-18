@@ -33,7 +33,8 @@
     "bd_hours": "час",
     "bd_minutes": "мин",
     "faq_title": "Часто задаваемые вопросы",
-    "t_upgrades": "Апгрейд"
+    "t_upgrades": "Апгрейд",
+    "t_raffles": "Розыгрыши"
   },
   "cases":{
     "example":"Пример кейса"
@@ -92,6 +93,11 @@
     "get_our_skins": "Скины, что хочешь получить",
     "search_by_data": "поиск",
     "search_by_price": "цена"
+  },
+  "raffles": {
+    "man_alt": "man picture",
+    "image_alt": "изображение",
+    "activity_price":"Стоимость участия:"
   },
   "items": {
     "add_good": "добавить"
