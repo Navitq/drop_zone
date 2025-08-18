@@ -88,7 +88,10 @@
     "get_object": "Select the item you want to receive",
     "upgrade_text":"upgrade",
     "your_chance": "your chance",
-    "your_skins":"Your skins"
+    "your_skins": "Your skins",
+    "get_our_skins": "Skins you can get",
+    "search_by_data": "search",
+    "search_by_price": "price"
   },
   "items": {
     "add_good": "add"

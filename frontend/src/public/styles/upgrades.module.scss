@@ -14,6 +14,8 @@
     width: 100%;
     padding: 0px 30px;
     flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .ugdTitleBlock {
@@ -27,8 +29,6 @@
     margin-left: auto;
     margin-right: auto;
     max-width: 1580px;
-    padding-left: 30px;
-    padding-right: 30px;
     width: 100%;
     margin-bottom: 60px;
 }
@@ -306,9 +306,6 @@
 }
 
 .propiety {
-    max-width: 1800px;
-    padding-left: 30px;
-    padding-right: 30px;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -320,10 +317,11 @@
     justify-content: flex-start;
     max-width: 855px;
     width: 100%;
-    padding: 30px 30px;
+    padding: 30px 13px 30px 30px;
     background-color: rgba(255, 255, 255, 0.05);
     height: 967px;
     border-radius: 10px;
+    flex: 1;
 }
 
 .exBlockTitleCnt {
@@ -340,4 +338,118 @@
 
 .exClientCnt {
     width: 100%;
+}
+
+.exClSort {
+    width: fit-content;
+    margin-top: 17px;
+    margin-bottom: 25px;
+}
+
+.ExClientStuffs {
+    display: flex;           // заменяем @extend %flexCenter
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    flex: 1;
+    width: 100%;
+    overflow: auto;
+    row-gap: 15px;
+    padding-right: 10px;
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(75, 75, 75, 1) transparent;
+    column-gap: 3px;
+}
+
+// Chrome, Safari, Edge
+.ExClientStuffs::-webkit-scrollbar {
+  width: 5px;
+}
+
+.ExClientStuffs::-webkit-scrollbar-track {
+  background: transparent;
+
+}
+
+.ExClientStuffs::-webkit-scrollbar-thumb {
+  background: rgba(75, 75, 75, 1);
+  border-radius: 10px;
+}
+
+.ExClientStuffs::-webkit-scrollbar-button {
+  display: none;  // стрелки убираем
+  width: 0;
+  height: 0;
+}
+
+.serverExTitle {
+    margin-bottom: 17px;
+}
+
+.exSearchBlock {
+    @extend %flexCenter;
+    height: 44px;
+    padding: 0px 45px 0px 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    width: fit-content;
+    width: 146px;
+    position: relative;
+
+    &::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-image: url('/images/upgrade_search.svg');
+        background-repeat: no-repeat;
+        right: 20px;
+    }
+}
+
+.serverInfoBlock {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.exSearchInput {
+  flex: 1;              /* займёт всю доступную ширину внутри flex */
+  width: 100%;          /* вместо inherit */
+  min-width: 0;         /* обязательно для flex, чтобы не вылазил */
+  color: rgba(255, 255, 255, 1);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+
+.exSearchInput::placeholder {
+    font-family: var(--font-textBold);
+    font-size: 16px;
+    line-height: 120%;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.exServerSearch {
+    @extend %flexCenter;
+    justify-content: flex-start;
+}
+
+.exSearchBlock:first-child {
+    margin-right: 30px;
+}
+
+.exSearchPrice.exSearchBlock {
+    width: 109px;
+    &::after {
+        width: 15px;
+        height: 15px;
+        background-image: url('/images/upgrade_arrow.svg');
+        right: 20px;
+    }
+}
+
+.clientBlock:first-child {
+    margin-right: 10px
 }

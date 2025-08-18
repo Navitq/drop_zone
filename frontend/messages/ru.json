@@ -88,7 +88,10 @@
     "get_object": "Выбери предмет, который хочешь получить",
     "upgrade_text":"апгрейд",
     "your_chance": "твой шанс",
-    "your_skins":"Твои скины"
+    "your_skins":"Твои скины",
+    "get_our_skins": "Скины, что хочешь получить",
+    "search_by_data": "поиск",
+    "search_by_price": "цена"
   },
   "items": {
     "add_good": "добавить"
