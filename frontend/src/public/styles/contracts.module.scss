@@ -137,6 +137,7 @@
 }
 
 .ctStaffCnt {
+    margin-top: 60px;
     @extend %flexStart;
     flex-direction: column;
     width: 100%;
@@ -148,12 +149,19 @@
 }
 
 .ctStaffTxtCnt {
+    width: 100%;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 44px;
 }
 
 .ctStaffTitle {
     font-family: var(--font-headRegular);
     font-size: 36px;
     line-height: 100%;
+    color: rgba(223, 223, 223, 1);
+}
+
+.ctStaffSortCnt {
+    max-width: 220px;
 }
