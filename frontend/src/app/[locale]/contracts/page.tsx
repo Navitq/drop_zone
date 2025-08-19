@@ -1,10 +1,28 @@
+import React from 'react';
+
 import { useTranslations } from 'next-intl';
 
-export default function HomePage() {
-  const t = useTranslations('homePage');
+import style from '@/styles/contracts.module.scss'
+
+import TitleHomePage from '@/components/TitleHomePage';
+import CtScinsData from '@/components/CtScinsData';
+import CtScinsSlots from '@/components/CtScinsSlots';
+import CtStaff from '@/components/CtStaff'
+
+export default function ContractPage(): React.ReactNode {
+  const t = useTranslations('contracts');
   return (
-    <div>
-      <h1>{t('title')}</h1>
+    <div className={style.contracts}>
+      <div className={style.contractsTitle}>
+        <TitleHomePage textKey={"t_contracts"}></TitleHomePage>
+      </div>
+      <div className={style.gameFieldCnt}>
+        <CtScinsData scinPrice={190.97}></CtScinsData>
+        <CtScinsSlots></CtScinsSlots>
+      </div>
+
+      <CtStaff></CtStaff>
+
     </div>
   );
 }

@@ -34,7 +34,8 @@
     "bd_minutes": "min",
     "faq_title": "Frequently asked questions",
     "t_upgrades": "Upgrades",
-    "t_raffles": "Raffles"
+    "t_raffles": "Raffles",
+    "t_contracts": "Contracts"
   },
     "cases":{
       "example":"Example case"
@@ -100,6 +101,18 @@
     "activity_price":"Cost of participation:",
     "take_part": "take part",
     "clock_alt": "Clock picture"
+
+  },
+  "contracts": {
+    "your_skin_price": "The cost of your skins:",
+    "our_skins_assessment": "You will receive a skin worth:",
+    "objects_amount": "add at least 3 items",
+    "how_its_work": "How to work with contracts?",
+    "rule_point_one": "Collect 3-10 items from your inventory",
+    "rule_point_two": "Click the button - launch the contract",
+    "rule_point_tree": "Get a new skin",
+    "slot_alt": "Slot case:",
+    "accessible_objects": "Items available for contract"
   },
   "items": {
     "add_good": "add"

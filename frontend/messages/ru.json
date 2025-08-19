@@ -34,7 +34,8 @@
     "bd_minutes": "мин",
     "faq_title": "Часто задаваемые вопросы",
     "t_upgrades": "Апгрейд",
-    "t_raffles": "Розыгрыши"
+    "t_raffles": "Розыгрыши",
+    "t_contracts": "Контракты"
   },
   "cases":{
     "example":"Пример кейса"
@@ -100,6 +101,17 @@
     "activity_price":"Стоимость участия:",
     "take_part": "участвовать",
     "clock_alt": "Изображение часов"
+  },
+  "contracts": {
+    "your_skin_price": "Стоимость твоих скинов:",
+    "our_skins_assessment": "Ты получишь скин стоимостью:",
+    "objects_amount": "добавь минимум 3 предмета",
+    "how_its_work": "Как работать с контрактами?",
+    "rule_point_one": "Собери 3–10 предметов из своего инвентаря",
+    "rule_point_two": "Жми на кнопку — запусти контракт",
+    "rule_point_tree": "Получи новый скин",
+    "slot_alt": "Слот кейса:",
+    "accessible_objects": "Доступные для контракта предметы"
   },
   "items": {
     "add_good": "добавить"

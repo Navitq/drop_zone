@@ -13,6 +13,7 @@
 }
 
 .rafflesTitle {
+    @extend %flexCenter;
     margin-top: 24px;
     margin-bottom: 56px;
 }

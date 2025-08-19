@@ -18,14 +18,14 @@ function ItemSm(props: ItemSmInt): React.ReactNode {
     return (
         <div className={`${style.smItemCnt} ${style[props.type + "ItemSmType"]}`}>
             <div className={style.smItemImgCnt}>
-                <Image width={190} height={100} alt={`${props.gunModel}, ${props.gunStyle}`} src={props.imgPath} className={style.smItemImg}></Image>
+                <Image fill alt={`${props.gunModel}, ${props.gunStyle}`} src={props.imgPath} className={style.smItemImg}></Image>
             </div>
             <div className={style.smItemInfoBlck}>
                 <div className={style.smItemInfoCnt}>
                     <div className={style.smItemGunModel}>{`${props.gunModel} |`}</div>
                     <div className={style.smItemGunStyle}>{`${props.gunStyle}`}</div>
                 </div>
-                <div className={style.smItemGunPrice}>{props.gunPrice}</div>
+                <div className={style.smItemGunPrice}>{`${props.gunPrice} Dc`}</div>
                 <ItemBtn price={t('add_good')}></ItemBtn>
             </div>
         </div>

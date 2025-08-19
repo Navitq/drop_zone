@@ -102,6 +102,7 @@
 
 .smItemImgCnt {
     @extend %flex-center;
+    position: relative;
     flex: 1;
     width: 100%;
     img {
@@ -132,4 +133,17 @@
 .smItemGunPrice {
     margin-bottom: 7px;
     margin-top: 7px;
+}
+
+.smItemGunPriceMode {
+    font-size: 24px;
+    height: 24px;
+    line-height: 24px;
+    margin: 0px;
+    margin-bottom: 12px;
+    margin-top: 11px;
+}
+
+.smItemGunModel, .smItemGunStyle {
+    font-size: 16px;
 }

@@ -1,0 +1,159 @@
+%flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%flexStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.contracts {
+    max-width: 1800px;
+    padding:0 30px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: column;
+    width: 100%;
+}
+
+.contractsTitle {
+    margin-top: 24px;
+    margin-bottom: 55px;
+}
+
+.gameFieldCnt {
+    @extend %flexCenter;
+    width: 100%;
+}
+
+.ctScinsData {
+    @extend %flexStart;
+    flex-direction:  column;
+    justify-content: space-between;
+    height: 402px;
+    max-width: 684px;
+    width: 100%;
+    flex: 1;
+    border-radius: 10px;
+    padding: 28px 35px 32px 35px;
+    background-color: rgba(255, 255, 255, 0.05);
+    margin-right: 20px
+}
+
+.yourSkinPriceCnt {
+    @extend %flexStart;
+    flex-direction:  column;
+    height: 62px;
+    width: fit-content;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+
+.yourSkinPrice {
+    font-family: var(--font-headBold);
+    font-size: 24px;
+    line-height: 100%;
+    color: rgba(223, 223, 223, 1);
+}
+
+.yourSkinPriceAmount {
+    font-family: var(--font-headBold);
+    font-size: 30px;
+    line-height: 100%;
+    color: rgba(255, 148, 0, 1)
+}
+
+
+
+.objectAmountCnt {
+    @extend %flexCenter;
+    height: 38px;
+    padding: 0px 17px;
+    border-radius: 7px;
+    background-color: rgba(229, 133, 0, 1);
+    vertical-align: middle;
+}
+
+.objectAmount {
+    @extend %flexCenter;
+    font-family: var(--font-headBold);
+    font-size: 18px;
+    line-height: 100%;
+    color: rgba(0, 0, 0, 1);
+    vertical-align: middle;
+}
+
+.userInfo {
+    @extend %flexStart;
+    flex-direction: column;
+}
+
+.ctRulesTitle {
+    margin-top: 21px;
+    font-family: var(--font-headBold);
+    font-size: 18px;
+    line-height: 100%;
+    color: rgba(255, 148, 13, 0.99);
+    margin-bottom: 17px;
+}
+
+.RulesList {
+    list-style-type: disc;
+    color: gray;
+    padding-left: 20px;
+
+    li {
+        font-family: var(--font-textRegular);
+        font-size: 16px;
+        line-height: 100%;
+        color: rgba(223, 223, 223, 1);
+        margin-bottom: 13px;
+    }
+
+    li:last-child {
+        margin-bottom: 0px;
+    }
+}
+
+.ctObjectCnt {
+    @extend %flexStart;
+    flex-wrap: wrap;
+    gap: 20px;
+    flex: 1;
+    justify-content: center
+}
+
+.ctSlotCnt {
+    @extend %flexCenter;
+    max-width: 191px;
+    height: 191px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.ctStaffCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    width: 100%;
+    min-height: 421px;
+    max-height: 956px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 30px 35px 30px 35px;
+}
+
+.ctStaffTxtCnt {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ctStaffTitle {
+    font-family: var(--font-headRegular);
+    font-size: 36px;
+    line-height: 100%;
+}
