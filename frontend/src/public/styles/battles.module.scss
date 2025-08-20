@@ -1,0 +1,21 @@
+%flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%flexStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.battles {
+    @extend %flexStart;
+    flex-direction: column;
+    max-width: 1800px;
+    padding: 0px 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}

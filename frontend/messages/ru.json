@@ -115,5 +115,13 @@
   },
   "items": {
     "add_good": "добавить"
+  },
+  "profile": {
+    "user_image": "Изображение пользователя ",
+    "account": "аккаунт",
+    "balance": "Баланс",
+    "top_up": "пополнить",
+    "profile_exit_alt": "Иконка дверей",
+    "logout": "выйти"
   }
 }

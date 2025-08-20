@@ -1,0 +1,241 @@
+%flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%flexStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+%pageBlock {
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.profile {
+    @extend %flexStart;
+    flex-direction: column;
+    max-width: 1800px;
+    padding: 0px 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+
+.mainUserInfoCnt {
+    @extend %flexCenter;
+    justify-content: space-between;
+}
+
+.prOwnerInfo {
+    @extend %flexStart, %pageBlock;
+    height: auto;
+    min-width: 420px;
+    width: 100%;
+    padding: 25px 15px;
+    align-items: normal;
+
+}
+
+.prOwnerImageCnt {
+    @extend %flexCenter;
+    max-width: 168px;
+    height: 168px;
+    width: 100%;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.prUserImageCnt {
+    @extend %flexCenter;
+    max-width: 86px;
+    height: 86px;
+    width: 100%;
+    position: relative;
+    margin-right: 15px;;
+}
+
+.prImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.prOwnerDataCnt, .prOwnerDataBlock {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.prOwnerDataBlock {
+    width: 100%;
+    margin-left: 25px;
+}
+
+.prOwnerDataCnt{
+    height: 117px;
+    width: 100%;
+}
+
+.prCurrentBalance {
+    font-family: var(--font-headBold);
+    font-size: 24px;
+    line-height: 100%;
+    color: rgba(255, 148, 0, 1);
+    padding-bottom: 7px;
+    margin-right: 20px;
+    white-space: nowrap;
+}
+
+.prTopUpBalance {
+    border-color: rgba(255, 148, 0, 1);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 7px;
+    padding: 7px 14px;
+    color: rgba(255, 255, 255, 1);
+
+    &:hover {
+       background-color: rgba(255, 169, 49, 0.3);
+    }
+
+  // &:focus {
+  //   background-color: rgba(246, 143, 0, 1);
+  //   color: rgba(255, 255, 255, 1);
+  //   border: 1px solid rgba(74, 74, 74, 0.7);
+  // }
+
+    &:active {
+        background-color: rgba(255, 150, 53, 1);
+    }
+
+    &:disabled {
+        color: rgba(255, 255, 255, 0.5);
+        background-color: rgba(174, 174, 174, 1);
+    }
+}
+
+.prNicknameAccountCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 43px;
+    margin-bottom: 22px;
+}
+
+.prNickname {
+    font-family: var(--font-headBold);
+    font-size: 24px;
+    line-height: 17px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.prAccountType {
+    font-family: var(--font-headBold);
+    font-size: 14px;
+    line-height: 9px;
+    line-height: 100%;
+    color: rgba(255, 148, 0, 1);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 148, 0, 1);;
+    padding-bottom: 3px;
+}
+
+.prAccountBalance {
+    font-family: var(--font-textRegular);
+    font-size: 20px;
+    line-height: 16px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.prCurrentBalanceCnt {
+    @extend %flexStart;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.prAccountBalanceCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 53px;
+}
+
+.prUserInfo {
+    @extend %flexStart, %pageBlock;
+    min-width: 420px;
+    height: 115px;
+    padding: 14px 15px;
+    justify-content: space-between;
+    align-items: center
+}
+
+.prUserNickname {
+    @extend %flexStart;
+    align-items: center;
+    font-family: var(--font-headBold);
+    font-size: 24px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+    height: 44px;
+}
+
+.prUserMainInfo {
+    @extend %flexStart;
+    align-items: center;
+}
+
+.prUserAccountType {
+    @extend %flexCenter;
+}
+
+.prLogOutCnt {
+    @extend %flexCenter;
+    width: 100%;
+    background-color: rgba(255, 148, 0, 1);
+    border-radius: 7px;
+    height: 29px;
+    cursor: pointer;
+
+    .prLogOut {
+        font-family: var(--font-headBold);
+        padding-bottom: 3px;
+        font-size: 14px;
+        margin-right: 7px;
+        color: rgba(0, 0, 0, 1);
+    }
+
+    &:hover {
+        background-color: rgba(255, 163, 36, 1);
+        .prLogOut {
+            color: rgba(255, 255, 255, 1);
+        }
+    }
+
+  // &:focus {
+  //   background-color: rgba(246, 143, 0, 1);
+  //   color: rgba(255, 255, 255, 1);
+  //   border: 1px solid rgba(74, 74, 74, 0.7);
+  // }
+
+  &:active {
+    background-color: rgba(255, 123, 0, 1);
+    .prLogOut {
+        color: rgba(255, 255, 255, 1);
+    }
+  }
+
+  &:disabled {
+    background-color: rgba(174, 174, 174, 1);
+    .prLogOut {
+        color: rgba(255, 255, 255, 0.5);;
+    }
+  }
+
+}

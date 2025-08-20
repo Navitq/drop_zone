@@ -116,5 +116,13 @@
   },
   "items": {
     "add_good": "add"
+  },
+  "profile": {
+    "user_image": "Images by user ",
+    "account": "account",
+    "balance": "Balance",
+    "top_up": "top up",
+    "profile_exit_alt": "Door icon",
+    "logout": "logout"
   }
 }
