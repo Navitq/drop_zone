@@ -35,7 +35,9 @@
     "faq_title": "Часто задаваемые вопросы",
     "t_upgrades": "Апгрейд",
     "t_raffles": "Розыгрыши",
-    "t_contracts": "Контракты"
+    "t_contracts": "Контракты",
+    "profile_title": "Твой профиль",
+    "user_title": "Профиль игрока"
   },
   "cases":{
     "example":"Пример кейса"
@@ -122,6 +124,8 @@
     "balance": "Баланс",
     "top_up": "пополнить",
     "profile_exit_alt": "Иконка дверей",
-    "logout": "выйти"
+    "logout": "выйти",
+    "save_trade": "сохранить",
+    "type_trade_link": "Введи ссылку на трейд"
   }
 }

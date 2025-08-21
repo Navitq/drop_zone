@@ -8,7 +8,7 @@ interface CaseBtnTextProps {
 
 function CaseBtnText({ text, onClick }: CaseBtnTextProps): React.ReactElement {
     return (
-        <div className={style.stCaseBtnCnt}>
+        <div className={style.stCaseBtnCntText}>
             <button className={style.stCaseBtn} onClick={onClick}>
                 {text}
             </button>

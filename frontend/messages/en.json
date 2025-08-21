@@ -35,7 +35,9 @@
     "faq_title": "Frequently asked questions",
     "t_upgrades": "Upgrades",
     "t_raffles": "Raffles",
-    "t_contracts": "Contracts"
+    "t_contracts": "Contracts",
+    "profile_title": "Your profile",
+    "user_title": "Player profile"
   },
     "cases":{
       "example":"Example case"
@@ -123,6 +125,8 @@
     "balance": "Balance",
     "top_up": "top up",
     "profile_exit_alt": "Door icon",
-    "logout": "logout"
+    "logout": "logout",
+    "save_trade": "save",
+    "type_trade_link": "Enter the trade link"
   }
 }

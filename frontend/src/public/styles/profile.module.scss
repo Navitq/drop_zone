@@ -25,17 +25,27 @@
     width: 100%;
 }
 
+.profileTitle {
+    @extend %flexCenter;
+    text-align: center;
+    margin-top: 24px;
+    margin-bottom: 56px;
+    width: 100%;
+}
+
 
 .mainUserInfoCnt {
     @extend %flexCenter;
     justify-content: space-between;
+    width: 100%;
+    column-gap: 22px;
 }
 
 .prOwnerInfo {
     @extend %flexStart, %pageBlock;
     height: auto;
-    min-width: 420px;
-    width: 100%;
+    min-width: fit-content;
+
     padding: 25px 15px;
     align-items: normal;
 
@@ -69,6 +79,7 @@
     @extend %flexStart;
     flex-direction: column;
     justify-content: space-between;
+    min-width: 198px;
 }
 
 .prOwnerDataBlock {
@@ -239,3 +250,50 @@
   }
 
 }
+
+.prTradeLinkBlock {
+    @extend %flexCenter, %pageBlock;
+    padding: 15px 35px;
+    justify-content: space-between;
+    width: 100%;
+    height: 77px
+}
+
+.prSaveBtCnt {
+    @extend %flexCenter;
+}
+
+.prTradeInputCnt {
+    @extend %flexCenter;
+    flex: 1;
+    margin-right: 30px;
+}
+
+.prTradeInput {
+    @extend %flexStart;
+    flex: 1;
+    font-family: var(--font-textRegular);
+    color: rgba(255, 255, 255, 1);
+    font-size: 24px;
+    height: auto;
+    &::placeholder {
+        font-family: var(--font-textRegular);
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+}
+
+.siteUserInfoCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.prSiteActivities {
+    @extend %flexCenter, %pageBlock;
+    width: 100%;
+    height: 115px;
+}
+
