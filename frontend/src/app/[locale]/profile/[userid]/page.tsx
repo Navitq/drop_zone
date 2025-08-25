@@ -7,6 +7,10 @@ import PrUserInfo from '@/components/PrUserInfo'
 import TitleHomePage from '@/components/TitleHomePage'
 import PrTradeLinkBlock from '@/components/PrTradeLinkBlock'
 import PrSiteActivities from '@/components/PrSiteActivities'
+import PrBestObject from '@/components/PrBestObject'
+import PrBestCase from '@/components/PrBestCase'
+
+
 
 
 
@@ -26,6 +30,15 @@ export default function ProfilePage(): React.ReactNode {
           {isAuth ? <PrTradeLinkBlock></PrTradeLinkBlock> : null}
           <PrSiteActivities></PrSiteActivities>
         </div>
+      </div>
+      <div className={style.prCasesData}>
+        <div className={style.prBestObjectCnt}>
+          <PrBestObject>
+            <PrBestCase caseName={"Весення кура"}></PrBestCase>
+          </PrBestObject>
+        </div>
+
+        <div></div>
       </div>
     </div >
   );

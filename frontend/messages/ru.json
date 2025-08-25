@@ -126,6 +126,11 @@
     "profile_exit_alt": "Иконка дверей",
     "logout": "выйти",
     "save_trade": "сохранить",
-    "type_trade_link": "Введи ссылку на трейд"
+    "type_trade_link": "Введи ссылку на трейд",
+    "prof_contracts": "Контрактов:",
+    "prof_battles": "Сражений:",
+    "prof_cases": "Открытых кейсов:",
+    "prof_upgrades": "Апгрейдов:",
+    "best_case": "Лучший кейс"
   }
 }

@@ -39,6 +39,7 @@
     justify-content: space-between;
     width: 100%;
     column-gap: 22px;
+    height: 100%;
 }
 
 .prOwnerInfo {
@@ -297,3 +298,87 @@
     height: 115px;
 }
 
+.prActivity {
+    @extend %flexCenter;
+    align-items: stretch;
+}
+
+.prActivityData {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    margin-left: 20px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.prActivityCnt {
+    margin-right: 30px;
+    &:last-child {
+        margin-right: 0px;
+    }
+}
+
+.prActivityImageCnt {
+    @extend %flexCenter;
+}
+
+.prActivityName {
+    font-family: var(--font-textRegular);
+    font-size: 15px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: rgba(119, 119, 119, 1);
+}
+
+.prActivityAmount {
+    font-family: var(--font-headBold);
+    font-size: 30px;
+    line-height: 100%;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+}
+
+.prCasesData {
+    @extend %flexStart;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 40px;
+}
+.prBestObject {
+    @extend %flexCenter;
+}
+.prBestObjectCnt {
+    @extend %pageBlock, %flexStart;;
+}
+.prBestCase {
+    @extend %flexCenter;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    min-height: 577px;
+    max-width: 420px;
+    width: 100%;
+    padding: 56px 14px 63px 14px;
+}
+
+.prBestCaseTxtCnt {
+    @extend %flexCenter;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 74px;
+}
+
+.prBestCaseTxt {
+    font-family: var(--font-headRegular);
+    font-size: 24px;
+    line-height: 100%;
+    text-align: center;
+    color: rgba(223, 223, 223, 1);
+}
+
+.prBestCaseName {
+    @extend .prBestCaseTxt ;
+    font-size: 36px;
+}

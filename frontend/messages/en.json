@@ -127,6 +127,11 @@
     "profile_exit_alt": "Door icon",
     "logout": "logout",
     "save_trade": "save",
-    "type_trade_link": "Enter the trade link"
+    "type_trade_link": "Enter the trade link",
+    "prof_contracts": "Contracts:",
+    "prof_battles": "Battles:",
+    "prof_cases": "Open cases:",
+    "prof_upgrades": "Upgrades:",
+    "best_case": "Best case"
   }
 }
