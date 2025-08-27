@@ -342,27 +342,31 @@
 
 .prCasesData {
     @extend %flexStart;
-    flex-direction: column;
     width: 100%;
     margin-top: 40px;
 }
 .prBestObject {
-    @extend %flexCenter;
+    @extend  %pageBlock, %flexCenter;
+    width: fit-content
+}
+.prBestObject:first-child {
+    margin-bottom: 40px;
 }
 .prBestObjectCnt {
-    @extend %pageBlock, %flexStart;;
+    @extend %flexStart;
+    flex-direction: column;
+    width: 100%;
+    margin-right: 22px;
+    width: fit-content;
 }
 .prBestCase {
     @extend %flexCenter;
     flex-direction: column;
     justify-content: space-between;
-    flex: 1;
     min-height: 577px;
-    max-width: 420px;
-    width: 100%;
+    width: 420px;
     padding: 56px 14px 63px 14px;
 }
-
 .prBestCaseTxtCnt {
     @extend %flexCenter;
     flex-direction: column;
@@ -381,4 +385,163 @@
 .prBestCaseName {
     @extend .prBestCaseTxt ;
     font-size: 36px;
+}
+
+.prBestCaseImgCnt {
+    @extend %flexCenter;
+    justify-content: center;
+    position: relative;
+    max-height: 326px;
+    flex: 1;
+    width: 100%;
+}
+
+.prBestCaseImgCnt img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.prBestSkinModel, .prBestSkinStyle {
+    font-family: var(--font-headRegular);
+    font-size: 36px;
+    line-height: 100%;
+    text-align: center;
+}
+
+.prBestSkinStyle  {
+    color: rgba(125, 128, 145, 1);
+ }
+
+.prBestSkinPrice {
+    margin-top: 15px;
+    font-family: var(--font-textRegular);
+    font-size: 48px;
+    line-height: 100%;
+    text-align: center;
+}
+
+.usuallPrBestySkin {
+    background-image: url(/images/usuallPrBestySkin.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    .prBestSkinModel {
+        color: rgba(255, 195, 0, 1);
+    }
+    .prBestSkinPrice {
+        color: rgba(254, 245, 163, 1);
+    }
+}
+.rarePrBestySkin {
+    background-image: url(/images/rarePrBestySkin.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    .prBestSkinModel {
+        color: rgba(255, 195, 0, 1);
+    }
+    .prBestSkinPrice {
+        color: rgba(254, 245, 163, 1);
+    }
+}
+.elitePrBestySkin {
+    background-image: url(/images/.elitePrBestySkin.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    .prBestSkinModel {
+        color: rgba(255, 195, 0, 1);
+    }
+    .prBestSkinPrice {
+        color: rgba(254, 245, 163, 1);
+    }
+}
+.epicPrBestySkin {
+    background-image: url(/images/epicPrBestySkin.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    .prBestSkinModel {
+        color: rgba(255, 195, 0, 1);
+    }
+    .prBestSkinPrice {
+        color: rgba(254, 245, 163, 1);
+    }
+}
+
+.prBestSkinTxtCnt {
+    margin-bottom: 15px;
+}
+
+.prBestSkinImgCnt {
+    position: relative;
+    @extend %flexCenter;
+    flex: 1;
+    height: 100%;
+    width: 100%;
+}
+
+.prStuffsCnt {
+    @extend %flexStart, %pageBlock;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 30px 30px 30px 30px;
+    max-height: 1194px;
+}
+
+.prOwnerStaffHeader {
+    @extend %flexStart;
+    flex-direction: column;
+    width: 100%;
+}
+.prUserStaffHeader {
+    @extend %flexStart;
+    justify-content: space-between;
+}
+
+.prStaffTitle {
+    font-family: var(--font-headRegular);
+    font-size: 36px;
+    line-height: 100%;
+    color: rgba(223, 223, 223, 1);
+}
+
+.prSettingsData {
+    @extend %flexStart;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 22px;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.prSortStuffBlock {
+    @extend %flexStart;
+    align-items: stretch;
+}
+
+.prMgLThrty {
+    margin-left: 30px;
+}
+
+.prStuffCntInfo {
+    @extend %flexStart;
+    font-family: var(--font-textRegular);
+    font-size: 20px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+}
+
+.prStuffAmount {
+    margin-right: 30px;
+}
+
+.prStuffAmount, .prStuffTotalPrice, .prStuffCntInfo {
+    @extend %flexCenter;
+    align-items: stretch;
+}
+
+.prUserStaffHeader {
+    @extend %flexCenter;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 40px;
 }

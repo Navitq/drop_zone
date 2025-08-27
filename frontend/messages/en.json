@@ -132,6 +132,12 @@
     "prof_battles": "Battles:",
     "prof_cases": "Open cases:",
     "prof_upgrades": "Upgrades:",
-    "best_case": "Best case"
+    "best_case": "Best case",
+    "case": "Case",
+    "your_objects": "Your items",
+    "user_objects": "Items",
+    "objects_amount": "items: ",
+    "total_objects_price": "total cost: ",
+    "sell_all": "sell everything"
   }
 }

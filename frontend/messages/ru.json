@@ -131,6 +131,12 @@
     "prof_battles": "Сражений:",
     "prof_cases": "Открытых кейсов:",
     "prof_upgrades": "Апгрейдов:",
-    "best_case": "Лучший кейс"
+    "best_case": "Лучший кейс",
+    "case": "Кейс",
+    "your_objects": "Твои предметы",
+    "user_objects": "Предметы",
+    "objects_amount": "предметов: ",
+    "total_objects_price": "общая стоимость: ",
+    "sell_all": "продать все"
   }
 }

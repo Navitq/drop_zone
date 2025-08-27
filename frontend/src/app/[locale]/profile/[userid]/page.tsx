@@ -9,7 +9,8 @@ import PrTradeLinkBlock from '@/components/PrTradeLinkBlock'
 import PrSiteActivities from '@/components/PrSiteActivities'
 import PrBestObject from '@/components/PrBestObject'
 import PrBestCase from '@/components/PrBestCase'
-
+import PrBestSkin from '@/components/PrBestSkin'
+import PrStuffsCnt from '@/components/PrStuffsCnt'
 
 
 
@@ -34,11 +35,14 @@ export default function ProfilePage(): React.ReactNode {
       <div className={style.prCasesData}>
         <div className={style.prBestObjectCnt}>
           <PrBestObject>
-            <PrBestCase caseName={"Весення кура"}></PrBestCase>
+            <PrBestCase imgPath='/images/case_mock.png' caseName={"Весення кура"}></PrBestCase>
+          </PrBestObject>
+          <PrBestObject>
+            <PrBestSkin imgPath='/images/example_profile_knife.png' type='epic' gunModel={"Knife"} gunStyle={"Zakalka"} gunPrice={32.42}></PrBestSkin>
           </PrBestObject>
         </div>
-
-        <div></div>
+        <PrStuffsCnt></PrStuffsCnt>
+        
       </div>
     </div >
   );
