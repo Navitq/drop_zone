@@ -37,7 +37,8 @@
     "t_raffles": "Розыгрыши",
     "t_contracts": "Контракты",
     "profile_title": "Твой профиль",
-    "user_title": "Профиль игрока"
+    "user_title": "Профиль игрока",
+    "battles_title": "Сражения"
   },
   "cases":{
     "example":"Пример кейса"
@@ -138,5 +139,18 @@
     "objects_amount": "предметов: ",
     "total_objects_price": "общая стоимость: ",
     "sell_all": "продать все"
+  },
+  "battles": {
+    "all_battles":"всего сражений",
+    "active_battles": "активных сражений",
+    "your_victories": "твоих побед",
+    "your_defeats": "твоих поражений",
+    "swords_alt": "Иконка меча",
+    "versus_alt": "Иконка версуса",
+    "prize_alt": "Иконка приза",
+    "cross_in_rect_alt": "Иконка креста в шестиугольнике",
+    "login": "авторизироваться",
+    "rules": "правила",
+    "create": "создать"
   }
 }

@@ -33,6 +33,7 @@ export default function ProfilePage(): React.ReactNode {
         </div>
       </div>
       <div className={style.prCasesData}>
+        
         <div className={style.prBestObjectCnt}>
           <PrBestObject>
             <PrBestCase imgPath='/images/case_mock.png' caseName={"Весення кура"}></PrBestCase>
@@ -42,7 +43,7 @@ export default function ProfilePage(): React.ReactNode {
           </PrBestObject>
         </div>
         <PrStuffsCnt></PrStuffsCnt>
-        
+
       </div>
     </div >
   );

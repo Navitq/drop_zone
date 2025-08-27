@@ -37,7 +37,8 @@
     "t_raffles": "Raffles",
     "t_contracts": "Contracts",
     "profile_title": "Your profile",
-    "user_title": "Player profile"
+    "user_title": "Player profile",
+    "battles_title": "Battles"
   },
     "cases":{
       "example":"Example case"
@@ -139,5 +140,18 @@
     "objects_amount": "items: ",
     "total_objects_price": "total cost: ",
     "sell_all": "sell everything"
+  },
+  "battles": {
+    "all_battles":"total battles",
+    "active_battles": "active battles",
+    "your_victories": "your victories",
+    "your_defeats": "your defeats",
+    "swords_alt": "Sword icon",
+    "versus_alt": "Versus icon",
+    "prize_alt": "Prize icon",
+    "cross_in_rect_alt": "Cross in hexagon icon",
+    "login": "login",
+    "rules": "rules",
+    "create": "create"
   }
 }
