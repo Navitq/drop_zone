@@ -6,6 +6,8 @@ import style from '@/styles/battles.module.scss'
 import MnHeadCard from '@/components/MnHeadCard'
 import CaseBtnText from '@/components/CaseBtnText'
 import MnHeadRules from '@/components/MnHeadRules'
+import { FRONTEND_PATHS } from '@/utilites/urls'
+import Link from 'next/link'
 
 import { useTranslations } from 'next-intl'
 
@@ -37,7 +39,9 @@ function MnHeadBlock(): React.ReactNode {
                     <>
                         <MnHeadRules></MnHeadRules>
                         <div className={style.prSaveBtCnt}>
-                            <CaseBtnText text={t('create')} />
+                            <Link href={FRONTEND_PATHS.battlesCreate}>
+                                <CaseBtnText text={t('create')} />
+                            </Link>
                         </div>
                     </>
                 ) : (
@@ -47,7 +51,7 @@ function MnHeadBlock(): React.ReactNode {
                 )}
 
             </div>
-        </div>
+        </div >
     )
 }
 

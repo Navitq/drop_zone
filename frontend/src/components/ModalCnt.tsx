@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 import style from '@/styles/modal.module.scss'
@@ -7,7 +9,7 @@ interface ModalCntInt {
     onClose: () => void;
 }
 
-function ModalCnt({ children, onClose }: ModalCntProps): React.ReactNode {
+function ModalCnt({ children, onClose }: ModalCntInt): React.ReactNode {
 
     return (
         <div onClick={() => { onClose() }} className={style.modalBackground}>

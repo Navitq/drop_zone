@@ -152,6 +152,21 @@
     "cross_in_rect_alt": "Cross in hexagon icon",
     "login": "login",
     "rules": "rules",
-    "create": "create"
+    "create": "create",
+    "how_battles_work": "How do battles work?",
+    "rm_divider_alt": "Divider image",
+    "rm_rule_1": "Click the \"create\" button or join a created battle",
+    "rm_rule_2": "The battle will begin as soon as the participants join.",
+    "rm_rule_3": "The participant who receives items in total more expensive than the others takes everything",
+    "rm_rule_4": "There are no losers! Loser - receives an item cheaper than the cost of the battle",
+    "battles": "Battles",
+    "round": "round",
+    "case_image" : "case image",
+    "cost": "Cost",
+    "player_0":"Player one",
+    "player_1":"Player two",
+    "player_2":"Player three",
+    "player_3":"Player four",
+    "login_verb": "log in"
   }
 }

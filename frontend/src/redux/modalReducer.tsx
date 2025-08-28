@@ -21,8 +21,8 @@ export const modalSlice = createSlice({
         showRulesModal: (state) => {
             state.rulesBattleModal.isVisible = true;
         },
-        hideRulesModal: (state) => {
-            state.rulesBattleModal.isVisible = true;
+        closeRulesModal: (state) => {
+            state.rulesBattleModal.isVisible = false;
         },
 
     }
@@ -30,6 +30,6 @@ export const modalSlice = createSlice({
 
 
 
-export const { showRulesModal, hideRulesModal } = modalSlice.actions;
+export const { showRulesModal, closeRulesModal } = modalSlice.actions;
 
 export default modalSlice.reducer;

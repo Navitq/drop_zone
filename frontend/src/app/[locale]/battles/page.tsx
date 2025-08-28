@@ -1,11 +1,10 @@
 import React from 'react';
-import style from '@/styles/battles.module.scss'
 
 
 import BattleGroupHeadCnt from '@/components/BattleGroupHeadCnt'
 import MnHeadBlock from '@/components/MnHeadBlock'
-import ModalCnt from '@/components/ModalCnt'
-import MdHeaderRulesModal from '@/components/MdHeaderRulesModal'
+import MdHeaderRulesModalCnt from '@/components/MdHeaderRulesModalCnt'
+import BattleActiveGamesCnt from '@/components/BattleActiveGamesCnt'
 
 
 export default function BattlesPage(): React.ReactNode {
@@ -14,9 +13,8 @@ export default function BattlesPage(): React.ReactNode {
       <BattleGroupHeadCnt>
         <MnHeadBlock></MnHeadBlock>
       </BattleGroupHeadCnt>
-      <ModalCnt>
-        <MdHeaderRulesModal></MdHeaderRulesModal>
-      </ModalCnt>
+      <BattleActiveGamesCnt></BattleActiveGamesCnt>
+      <MdHeaderRulesModalCnt></MdHeaderRulesModalCnt>
     </>
   );
 }

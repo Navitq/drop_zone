@@ -14,7 +14,7 @@ function MnHeadCard(props: MnHeadCardInt): React.ReactNode {
     return (
         <div className={style.mnHeadCard}>
             <div className={style.mnHeadImgBlock}>
-                <Image className={style.mnHeadImg} src={props.imgPath} alt={props.altImg} fill></Image>
+                <Image className={style.mnHeadImg} sizes='100vh' src={props.imgPath} alt={props.altImg} fill></Image>
             </div>
             <div className={style.mnHeadInfoBlock}>
                 <div className={style.mnHeadInfoType}>{props.title}</div>

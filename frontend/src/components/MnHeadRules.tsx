@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 
 import style from '@/styles/battles.module.scss'
@@ -16,7 +17,7 @@ function MnHeadRules(): React.ReactNode {
     }
     return (
         <div className={style.mnHeadBtnRulesCnt}>
-            <button onClick={showModal()} className={style.mnHeadBtnRules}>{t('rules')}</button>
+            <button onClick={() => { showModal() }} className={style.mnHeadBtnRules}>{t('rules')}</button>
         </div>
     )
 }

@@ -4,6 +4,12 @@
     align-items: center;
 }
 
+%flexEnd {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
 %flexStart {
     display: flex;
     justify-content: flex-start;
@@ -37,7 +43,14 @@
     height: 100px;
     width: 100%;
 }
-
+.mnBattlesStuffCnt {
+    @extend %pageBlock, %flexStart;
+    flex-direction: column;
+    padding: 15px 25px 25px 25px;
+    width: 100%;
+    height: 602px;
+    margin-top: 70px;
+}
 .mnHeadBlock {
     @extend %flexStart;
     align-items: center;
@@ -133,3 +146,184 @@
 .mnHeadBtnRulesCnt {
     margin-right: 20px;
 }
+
+.mnStuffTitle {
+    font-family: var(--font-headRegular);
+    font-size: 36px;
+    line-height: 100%;
+    color: rgba(223, 223, 223, 1);
+    margin-bottom: 25px;
+}
+
+
+.mnStuffCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    // flex: 1;
+    width: 100%;
+    overflow: auto;
+    row-gap: 40px;
+    padding-right: 10px;
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(75, 75, 75, 1) transparent;
+}
+
+// Chrome, Safari, Edge
+.mnStuffCnt::-webkit-scrollbar {
+  width: 5px;
+}
+
+.mnStuffCnt::-webkit-scrollbar-track {
+  background: transparent;
+
+}
+
+.mnStuffCnt::-webkit-scrollbar-thumb {
+  background: rgba(75, 75, 75, 1);
+  border-radius: 10px;
+}
+
+.mnStuffCnt::-webkit-scrollbar-button {
+  display: none;  // стрелки убираем
+  width: 0;
+  height: 0;
+}
+
+.abcCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 96px;
+    flex-shrink: 0;
+}
+
+.abcSeparator {
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 148, 0, 0.5);
+}
+
+.abcDataCnt {
+    @extend %flexCenter;
+    justify-content: space-between;
+    align-items: center;
+    height: 76px;
+    width: 100%;
+}
+
+.abcBattleRounds {
+    @extend %flexCenter;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 54px;
+    padding: 4px 10px 10px 10px;
+    border: 1px solid rgba(255, 148, 0, 0.5);
+    border-radius: 7px;
+    margin-right: 50px;
+}
+
+.abcRoundsAmount, .abcRoundsTxt , .abcCardPriceBlock {
+    font-family: var(--font-headRegular);
+    font-size: 24px;
+    line-height: 24px;
+    text-align: center;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+}
+
+.abcRoundsTxt {
+    line-height: 12px;
+    font-size: 12px;
+}
+
+.abcContainersInfo {
+    @extend %flexCenter;
+    margin-right: 25px
+}
+
+.abcBlockCaseImg {
+    @extend %flexCenter;
+    position: relative;
+    margin-right: 35px;
+    img {
+        max-height: 76px;
+        object-fit: contain;
+    }
+    &:last-child {
+        margin-right: 0px
+    }
+}
+
+.abcContainersImages {
+    @extend %flexCenter;
+    min-width: fit-content;
+}
+
+.abcMainInfo {
+    @extend %flexCenter;
+    min-width: fit-content;
+    justify-content: space-between;
+    max-width: 934px;
+    width: 100%;
+    margin-right: 50px;
+    height: 100%;
+}
+
+.abcCardPriceBlock {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: fit-content;
+    height: 100%;
+}
+
+.abcCardPriceTitle {
+    font-size: 20px;
+    line-height: 100%;
+}
+
+.abcCardPrice {
+    font-size: 24px;
+    line-height: 100%;
+    height: 100%;
+    width: fit-content;
+}
+
+.abcCardPriceBlock {
+    max-height: 60px;
+}
+
+.abcPlayerInfo {
+    @extend %flexEnd;
+    align-items: center;
+    min-width: fit-content;
+}
+
+.abcCardPrice {
+    height: fit-content;
+}
+
+.cardPlayers {
+    @extend %flexCenter;
+    position: relative;   // обязательно для fill
+    width: auto;          // ширина будет по содержимому
+    height: 54px;         // максимальная высота блока
+    flex-shrink: 0;
+    border-radius: 7px;
+    margin-right: 20px;
+    img {
+        object-fit: contain;  // сохраняем пропорции
+        height: 100%;         // растягиваем по высоте родителя
+        width: auto;
+    }
+    &:last-child {
+        margin-right: 0px
+    }
+}
+
+.abcCardPlayerCnt {
+    @extend %flexEnd;
+    margin-right: 40px;
+}
+
