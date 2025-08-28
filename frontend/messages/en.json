@@ -167,6 +167,9 @@
     "player_1":"Player two",
     "player_2":"Player three",
     "player_3":"Player four",
-    "login_verb": "log in"
+    "login_verb": "log in",
+    "gsp_people": "People",
+    "player_amoun": "Number of players",
+    "clean": "clean"
   }
 }

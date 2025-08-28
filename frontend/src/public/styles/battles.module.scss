@@ -327,3 +327,77 @@
     margin-right: 40px;
 }
 
+.gameSetupPanel {
+    @extend %pageBlock, %flexStart;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    width: 100%;
+    padding: 0px 25px;
+    margin-bottom: 70px;
+}
+
+.gspPlayerInfoBlock {
+    @extend %flexStart;
+    align-items: center;
+    height: 100%;
+}
+
+.gspPlayerImgCnt {
+    @extend %flexCenter;
+    height: 100%;
+    margin-right: 25px;
+}
+
+.gspPlayerAmountCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 65px;
+}
+
+.gspPlayerAmountTxt {
+    font-family: var(--font-headRegular);
+    font-size: 15px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+}
+
+.gspPlayerBtn {
+    @extend %flexCenter;
+    height: 40px;
+    border: 1px solid rgba(255, 148, 0, 1);
+    padding: 0px 13px;
+    border-radius: 7px;
+    font-family: var(--font-headBold);
+    font-size: 20px;
+    line-height: 100%;
+    text-align: center;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+    margin-right: 20px;
+    cursor: pointer;
+    &:hover {
+       background-color: rgba(255, 169, 49, 0.3);
+    }
+    &:active {
+        background-color: rgba(255, 150, 53, 1);
+    }
+    &:disabled {
+        color: rgba(255, 255, 255, 0.5);
+        background-color: rgba(174, 174, 174, 1);
+    }
+}
+
+.gspPlayerBtn:last-child {
+    margin-right: 0px;
+}
+
+.gspPlayerCnt {
+    @extend %flexCenter;
+
+}
+
+.gspPlayerBtnGroup {
+    @extend %flexStart;
+}
