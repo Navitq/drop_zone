@@ -173,6 +173,8 @@
     "clean": "clean",
     "rounds_amount": "number of rounds",
     "battles_price": "cost of battle",
-    "add_case": "Add case"
+    "add_case": "Add case",
+    "case": "Case",
+    "add": "add"
   }
 }

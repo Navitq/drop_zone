@@ -17,7 +17,7 @@ function GameBtlCasesInfo(): React.ReactNode {
         <div className={style.gbciCnt}>
             <div className={style.gbciAddCaseBlockCnt}>
                 <div className={style.gbciCaseBlockCnt}>
-                    <CbBattleCase></CbBattleCase>
+                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={4 + ""}></CbBattleCase>
                 </div>
                 <div className={style.gbciAddCaseBlock}>
                     <svg preserveAspectRatio="none" className={style.gbciSvgBorder} viewBox="0 0 1036 331" fill="none" xmlns="http://www.w3.org/2000/svg">

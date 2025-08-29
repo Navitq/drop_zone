@@ -528,12 +528,58 @@
     }
 }
 
+.cbCaseName, .cbCasePrice {
+    font-family: var(--font-headBold);
+    font-size: 20px;
+    line-height: 20px;
+    color: rgba(255, 255, 255, 1);
+}
 
+.cbCasePrice {
+    color: rgba(229, 133, 0, 1);
+}
 
+.cbCaseAmountCalc {
+    @extend %flexCenter;
+}
 
+.cbCaseAddition, .cbCaseSubtraction {
+    @extend %flexCenter;
+    height: 24px;
+    padding: 0px 10px;
+    background-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 1);
+    font-family: var(--font-textRegular);
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: 0%;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
+.cbCaseAmount {
+    @extend %flexCenter;
+    color: rgba(255, 255, 255, 1);
+    line-height: 18px;
+    font-size: 18px;
+    margin: 0px 15px;
+}
 
+.mnHeadBtnCaseCnt {
+    width: 100%;
+}
 
+.mnHeadBtnCase {
+    font-size: 18px;
+    font-family: var(--font-headBold);
+    height: 38px;
+    line-height: 18px;
+    width: 100%;
+    padding-bottom: 4px;
+    padding-top: 0px;
+}
 
 
 
