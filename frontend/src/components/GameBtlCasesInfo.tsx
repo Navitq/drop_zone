@@ -1,0 +1,51 @@
+'use client'
+
+import React from 'react'
+import style from '@/styles/battles.module.scss'
+import { useTranslations } from 'next-intl'
+import { useAppSelector } from '@/lib/hooks'
+import Image from 'next/image'
+
+function GameBtlCasesInfo(): React.ReactNode {
+    const t = useTranslations("battles")
+
+    const { totalCaseAmount, totalPrice } = useAppSelector(
+        (state) => state.battlesCreate
+    )
+    return (
+        <div className={style.gbciCnt}>
+            <div className={style.gbciAddCaseBlock}>
+                <svg preserveAspectRatio="none" className={style.gbciSvgBorder} viewBox="0 0 1036 331" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0.5" y="0.5" width="1035" height="330" rx="9.5" fill="transparent" />
+
+                    <rect x="0.5" y="0.5" width="1035" height="330" rx="9.5" stroke="url(#paint0_linear_0_3)" stroke-width="1" />
+
+                    <defs>
+                        <linearGradient id="paint0_linear_0_3" x1="518" y1="0" x2="518" y2="331" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#FF8F2D" />
+                            <stop offset="1" stop-color="#FF8F2D" stop-opacity="0.3" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div className={style.gbciAddBtn}>
+                    <div>
+                        <Image src={"/images/cr_battle_add_case.svg"} alt={t('add_case')} width={80} height={80}></Image>
+                    </div>
+                    <div>{t('add_case')}</div>
+                </div>
+            </div>
+            <div className={style.gbcipCaseInfoBlock}>
+                <div className={style.gbcipCaseAmountBlock}>
+                    <div>{`${totalCaseAmount}/3`}</div>
+                    <div>{`${totalPrice} Dc`}</div>
+                </div>
+                <div className={style.gbcipCaseDefenitionsBlock}>
+                    <div>{t('rounds_amount')}</div>
+                    <div>{t('battles_price')}</div>
+                </div>
+            </div>
+        </ div>
+    )
+}
+
+export default GameBtlCasesInfo

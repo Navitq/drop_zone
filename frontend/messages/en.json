@@ -170,6 +170,9 @@
     "login_verb": "log in",
     "gsp_people": "People",
     "player_amoun": "Number of players",
-    "clean": "clean"
+    "clean": "clean",
+    "rounds_amount": "number of rounds",
+    "battles_price": "cost of battle",
+    "add_case": "Add case"
   }
 }

@@ -1,0 +1,11 @@
+<svg className={style.gbciSvgBorder} viewBox="0 0 1036 331" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="1036" height="331" rx="10" fill="transparent" />
+    <rect x="0" y="0" width="1036" height="331" rx="10" stroke="url(#paint0_linear_0_3)" stroke-width="1" />
+    <defs>
+        <linearGradient id="paint0_linear_0_3" x1="518" y1="0" x2="518" y2="331" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF8F2D" />
+            <stop offset="1" stop-color="#FF8F2D" stop-opacity="0.3" />
+        </linearGradient>
+    </defs>
+</svg>
+
