@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { number } from 'motion';
+
+type playersAmountRange = 2 | 3 | 4;
 
 interface CaseInfo {
     casesId: string;
@@ -13,12 +14,14 @@ interface BattlesInfo {
     createBtlData: CaseInfo[], // массив кейсов
     totalPrice: number,
     totalCaseAmount: number,
+    playersAmount: playersAmountRange
 }
-
+/* <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={4 + ""}></CbBattleCase> */
 const initialState: BattlesInfo = {
-    createBtlData: [], // массив кейсов
+    createBtlData: [],//[{ casesId: '12', caseName: "Весенняя кура", caseImgPath: "/images/case_mock.png", caseAmount: 1, unitPrice: 132 }, { casesId: '1222', caseName: "Весенняя кура", caseImgPath: "/images/case_mock.png", caseAmount: 1, unitPrice: 132 }], // массив кейсов
     totalCaseAmount: 0,
     totalPrice: 0,
+    playersAmount: 2,
 };
 
 export const battlesCreateSlice = createSlice({
@@ -29,39 +32,49 @@ export const battlesCreateSlice = createSlice({
             state.createBtlData = [];
             state.totalPrice = 0;
             state.totalCaseAmount = 0;
+            state.playersAmount = 2;
+        },
+
+        setPlayersAmount: (state, action: PayloadAction<playersAmountRange>) => {
+            state.playersAmount = action.payload;
         },
 
         addNewCase: (state, action: PayloadAction<CaseInfo>) => {
-            const currentSum = state.createBtlData.reduce(
+            const currentSum: number = state.createBtlData.reduce(
                 (sum, c) => sum + c.caseAmount,
                 0
             );
-            if (currentSum + action.payload.caseAmount > 3) {
+            if (currentSum >= 3) {
                 return;
             }
-            const existingCase = state.createBtlData.find(
+
+            const existingCase: CaseInfo | undefined = state.createBtlData.find(
                 (c) => c.casesId === action.payload.casesId
             );
 
             if (existingCase) {
-                existingCase.caseAmount += 1;
+                ++existingCase.caseAmount;
                 state.totalPrice = state.totalPrice + existingCase.unitPrice;
             } else {
-                state.createBtlData[state.createBtlData.length] = action.payload;
-                state.totalPrice = state.totalPrice + action.payload.unitPrice;
+                const newCase = {
+                    ...action.payload,
+                    caseAmount: action.payload.caseAmount + 1
+                };
+                state.createBtlData.push(newCase);
+                state.totalPrice += newCase.unitPrice;
             }
             ++state.totalCaseAmount;
         },
 
         removeCase: (state, action: PayloadAction<string>) => {
-            const currentSum = state.createBtlData.reduce(
+            const currentSum: number = state.createBtlData.reduce(
                 (sum, c) => sum + c.caseAmount,
                 0
             );
             if (currentSum <= 0) {
                 return;
             }
-            const existingCase = state.createBtlData.find(
+            const existingCase: CaseInfo | undefined = state.createBtlData.find(
                 (c) => c.casesId === action.payload
             );
             if (!existingCase) {
@@ -85,6 +98,6 @@ export const battlesCreateSlice = createSlice({
 
 
 
-export const { cleanCreateField, addNewCase, removeCase } = battlesCreateSlice.actions;
+export const { cleanCreateField, addNewCase, removeCase, setPlayersAmount } = battlesCreateSlice.actions;
 
 export default battlesCreateSlice.reducer;

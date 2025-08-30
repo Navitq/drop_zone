@@ -156,7 +156,7 @@
 }
 
 
-.mnStuffCnt {
+.mnStuffCnt, .crModalCaseStore {
     @extend %flexStart;
     flex-direction: column;
     // flex: 1;
@@ -170,21 +170,21 @@
 }
 
 // Chrome, Safari, Edge
-.mnStuffCnt::-webkit-scrollbar {
+.mnStuffCnt::-webkit-scrollbar, .crModalCaseStore::-webkit-scrollbar {
   width: 5px;
 }
 
-.mnStuffCnt::-webkit-scrollbar-track {
+.mnStuffCnt::-webkit-scrollbar-track, .crModalCaseStore::-webkit-scrollbar-track {
   background: transparent;
 
 }
 
-.mnStuffCnt::-webkit-scrollbar-thumb {
+.mnStuffCnt::-webkit-scrollbar-thumb, .crModalCaseStore::-webkit-scrollbar-thumb  {
   background: rgba(75, 75, 75, 1);
   border-radius: 10px;
 }
 
-.mnStuffCnt::-webkit-scrollbar-button {
+.mnStuffCnt::-webkit-scrollbar-button, .crModalCaseStore::-webkit-scrollbar-button  {
   display: none;  // стрелки убираем
   width: 0;
   height: 0;
@@ -378,15 +378,22 @@
     margin-right: 20px;
     cursor: pointer;
     &:hover {
-       background-color: rgba(255, 169, 49, 0.3);
+        color: rgba(255, 255, 255, 1);
+        background-color: rgba(255, 169, 49, 0.3);
     }
     &:active {
+        color: rgba(0, 0, 0, 1);
         background-color: rgba(255, 150, 53, 1);
     }
     &:disabled {
         color: rgba(255, 255, 255, 0.5);
         background-color: rgba(174, 174, 174, 1);
     }
+}
+
+.setActiveBtn {
+    background-color: rgba(255, 150, 53, 1);
+    color: rgba(0, 0, 0, 1);
 }
 
 .gspPlayerBtn:last-child {
@@ -417,7 +424,7 @@
     min-width: fit-content;
     border-radius: 0px;
     overflow: hidden;
-    margin-left: 20px;
+    margin-left: 0px;
     cursor: pointer;
 }
 
@@ -502,7 +509,9 @@
     }
 }
 
-
+.gbciAddCaseBlockCnt_around {
+    justify-content: space-around;
+}
 
 //case start
 
@@ -583,13 +592,154 @@
 
 
 
-
-
-
-
-
-
-
-
-
 //case finished
+// modal start
+
+.crModalCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    align-items: center;
+    padding: 35px 55px 40px 55px;
+    max-width: 1031px;
+    width:  100vw;
+    max-height: 1009px;
+    height:  100vh;
+    justify-content: space-between;
+}
+
+.crModalHeadCnt {
+    width: 100%;
+}
+
+.crModalHead {
+    @extend %flexCenter;
+    height: 53px;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 5px
+}
+
+.crModalTitle {
+    @extend %flexCenter;
+    height: 100%;
+    font-family: var(--font-headBold);
+    font-size: 36px;
+    color: rgba(250, 250, 250, 1);
+    padding-bottom: 7px;
+}
+
+.crModalSeparator {
+    position: relative;
+    max-width: 259px;
+    height: 2;
+}
+
+.crModalSort {
+    margin-left: 30px;
+}
+
+.btlSearchBlock {
+    @extend %flexCenter;
+    height: 53px;
+    padding: 0px 45px 0px 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    width: fit-content;
+    width: 156px;
+    position: relative;
+
+    &::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-image: url('/images/upgrade_search.svg');
+        background-repeat: no-repeat;
+        right: 20px;
+    }
+}
+
+.btlSearchInput {
+  flex: 1;              /* займёт всю доступную ширину внутри flex */
+  width: 100%;          /* вместо inherit */
+  min-width: 0;         /* обязательно для flex, чтобы не вылазил */
+  color: rgba(255, 255, 255, 1);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+
+.btlSearchInput::placeholder {
+    font-family: var(--font-textBold);
+    font-size: 16px;
+    line-height: 120%;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.crModalFilter {
+    @extend %flexStart;
+}
+
+.crModalCaseStore {
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 25px;
+    column-gap: 5px;
+    width: 100%;
+    max-height: 761px;
+    height: 100vh;
+}
+
+.crModalAdditionalData {
+    @extend %flexCenter;
+    height: 46px;
+}
+.crModalTotalPrice {
+    @extend %flexCenter;
+}
+
+.crModalPriceTxtDescr {
+    font-family: var(--font-textRegular);
+    font-size: 18px;
+    margin-right: 15px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.crModalPriceAmount {
+    font-family: var(--font-textRegular);
+    font-size: 22px;
+    color: rgba(255, 195, 0, 1);
+}
+
+.crModalConfirmCnt {
+    @extend %flexCenter;
+    margin: 0px 40px;
+}
+
+.crModalCard {
+    height: 345px;
+    max-width: 287px;
+    width: 100%;
+    .CbBattleCase {
+        padding-top: 27px;
+        padding-bottom: 27px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//modal finished

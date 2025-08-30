@@ -10,7 +10,6 @@ import { FRONTEND_PATHS } from '@/utilites/urls'
 import Link from 'next/link'
 
 interface MdHeaderRulesModalInt {
-    children: React.ReactNode;
     onClose: () => void;
 }
 

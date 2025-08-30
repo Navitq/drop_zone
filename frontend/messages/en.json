@@ -175,6 +175,9 @@
     "battles_price": "cost of battle",
     "add_case": "Add case",
     "case": "Case",
-    "add": "add"
+    "add": "add",
+    "search": "search",
+    "price": "price",
+    "confirm": "confirm"
   }
 }

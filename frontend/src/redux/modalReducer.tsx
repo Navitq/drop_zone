@@ -1,4 +1,4 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 interface BattlesRules {
     isVisible: boolean
@@ -6,10 +6,14 @@ interface BattlesRules {
 
 interface ModalState {
     rulesBattleModal: BattlesRules,
+    createBattleModal: BattlesRules,
 }
 
 const initialState: ModalState = {
     rulesBattleModal: {
+        isVisible: false
+    },
+    createBattleModal: {
         isVisible: false
     },
 };
@@ -24,12 +28,17 @@ export const modalSlice = createSlice({
         closeRulesModal: (state) => {
             state.rulesBattleModal.isVisible = false;
         },
-
+        showBattleCreateModal: (state) => {
+            state.createBattleModal.isVisible = true;
+        },
+        closeBattleCreateModal: (state) => {
+            state.createBattleModal.isVisible = false;
+        },
     }
 });
 
 
 
-export const { showRulesModal, closeRulesModal } = modalSlice.actions;
+export const { showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
 
 export default modalSlice.reducer;
