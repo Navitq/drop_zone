@@ -16,9 +16,9 @@ interface BattlesInfo {
     totalCaseAmount: number,
     playersAmount: playersAmountRange
 }
-/* <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={4 + ""}></CbBattleCase> */
+
 const initialState: BattlesInfo = {
-    createBtlData: [],//[{ casesId: '12', caseName: "Весенняя кура", caseImgPath: "/images/case_mock.png", caseAmount: 1, unitPrice: 132 }, { casesId: '1222', caseName: "Весенняя кура", caseImgPath: "/images/case_mock.png", caseAmount: 1, unitPrice: 132 }], // массив кейсов
+    createBtlData: [],
     totalCaseAmount: 0,
     totalPrice: 0,
     playersAmount: 2,

@@ -178,6 +178,8 @@
     "add": "add",
     "search": "search",
     "price": "price",
-    "confirm": "confirm"
+    "confirm": "confirm",
+    "expectation": "waiting for",
+    "participants": "participants"
   }
 }

@@ -2,12 +2,15 @@ import { configureStore } from '@reduxjs/toolkit'
 import userReducer from '@/redux/userReducer'
 import modalReducer from '@/redux/modalReducer'
 import battlesCreateReducer from '@/redux/battlesCreateReducer'
+import activeBattleReducer from '@/redux/activeBattleReducer'
+
 export const makeStore = () => {
   return configureStore({
     reducer: {
         user: userReducer,
         modal: modalReducer,
-        battlesCreate: battlesCreateReducer
+        battlesCreate: battlesCreateReducer,
+        activeBattle: activeBattleReducer
     }
   })
 }
