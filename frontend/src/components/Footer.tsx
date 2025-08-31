@@ -9,6 +9,8 @@ import OurContacts from '@/components/OurContacts'
 function Footer(): React.ReactNode {
     return (
         <footer className={btcss.basement}>
+
+
             <div className={btcss.mainInfo}>
                 <div className={btcss.basementCompanyBlock}>
                     <div className={btcss.companyName}>DROPZONE</div>

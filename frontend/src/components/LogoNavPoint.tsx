@@ -25,19 +25,19 @@ function LogoNavPoint(props: PointRules): React.ReactNode {
     const pathname = usePathname()
 
     const isActive = useMemo(() => pathname === props.linkPath, [pathname, props.linkPath])
-
+    console.log(pathname, props.linkPath)
     return (
         <div className={style.navPointBlockCnt}>
             <Link href={props.linkPath} className={style.navPointBlock}>
                 <div className={style.linkPathWrapper}>
-                    <LogoCnt width={props.width} height={props.height} cntClass={props.cntClass ? props.cntClass : undefined} path={props.path} altKey={props.altKey} imgClass={props.imgClass ? props.imgClass : undefined}></LogoCnt>
+                    <LogoCnt width={props.width} height={props.height} cntClass={props.cntClass ? props.cntClass : ''} path={props.path} altKey={props.altKey} imgClass={props.imgClass ? props.imgClass : ''}></LogoCnt>
                 </div>
                 <div className={style.linkPathWrapperSm}>
-                    {isActive && props.pathSm ? <LogoCnt width={40} height={40} cntClass={props.cntClass ? props.cntClass : undefined} path={props.pathSm} altKey={props.altKey} imgClass={props.imgClass ? props.imgClass + 'Activate' : undefined}></LogoCnt> : <LogoCnt width={props.width} height={props.height} cntClass={props.cntClass ? props.cntClass : undefined} path={props.path} altKey={props.altKey} imgClass={props.imgClass ? props.imgClass : undefined}></LogoCnt>}
+                    {isActive ? <LogoCnt width={props.width} height={props.height} cntClass={props.cntClass ? props.cntClass : ''} path={props.pathSm ? props.pathSm : props.path} altKey={props.altKey} imgClass={props.imgClass ? props.imgClass : ''}></LogoCnt> : <LogoCnt priority={false} width={props.width} height={props.height} cntClass={props.cntClass ? props.cntClass : ''} path={props.path} altKey={props.altKey} imgClass={props.imgClass ? props.imgClass : ''}></LogoCnt>}
                 </div>
                 <div className={style.navPointTextCnt}>
                     <div className={style.navPointText}>{t(props.textKey)}</div>
-                    {isActive ? <LogoCnt width={7} height={7} cntClass={'pagePointImg'} path={"/images/active_header_point.svg"} altKey={"active_header_point"}></LogoCnt> : null}
+                    {isActive ? <LogoCnt width={7} height={7} cntClass={'pagePointImg'} path={"/images/active_header_point.svg"} altKey={"active_header_point"}></LogoCnt> : ''}
                 </div>
             </Link>
         </div>

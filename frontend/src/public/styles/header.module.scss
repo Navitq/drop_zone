@@ -34,7 +34,8 @@
     max-width: 952px;
     width: 100%;
     justify-content: space-around;
-    min-width: fit-content
+    min-width: fit-content;
+    z-index: 98;
 }
 
 .navPointCnt {
@@ -42,6 +43,7 @@
     height: 100%;
     flex-shrink: 0;
 }
+
 
 .navPointBlock {
     @extend %flexCenter;
@@ -237,10 +239,10 @@ input.headerPromo::placeholder {
 }
 
 .navImgSizeActive {
-    width: 26px;
-    height: 25px;
+    img {
+        scale: 2;
+    }
 }
-
 
 @media (max-width: 1439px) {
     .navMenuCnt {
@@ -254,6 +256,10 @@ input.headerPromo::placeholder {
         justify-content: space-around;
         height: 65px;
         background-color: rgba(32, 32, 35, 1);
+    }
+
+    .headerPromoCnt {
+        display: none;
     }
 
     .headerDataCnt {

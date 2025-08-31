@@ -18,9 +18,6 @@ function HeaderUserInfo() {
                 <input className={style.headerPromo} placeholder={t("promo_code_placeholder")}></input>
             </div>
             {userState.isAuth ? <AuthHeader></AuthHeader> : <LogInBlock></LogInBlock>}
-
-
-
         </div >
     )
 }
