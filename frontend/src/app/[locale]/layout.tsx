@@ -39,11 +39,11 @@ export default async function LocaleLayout({
           <div className='global-container'>
             <NextIntlClientProvider>
               {/* <BackGround></BackGround> */}
-              {/* <Header></Header> */}
+              <Header></Header>
               {/* <main className='global-content'>
                 {children}
               </main> */}
-              <Footer></Footer>
+              {/* <Footer></Footer> */}
             </NextIntlClientProvider>
           </div>
         </StoreProvider>

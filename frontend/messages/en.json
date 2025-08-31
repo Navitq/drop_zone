@@ -38,7 +38,15 @@
     "t_contracts": "Contracts",
     "profile_title": "Your profile",
     "user_title": "Player profile",
-    "battles_title": "Battles"
+    "battles_title": "Battles",
+    "md_profie_alt": "User image",
+    "md_dialogue_alt": "Dialogue image",
+    "md_question_alt": "Image of a question mark",
+    "md_exit_alt": "Image of the exit",
+    "md_profile": "Profile",
+    "md_faq": "FAQ",
+    "md_support": "Support",
+    "md_exit": "Log out"
   },
     "cases":{
       "example":"Example case"

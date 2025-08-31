@@ -25,7 +25,7 @@ const initialState: AuthState = {
         address: '',
         image: '/images/user_mock.jpg' // путь к изображению
     },
-    isAuth: false,
+    isAuth: true,
     isLoading: false,
     error: null,
 };

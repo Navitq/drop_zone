@@ -6,6 +6,7 @@ interface FrontendPaths {
     home: string;
     contracts: string;
     battles: string;
+    profile: string;
     raffles: string;
     faq: string;
     upgrades: string;
@@ -30,6 +31,7 @@ export const FRONTEND_PATHS: FrontendPaths = {
     contracts: '/contracts',
     battles: '/battles',
     raffles: '/raffles',
+    profile: '/profile',
     faq: '/faq',
     upgrades: '/upgrades',
     privacyPolicy: '/privacy-policy',

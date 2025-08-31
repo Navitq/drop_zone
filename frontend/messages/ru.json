@@ -38,7 +38,15 @@
     "t_contracts": "Контракты",
     "profile_title": "Твой профиль",
     "user_title": "Профиль игрока",
-    "battles_title": "Сражения"
+    "battles_title": "Сражения",
+    "md_profie_alt": "Изображение пользователя",
+    "md_dialogue_alt": "Изображение диалога",
+    "md_question_alt": "Изображение знака вопроса",
+    "md_exit_alt": "Изображение выхода",
+    "md_profile": "Профиль",
+    "md_faq": "FAQ",
+    "md_support": "Поддержка",
+    "md_exit": "Выйти"
   },
   "cases":{
     "example":"Пример кейса"

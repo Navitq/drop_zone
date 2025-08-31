@@ -17,6 +17,13 @@
     align-items: center;
 }
 
+%flexStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+
 .logoCnt {
     @extend %flexCenter;
     flex: 1;
@@ -244,6 +251,49 @@ input.headerPromo::placeholder {
     }
 }
 
+.hmusCnt {
+    @extend %flexStart;
+    left: -165px;
+    top: 69px;
+    flex-direction: column;
+    position: absolute;
+    padding: 14px 18px 18px 18px;
+    border-radius: 5px;
+    border-top-right-radius: 0px;
+    background-color: rgba(255, 148, 0, 0.5);
+    min-width: 173px;
+}
+
+.hmusCnt::after {
+    content: "";
+    position: absolute;
+    width: 21px;
+    height: 17px;
+    background-image: url('/images/user_modal_triang.svg');
+    top: -17px;
+    right: 0px;
+}
+
+.userModalPoint {
+    @extend %flexCenter;
+    justify-content: space-between;
+    min-width: 139px;
+    height: 34px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 148, 0, 0.5);
+    margin-bottom: 5px;
+
+}
+
+.userModalPointText {
+    font-family: var(--font-textRegular);
+    font-size: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+}
+
 @media (max-width: 1439px) {
     .navMenuCnt {
         display: flex;
@@ -283,5 +333,26 @@ input.headerPromo::placeholder {
 @media (max-width: 768px) {
     .navPointTextCnt {
         display: none;
+    }
+    .userIcon {
+        height: 34px;
+        width: 34px;
+    }
+
+    .userIconCnt::before{
+        content: "";
+        background-image: none;
+    }
+    .userTokensText {
+        font-size: 15px;
+    }
+    .userTokens {
+        margin-right: 15px;
+    }
+    .addUserTokens {
+        margin-right: 5px;
+    }
+    .hmusCnt {
+        top: 49px;
     }
 }

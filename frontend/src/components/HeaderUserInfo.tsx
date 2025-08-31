@@ -9,15 +9,15 @@ import AuthHeader from '@/components/AuthHeader'
 import { useTranslations } from 'next-intl'
 
 function HeaderUserInfo() {
-    const userState = useAppSelector(state => state.user)
     const t = useTranslations('header');
+    const isAuth = useAppSelector(state => state.user.isAuth)
 
     return (
         <div className={style.headerUserInfo}>
             <div className={style.headerPromoCnt}>
                 <input className={style.headerPromo} placeholder={t("promo_code_placeholder")}></input>
             </div>
-            {userState.isAuth ? <AuthHeader></AuthHeader> : <LogInBlock></LogInBlock>}
+            {isAuth ? <AuthHeader></AuthHeader> : <LogInBlock></LogInBlock>}
         </div >
     )
 }
