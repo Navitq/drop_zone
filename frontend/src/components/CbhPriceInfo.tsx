@@ -14,14 +14,16 @@ function CbhPriceInfo(): React.ReactNode {
     }
 
     return (
-        <div className={style.CbhPriceInfo}>
-            <div className={`${style.CbhPriceInfoData} ${style.CbhPriceAndAmount}`}>
-                <div>{`${formatNumber(totalPrice)} Dc`}</div>
-                <div>{totalCaseAmount}</div>
-            </div>
-            <div className={style.CbhPriceInfoData}>
-                <div>{t('battles_price')}</div>
-                <div>{t('rounds_amount')}</div>
+        <div className={`${style.CbhPriceInfo} ${style.cbhHeadSideblock}`}>
+            <div className={style.CbhPriceInfoCnt}>
+                <div className={`${style.CbhPriceInfoData} ${style.CbhPriceAndAmount}`}>
+                    <div>{`${formatNumber(totalPrice)} Dc`}</div>
+                    <div>{totalCaseAmount}</div>
+                </div>
+                <div className={style.CbhPriceInfoData}>
+                    <div>{t('battles_price')}</div>
+                    <div>{t('rounds_amount')}</div>
+                </div>
             </div>
         </div>
     )

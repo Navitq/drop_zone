@@ -180,6 +180,7 @@
     "price": "price",
     "confirm": "confirm",
     "expectation": "waiting for",
-    "participants": "participants"
+    "participants": "participants",
+    "leave_battle": "leave the battle"
   }
 }

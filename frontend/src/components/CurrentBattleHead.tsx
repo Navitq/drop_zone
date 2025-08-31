@@ -5,6 +5,7 @@ import style from '@/styles/battles.module.scss'
 
 import CbhPriceInfo from '@/components/CbhPriceInfo'
 import CbhGameState from '@/components/CbhGameState'
+import CbhGameCases from '@/components/CbhGameCases'
 
 
 function CurrentBattleHead(): React.ReactNode {
@@ -13,9 +14,11 @@ function CurrentBattleHead(): React.ReactNode {
         <div className={style.cbhCnt}>
             <CbhPriceInfo></CbhPriceInfo>
             <CbhGameState firstLine={t('expectation')} secondLine={t('participants')}></CbhGameState>
-            <div></div>
+            <CbhGameCases></CbhGameCases>
         </div>
     )
 }
+
+
 
 export default CurrentBattleHead
