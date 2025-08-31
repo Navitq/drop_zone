@@ -4,6 +4,8 @@ import style from '@/styles/header.module.scss'
 import LogoCnt from '@/components/LogoCnt'
 import NavigatianMenu from '@/components/NavigatianMenu'
 import HeaderUserInfo from '@/components/HeaderUserInfo'
+import Link from 'next/link'
+import { FRONTEND_PATHS } from '@/utilites/urls'
 
 
 function Header() {
@@ -11,7 +13,9 @@ function Header() {
 
     return (
         <header className={style.header}>
-            <LogoCnt width={60} height={50} cntClass="logoCntMode" path="/images/head_logo.png" altKey={"daw"}></LogoCnt>
+            <Link href={FRONTEND_PATHS.home} className={style.logoLink}>
+                <LogoCnt width={60} height={50} cntClass="logoCntMode" path="/images/head_logo.png" altKey={"daw"}></LogoCnt>
+            </Link>
             <div className={style.headerDataCnt}>
                 <NavigatianMenu></NavigatianMenu>
                 <HeaderUserInfo></HeaderUserInfo>
