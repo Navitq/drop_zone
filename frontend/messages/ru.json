@@ -70,7 +70,8 @@
     "logIn": "войти",
     "steam_log_in_alt": "Войти через Steam",
     "vk_log_in_alt": "Войти через ВКонтакте",
-    "google_log_in_alt": "Войти через Google"
+    "google_log_in_alt": "Войти через Google",
+    "log_in": "войти"
   },
   "faq": {
     "t_item_1":"Я пополнил баланс, а денег на сайте нет. Что делать?",

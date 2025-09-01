@@ -70,7 +70,8 @@
     "logIn": "log in",
     "steam_log_in_alt": "Steam Log In",
     "vk_log_in_alt": "VK Log In",
-    "google_log_in_alt": "Google Log In"
+    "google_log_in_alt": "Google Log In",
+    "log_in": "log in"
   },
   "faq": {
     "t_item_1": "I topped up my balance, but the money does not appear on the site. What should I do?",
