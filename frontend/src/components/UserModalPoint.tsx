@@ -11,11 +11,12 @@ interface UserModalPointInt {
     imgAlt: string;
     width: number;
     height: number;
+    close: () => void;
 }
 
 function UserModalPoint(props: UserModalPointInt) {
     return (
-        <div className={style.userModalPoint}>
+        <div className={style.userModalPoint} onClick={() => { props.close() }}>
             <div className={style.userModalPointText}>{props.text}</div>
             <div className={style.userModalPointImgCnt}>
                 <Image src={props.imgPath} alt={props.imgAlt} width={props.width} height={props.height}></Image>

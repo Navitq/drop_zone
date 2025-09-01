@@ -294,6 +294,35 @@ input.headerPromo::placeholder {
     color: rgba(255, 255, 255, 1);
 }
 
+.umlsCnt {
+    @extend %flexStart;
+    align-items: center;
+    height: 29px;
+}
+
+.passiveLocale {
+    @extend %flexCenter;
+    font-family: var(--font-textRegular);
+    font-size: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    height: 29px;
+    border-radius: 5px;
+    color: rgba(255, 255, 255, 1);
+    padding-right:8px;
+    padding-top: 2px;
+}
+
+.activeLocale {
+    padding: 0px 8px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(15px);
+}
+
+.passiveLocale:first-child {
+    margin-right: 7px;
+}
+
 @media (max-width: 1439px) {
     .navMenuCnt {
         display: flex;

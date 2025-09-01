@@ -7,6 +7,7 @@ interface BattlesRules {
 interface ModalState {
     rulesBattleModal: BattlesRules,
     createBattleModal: BattlesRules,
+    userModal: BattlesRules,
 }
 
 const initialState: ModalState = {
@@ -16,6 +17,9 @@ const initialState: ModalState = {
     createBattleModal: {
         isVisible: false
     },
+    userModal: {
+        isVisible: false
+    }
 };
 
 export const modalSlice = createSlice({
@@ -34,11 +38,17 @@ export const modalSlice = createSlice({
         closeBattleCreateModal: (state) => {
             state.createBattleModal.isVisible = false;
         },
+        showUserModal: (state) => {
+            state.userModal.isVisible = true;
+        },
+        closeUserModal: (state) => {
+            state.userModal.isVisible = false;
+        },
     }
 });
 
 
 
-export const { showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
+export const { closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
 
 export default modalSlice.reducer;
