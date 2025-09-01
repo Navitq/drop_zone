@@ -1,0 +1,1 @@
+sudo -u postgres pg_restore -d job_war_hammer -1 backup.dump

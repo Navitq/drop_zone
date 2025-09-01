@@ -1,0 +1,1 @@
+docker exec custom_psql pg_dump -U navitq -d job_war_hammer -F c > backup_30_07_2025.dump

@@ -1,0 +1,5 @@
+на сервере
+docker exec custom_psql pg_dump -U navitq -d job_war_hammer -F c > backup_30_07_2025.dump
+на пк
+scp root@89.104.68.117:~/job_war_hammer.dump ./job_war_hammer.dump
+
