@@ -2,11 +2,12 @@ import { createSlice, current } from '@reduxjs/toolkit';
 
 interface UserData {
     id: number;
-    name: string;
+    username: string;
     email: string;
     phone: string;
     address: string;
     image: string;
+    accountType: "Steam" | "Google" | "Vk" | "";
 }
 
 interface AuthState {
@@ -19,10 +20,11 @@ interface AuthState {
 const initialState: AuthState = {
     userData: {
         id: 0,            // число
-        name: '',
+        username: '',
         email: '',
         phone: '',
         address: '',
+        accountType: "",
         image: '/images/user_mock.jpg' // путь к изображению
     },
     isAuth: false,

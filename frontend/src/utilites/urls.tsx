@@ -1,5 +1,5 @@
 interface Urls {
-    [key: string]: string | ((id: string) => string);
+    [key: string]: string;
 }
 
 interface FrontendPaths {
@@ -22,6 +22,8 @@ export const BACKEND_PATHS: Urls = {
     getUser: '',
     getPosts: '',
     createPost: '',
+    googleAuth: `/oauth2/google/login/`,
+    refreshTocken: '/token/refresh/'
 }
 
 

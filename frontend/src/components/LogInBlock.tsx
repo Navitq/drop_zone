@@ -2,13 +2,22 @@ import React from 'react'
 import style from '@/styles/header.module.scss'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
+import axios from "axios";
 
 import LibSocialNetworkPoint from '@/components/LibSocialNetworkPoint'
 import HeaderLogInLanguageSm from '@/components/HeaderLogInLanguageSm'
-
+import { BACKEND_PATHS } from '@/utilites/urls'
+import api from '@/lib/api';
 
 function LogInBlock(): React.ReactNode {
     const t = useTranslations('header');
+
+    async function handleLogin(url: string) {
+        const res = await api.get(url); // url относительный к baseURL из api.ts
+        window.location.href = res.data.auth_url; // редиректим на Google
+    }
+
+
     return (
         <>
             <div className={style.logInBlock}>
@@ -30,13 +39,15 @@ function LogInBlock(): React.ReactNode {
             <div className={style.logInBlockSm}>
                 <div className={style.libTextSm}>{`${t('log_in')}:`}</div>
                 <div className={style.libSocialNetworksCntSm}>
+
                     <div className={style.libPointCnt}>
                         <LibSocialNetworkPoint height={13} width={13} imgPath={"/images/steam_log_in.svg"} altText={t('steam_log_in_alt')}></LibSocialNetworkPoint>
                     </div>
+
                     <div className={style.libPointCnt}>
                         <LibSocialNetworkPoint height={15} width={15} imgPath={"/images/vk_log_in.svg"} altText={t('vk_log_in_alt')}></LibSocialNetworkPoint>
                     </div>
-                    <div className={style.libPointCnt}>
+                    <div onClick={() => { handleLogin(BACKEND_PATHS.googleAuth) }} className={style.libPointCnt}>
                         <LibSocialNetworkPoint height={15} width={15} imgPath={"/images/google_log_in.svg"} altText={t('google_log_in_alt')}></LibSocialNetworkPoint>
                     </div>
                 </div>

@@ -9,13 +9,46 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_URL = '/static_backend/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+SESSION_COOKIE_SECURE = True               # только HTTPS
+SESSION_COOKIE_SAMESITE = 'Lax'            # или 'Strict'
+SESSION_COOKIE_HTTPONLY = True
+
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+SESSION_COOKIE_AGE = 1209600
 
 
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+]
+
+DATE_FORMAT = "d.m.Y"
+
+# Разрешаем заголовки для межсайтовых запросов
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+
+# ф Формат даты
+DATE_INPUT_FORMATS = ['%d.%m.%Y']
+
+
+# Разрешаем отправлять cookie при межсайтовых запросах на разрешённые домены:
+CORS_ALLOW_CREDENTIALS = True
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -25,12 +58,14 @@ SECRET_KEY = 'django-insecure-*q#n4lejd-+s3f061uw&%4y)xl12xe0+_v$kn+z=9g2i#a2iwi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
+    'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +75,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,6 +84,23 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),        # короткий access
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),          # долгий refresh
+    # новый refresh при использовании
+    "ROTATE_REFRESH_TOKENS": True,
+    # старые refresh токены аннулируем
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "TOKEN_OBTAIN_SERIALIZER": "main_app.serializers.MyTokenObtainPairSerializer"
+}
 
 ROOT_URLCONF = 'dropzone_backend.urls'
 
@@ -72,12 +125,31 @@ WSGI_APPLICATION = 'dropzone_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "drop_zone",
+        "USER": "drop_zone_admin",
+        "PASSWORD": "fD8x*c4!XXX2ab2",
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB', 'drop_zone'),
+#         'USER': os.getenv('POSTGRES_USER', 'navitq'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'H.7JShPd27idDQr'),
+#         # Имя контейнера с БД
+#         'HOST': os.getenv('POSTGRES_HOST', 'custom_psql'),
+#         # Порт PostgreSQL по умолчанию
+#         'PORT': os.getenv('POSTGRES_PORT', '5432'),
+#     }
+# }
 
 
 # Password validation
@@ -102,9 +174,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
