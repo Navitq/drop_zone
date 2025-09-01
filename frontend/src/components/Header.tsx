@@ -14,7 +14,12 @@ function Header() {
     return (
         <header className={style.header}>
             <Link href={FRONTEND_PATHS.home} className={style.logoLink}>
-                <LogoCnt width={60} height={50} cntClass="logoCntMode" path="/images/head_logo.png" altKey={"daw"}></LogoCnt>
+                <div className={style.logoHeaderCntBg}>
+                    <LogoCnt width={60} height={50} cntClass="logoCntMode" path="/images/head_logo.png" altKey={"daw"}></LogoCnt>
+                </div>
+                <div className={style.logoHeaderCntSm}>
+                    <LogoCnt width={40} height={33} cntClass="logoCntMode" path="/images/head_logo.png" altKey={"daw"}></LogoCnt>
+                </div>
             </Link>
             <div className={style.headerDataCnt}>
                 <NavigatianMenu></NavigatianMenu>

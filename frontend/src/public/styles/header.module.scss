@@ -237,7 +237,8 @@ input.headerPromo::placeholder {
 }
 
 .logoLink {
-    display: block;
+    display: flex;
+    align-items: center;
     min-width: fit-content;
 }
 
@@ -323,7 +324,72 @@ input.headerPromo::placeholder {
     margin-right: 7px;
 }
 
+//delet
+
+.logInBlockSm {
+    @extend %flexStart;
+    align-items: center;
+    display: none;
+}
+
+.libTextSm {
+    font-family: var(--font-textRegular);
+    font-size: 14px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+    margin-right: 10px;
+}
+
+.libSocialNetworksCntSm {
+    @extend %flexStart;
+}
+
+.libSocialPoint {
+    @extend %flexCenter;
+    width: 30px;
+    height: 30px;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.libPointCnt {
+    @extend %flexCenter;
+    width: fit-content;
+    height: fit-content;
+    margin-right: 10px;
+}
+
+.libPointCnt:last-child {
+    margin-right: 0px;
+}
+
+.logInLocale {
+    cursor: pointer;
+    font-family: var(--font-textRegular);
+    font-size: 14px;
+    margin-right: 7px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.logInLocale:last-child {
+    margin-right: 0px;
+
+}
+
+.logInLocale:first-child {
+    margin-left: 10px;
+}
+
+.logoHeaderCntSm {
+    display: none;
+}
+
 @media (max-width: 1439px) {
+
+    .header {
+        margin-top: 20px;
+    }
     .navMenuCnt {
         display: flex;
         justify-content: center;
@@ -348,6 +414,19 @@ input.headerPromo::placeholder {
 
 
 @media (max-width: 1024px) {
+    .logInBlock {
+        display: none;
+    }
+    .logInBlockSm {
+        display: flex;
+    }
+    .logoHeaderCntBg {
+        display: none;
+    }
+    .logoHeaderCntSm {
+        display: block;
+    }
+
     .pagePointImg {
         display: none;
     }
@@ -360,6 +439,7 @@ input.headerPromo::placeholder {
 }
 
 @media (max-width: 768px) {
+
     .navPointTextCnt {
         display: none;
     }
