@@ -3,7 +3,6 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
-from django.contrib.postgres.fields import JSONField  # для PostgreSQL
 
 # ----------------------------
 # Менеджер пользователя (минимальный)
@@ -11,11 +10,13 @@ from django.contrib.postgres.fields import JSONField  # для PostgreSQL
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, username=None, email=None, **extra_fields):
+    def create_user(self, username=None, email=None, password=None, **extra_fields):
         if not username and not email:
             raise ValueError("User must have username or email")
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, **extra_fields)
+        if password:  # дописанное
+            user.set_password(password)  # дописанное
         user.save(using=self._db)
         return user
 
@@ -40,6 +41,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='customuser_set',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='customuser_set',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
     USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = []
 
@@ -50,13 +65,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 # Социальные аккаунты
 # ----------------------------
 
+
 class SocialAccount(models.Model):
     PROVIDER_CHOICES = [
         ('google', 'Google'),
         ('vk', 'VK'),
         ('steam', 'Steam'),
     ]
-
+    verified_email = models.BooleanField(default=False, blank=True, null=True)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='social_accounts')
@@ -65,7 +81,7 @@ class SocialAccount(models.Model):
     access_token = models.TextField(blank=True, null=True)
     refresh_token = models.TextField(blank=True, null=True)
     # любые дополнительные данные
-    extra_data = JSONField(blank=True, null=True)
+    extra_data = models.JSONField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

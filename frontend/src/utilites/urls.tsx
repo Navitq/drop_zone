@@ -22,7 +22,9 @@ export const BACKEND_PATHS: Urls = {
     getUser: '',
     getPosts: '',
     createPost: '',
+    vkAuth: '/oauth2/vk/login/',
     googleAuth: `/oauth2/google/login/`,
+    steamAuth: `/oauth2/steam/login/`,
     refreshTocken: '/token/refresh/'
 }
 

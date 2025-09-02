@@ -9,10 +9,16 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     # path("", views.index, name="TokenObtainPairView"),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/login/', views.google_login, name='token_refresh'),
-    path('oauth2/google/callback/',
-         views.create_google_user, name='google_oauth2')
-
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('oauth2/google/login/', views.google_login_view,
+         name='google_oauth2_login'),
+    path('oauth2/google/callback/', views.google_callback_view,
+         name='google_oauth2_login'),
+    path('oauth2/vk/login/', views.vk_login_view, name='vk_oauth2_login'),
+    path('oauth2/vk/callback/',
+         views.vk_callback_view, name='vk_oauth2_callback'),
+    path('oauth2/steam/login/', views.steam_login_view, name='vk_oauth2_login'),
+    path('oauth2/steam/callback/',
+         views.steam_callback_view, name='vk_oauth2_callback'),
 ]

@@ -31,7 +31,7 @@ function LogInBlock(): React.ReactNode {
                     <div className={style.logInIconCnt}>
                         <Image priority={true} src="/images/vk_log_in.svg" width={25} height={25} alt={t('vk_log_in_alt')}></Image>
                     </div>
-                    <div className={style.logInIconCnt}>
+                    <div className={style.logInIconCnt} onClick={() => { handleLogin(BACKEND_PATHS.vkAuth) }}>
                         <Image priority={true} src="/images/google_log_in.svg" width={25} height={25} alt={t('google_log_in_alt')}></Image>
                     </div>
                 </div>

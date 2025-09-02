@@ -12,11 +12,18 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_URL = '/static_backend/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DATABASE_USER = os.getenv("DATABASE_USER")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+APP_SECRET_KEY = os.getenv("APP_SECRET_KEY")
 
 SESSION_COOKIE_SECURE = True               # только HTTPS
 SESSION_COOKIE_SAMESITE = 'Lax'            # или 'Strict'
@@ -53,7 +60,7 @@ CORS_ALLOW_CREDENTIALS = True
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*q#n4lejd-+s3f061uw&%4y)xl12xe0+_v$kn+z=9g2i#a2iwi'
+SECRET_KEY = APP_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -64,6 +71,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "main_app",
     'corsheaders',
     'rest_framework_simplejwt',
     'django.contrib.admin',
@@ -129,9 +137,10 @@ WSGI_APPLICATION = 'dropzone_backend.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "drop_zone",
-        "USER": "drop_zone_admin",
-        "PASSWORD": "fD8x*c4!XXX2ab2",
+        "NAME": DATABASE_NAME,
+        "USER": DATABASE_USER,
+        "PASSWORD": DATABASE_PASSWORD,
+
         "HOST": "127.0.0.1",
         "PORT": "5432",
     }
