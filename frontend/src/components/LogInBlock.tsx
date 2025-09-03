@@ -25,13 +25,13 @@ function LogInBlock(): React.ReactNode {
                     {t("logIn")}
                 </div>
                 <div className={style.logInIconBlock} >
-                    <div className={style.logInIconCnt}>
+                    <div className={style.logInIconCnt} onClick={() => { handleLogin(BACKEND_PATHS.steamAuth) }}>
                         <Image src="/images/steam_log_in.svg" width={25} height={25} alt={t('steam_log_in_alt')}></Image>
                     </div>
-                    <div className={style.logInIconCnt}>
+                    <div className={style.logInIconCnt} onClick={() => { handleLogin(BACKEND_PATHS.vkAuth) }}>
                         <Image priority={true} src="/images/vk_log_in.svg" width={25} height={25} alt={t('vk_log_in_alt')}></Image>
                     </div>
-                    <div className={style.logInIconCnt} onClick={() => { handleLogin(BACKEND_PATHS.vkAuth) }}>
+                    <div className={style.logInIconCnt} onClick={() => { handleLogin(BACKEND_PATHS.googleAuth) }}>
                         <Image priority={true} src="/images/google_log_in.svg" width={25} height={25} alt={t('google_log_in_alt')}></Image>
                     </div>
                 </div>
@@ -40,11 +40,11 @@ function LogInBlock(): React.ReactNode {
                 <div className={style.libTextSm}>{`${t('log_in')}:`}</div>
                 <div className={style.libSocialNetworksCntSm}>
 
-                    <div className={style.libPointCnt}>
+                    <div onClick={() => { handleLogin(BACKEND_PATHS.steamAuth) }} className={style.libPointCnt}>
                         <LibSocialNetworkPoint height={13} width={13} imgPath={"/images/steam_log_in.svg"} altText={t('steam_log_in_alt')}></LibSocialNetworkPoint>
                     </div>
 
-                    <div className={style.libPointCnt}>
+                    <div onClick={() => { handleLogin(BACKEND_PATHS.vkAuth) }} className={style.libPointCnt}>
                         <LibSocialNetworkPoint height={15} width={15} imgPath={"/images/vk_log_in.svg"} altText={t('vk_log_in_alt')}></LibSocialNetworkPoint>
                     </div>
                     <div onClick={() => { handleLogin(BACKEND_PATHS.googleAuth) }} className={style.libPointCnt}>

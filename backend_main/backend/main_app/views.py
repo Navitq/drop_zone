@@ -219,7 +219,7 @@ async def steam_callback_view(request):
     )()
 
     if social_account:
-        user = social_account.user
+        user = await sync_to_async(lambda: social_account.user)()
     else:
         # Создаём нового пользователя
         user = await sync_to_async(User.objects.create)(
@@ -233,7 +233,6 @@ async def steam_callback_view(request):
         )
 
     # Логиним пользователя
-    await sync_to_async(login)(request, user)
 
     # Генерируем JWT
     refresh = await sync_to_async(RefreshToken.for_user)(user)
@@ -251,7 +250,7 @@ async def steam_callback_view(request):
     }
 
     # Создаём JsonResponse
-    response = JsonResponse({"user": user_data})
+    response = HttpResponseRedirect(REDIRECT_OAUTH_CLIENT_PATH)
 
     # Устанавливаем cookies
     response.set_cookie(
@@ -312,7 +311,7 @@ async def google_callback_view(request):
         social_account.extra_data = user_info  # сохраняем полный user_info для удобства
         await sync_to_async(social_account.save)()
 
-        user = social_account.user
+        user = await sync_to_async(lambda: social_account.user)()
         # Можно обновить профиль пользователя
         user.first_name = first_name
         user.last_name = last_name
@@ -342,9 +341,8 @@ async def google_callback_view(request):
     # автоматически использует кастомный сериализатор
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
-    frontend_url = REDIRECT_OAUTH_CLIENT_PATH
 
-    response = HttpResponseRedirect(frontend_url)
+    response = HttpResponseRedirect(REDIRECT_OAUTH_CLIENT_PATH)
 
     # HttpOnly cookie для access_token
     response.set_cookie(
