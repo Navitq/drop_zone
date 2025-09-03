@@ -13,18 +13,23 @@ interface GunData {
     type: "usuall" | "rare" | "elite" | "epic" | "classified"
 }
 
-interface stCaseInt {
+interface StCaseInt {
     isVisible: boolean;
     caseId: string;
     caseItems: GunData[];
     caseName: string
 }
 
+interface PaymentInt {
+    isVisible: boolean;
+}
+
 interface ModalState {
     rulesBattleModal: BattlesRules,
     createBattleModal: BattlesRules,
     userModal: BattlesRules,
-    stCaseModal: stCaseInt,
+    stCaseModal: StCaseInt,
+    paymentModal: PaymentInt,
 }
 
 const initialState: ModalState = {
@@ -38,10 +43,13 @@ const initialState: ModalState = {
         isVisible: false
     },
     stCaseModal: {
-        isVisible: true,
+        isVisible: false,
         caseId: "",
         caseName: "",
         caseItems: []
+    },
+    paymentModal: {
+        isVisible: false
     }
 };
 
@@ -78,12 +86,18 @@ export const modalSlice = createSlice({
             state.stCaseModal.caseItems = []
             state.stCaseModal.caseName = ""
         },
+        showPaymentModal: (state) => {
+            state.paymentModal.isVisible = true;
+        },
+        closePaymentModal: (state) => {
+            state.paymentModal.isVisible = false;
+        },
 
     }
 });
 
 
 
-export const { closeStCaseModal, showStCaseModal, closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
+export const { showPaymentModal, closePaymentModal, closeStCaseModal, showStCaseModal, closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
 
 export default modalSlice.reducer;

@@ -4,6 +4,7 @@ import style from '@/styles/header.module.scss'
 import LogoCnt from '@/components/LogoCnt'
 import NavigatianMenu from '@/components/NavigatianMenu'
 import HeaderUserInfo from '@/components/HeaderUserInfo'
+import PaymentModal from '@/components/PaymentModal'
 import Link from 'next/link'
 import { FRONTEND_PATHS } from '@/utilites/urls'
 
@@ -26,7 +27,7 @@ function Header() {
                 <HeaderUserInfo></HeaderUserInfo>
 
             </div>
-
+            <PaymentModal></PaymentModal>
         </header>
     )
 }

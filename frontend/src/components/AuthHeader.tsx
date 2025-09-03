@@ -8,7 +8,7 @@ import { AnimatePresence } from "motion/react"
 
 import HeadModalUserSetting from '@/components/HeadModalUserSetting'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { closeUserModal, showUserModal } from '@/redux/modalReducer'
+import { closeUserModal, showUserModal, showPaymentModal } from '@/redux/modalReducer'
 
 function AuthHeader(): React.ReactNode {
     const t = useTranslations('header');
@@ -35,7 +35,7 @@ function AuthHeader(): React.ReactNode {
     return (
         <div className={style.userData}>
             <div className={style.userTokens}>
-                <div className={style.addUserTokens}>
+                <div className={style.addUserTokens} onClick={() => { dispatch(showPaymentModal()) }}>
                     <Image priority={true} src="/images/add_tockens.svg" height={20} width={20} alt={t("get_more_tokens")}></Image>
                 </div>
                 <span className={style.userTokensText}>

@@ -19,6 +19,7 @@
     }
 
 
+
     .sort-select__placeholder, .sort-select__option, .sort-select__single-value, .sort-select__input-container {
         font-family: var(--font-textRegular);
         font-size: 20px;
@@ -57,4 +58,19 @@
         }
     }
 
+
+}
+
+.sort-select-countrie {
+    width: fit-content;
+    .sort-select-cnt {
+        min-width: 146px;
+        .sort-select__control{
+            min-height: 43px ;
+            border-radius: 10px;
+        }
+        .sort-select__option {
+            height: 43px;
+        }
+    }
 }

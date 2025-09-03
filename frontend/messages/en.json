@@ -72,8 +72,23 @@
     "steam_log_in_alt": "Steam Log In",
     "vk_log_in_alt": "VK Log In",
     "google_log_in_alt": "Google Log In",
-    "log_in": "log in"
-  },
+    "log_in": "log in",
+    "balance_replenishment": "Balance replenishment",
+    "rm_divider_alt": "Divider image",
+    "countrie": "Countrie",
+    "ruassia_st": "Ruassia",
+    "china_st": "China",
+    "usa_st": "USA",
+    "all_menu": "Everything",
+    "card_menu": "Card",
+    "wallet_menu": "Wallet",
+    "cryptocurrency_menu": "Cryptocurrency",
+    "sell_skin_menu": "Sell skin",
+    "alt_card_menu": "Cards set image",
+    "alt_wallet_menu": "Wallet image",
+    "alt_cryptocurrency_menu": "Cryptocurrency image",
+    "alt_sell_skin": "Gun image"
+    },
   "faq": {
     "t_item_1": "I topped up my balance, but the money does not appear on the site. What should I do?",
     "t_item_2": "I have money on my Steam account, but it does not show up here. Why?",
@@ -114,7 +129,6 @@
     "activity_price":"Cost of participation:",
     "take_part": "take part",
     "clock_alt": "Clock picture"
-
   },
   "contracts": {
     "your_skin_price": "The cost of your skins:",

@@ -72,7 +72,22 @@
     "steam_log_in_alt": "Войти через Steam",
     "vk_log_in_alt": "Войти через ВКонтакте",
     "google_log_in_alt": "Войти через Google",
-    "log_in": "войти"
+    "log_in": "войти",
+    "balance_replenishment": "Пополнение баланса",
+    "divider_alt": "Картинка разделителя",
+    "countrie": "Страна",
+    "ruassia_st": "Россия",
+    "china_st": "Китай",
+    "usa_st": "США",
+    "all_menu": "Все",
+    "card_menu": "Карта",
+    "wallet_menu": "Кошелек",
+    "cryptocurrency_menu": "Криптовалюта",
+    "sell_skin_menu": "Продать скин",
+    "alt_card_menu": "Изображение стопки кредитных кард",
+    "alt_wallet_menu": "Изображение кошелька",
+    "alt_cryptocurrency_menu": "Изображение криптовалюта",
+    "alt_sell_skin": "Изображение пистолета"
   },
   "faq": {
     "t_item_1":"Я пополнил баланс, а денег на сайте нет. Что делать?",
