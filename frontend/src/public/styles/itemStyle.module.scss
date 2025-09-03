@@ -35,9 +35,19 @@
     }
     &.rareItemSmType {
         background-image: url(/images/violet_item_background.png);
-        border: 1px solid;
+        &::before {
+            background: linear-gradient(180deg, rgba(123, 0, 255, 0.5) 0%, rgba(56, 56, 56, 0) 107.01%);
+        }
+        .smItemGunPrice {
+            color: rgba(228, 203, 255, 1);
+        }
+        .smItemGunModel {
+            color: rgba(179, 108, 255, 1)
+        }
+    }
 
-
+    &.classifiedItemSmType {
+        background-image: url(/images/pink_item_background.png);
         &::before {
             background: linear-gradient(180deg, rgba(212, 0, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
         }
@@ -48,6 +58,7 @@
             color: rgba(255, 56, 229, 1)
         }
     }
+
     &.eliteItemSmType {
         background-image: url(/images/red_item_background.png);
         &::before {

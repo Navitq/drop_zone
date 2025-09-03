@@ -13,7 +13,7 @@ interface GunData {
     gunStyle: string
     gunPrice: number
     imgPath: string
-    type: "usuall" | "rare" | "elite" | "epic"
+    type: "usuall" | "rare" | "elite" | "epic" | "classified"
 }
 
 function CtSlot(props: { data: GunData, index: number }): React.ReactNode {

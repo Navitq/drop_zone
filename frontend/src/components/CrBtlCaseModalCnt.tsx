@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence } from "motion/react"
 
 import ModalCnt from '@/components/ModalCnt'
 import CrBattleModal from '@/components/CrBattleModal'

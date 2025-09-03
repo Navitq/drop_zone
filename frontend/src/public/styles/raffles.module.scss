@@ -75,6 +75,11 @@
 
 .weaponImg {
     object-fit: "contain";
+    transition: transform 0.5s ease;
+}
+
+.weaponImg:hover {
+    transform: rotate(8deg);
 }
 
 .weaponImgCnt {
@@ -169,6 +174,19 @@
 
 .rareCaseType {
     background-image: url(/images/rare_raffles_background.png);
+    .rafflesPlayerAmount, .weaponModel, .priceInfo, .timerText{
+        color:rgba(193, 135, 255, 1);
+    }
+    .rafflesAplliedBtnCnt {
+        border-color: rgba(193, 135, 255, 1);
+        &:hover {
+            background-color: rgba(193, 135, 255, 0.3);
+        }
+    }
+}
+
+.classifiedCaseType {
+    background-image: url(/images/classified_raffles_background.png);
     .rafflesPlayerAmount, .weaponModel, .priceInfo, .timerText{
         color:rgba(255, 56, 229, 1);
     }

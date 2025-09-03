@@ -4,6 +4,7 @@ import SeasonCasesBlock from '@/components/SeasonCasesBlock';
 import ActualCases from '@/components/ActualCases'
 import BlogerCases from '@/components/BlogerCases'
 import AdvertisementBlock from '@/components/AdvertisementBlock'
+import StCaseModal from '@/components/StCaseModal'
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
         <ActualCases></ActualCases>
         <BlogerCases></BlogerCases>
       </div>
+      <StCaseModal></StCaseModal>
     </div >
   );
 }

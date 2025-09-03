@@ -421,40 +421,51 @@
 }
 
 .usuallPrBestySkin {
-    background-image: url(/images/usuallPrBestySkin.png);
+    background-image: url(/images/usuall_pr_best_skin.png);
     background-repeat: no-repeat;
     background-size: cover;
     .prBestSkinModel {
-        color: rgba(255, 195, 0, 1);
+        color: rgba(0, 140, 255, 1);
     }
     .prBestSkinPrice {
-        color: rgba(254, 245, 163, 1);
+        color: rgba(184, 208, 255, 1);
+    }
+}
+.classifiedPrBestySkin {
+    background-image: url(/images/classified_pr_best_skin.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    .prBestSkinModel {
+        color: rgba(255, 56, 229, 1);
+    }
+    .prBestSkinPrice {
+        color: rgba(255, 217, 248, 1);
     }
 }
 .rarePrBestySkin {
-    background-image: url(/images/rarePrBestySkin.png);
+    background-image: url(/images/rare_pr_best_skin.png);
     background-repeat: no-repeat;
     background-size: cover;
     .prBestSkinModel {
-        color: rgba(255, 195, 0, 1);
+        color: rgba(179, 108, 255, 1);
     }
     .prBestSkinPrice {
-        color: rgba(254, 245, 163, 1);
+        color: rgba(228, 203, 255, 1);
     }
 }
 .elitePrBestySkin {
-    background-image: url(/images/.elitePrBestySkin.png);
+    background-image: url(/images/elite_pr_best_skin.png);
     background-repeat: no-repeat;
     background-size: cover;
     .prBestSkinModel {
-        color: rgba(255, 195, 0, 1);
+        color: rgba(255, 80, 80, 1);
     }
     .prBestSkinPrice {
-        color: rgba(254, 245, 163, 1);
+        color: rgba(255, 217, 217, 1);
     }
 }
 .epicPrBestySkin {
-    background-image: url(/images/epicPrBestySkin.png);
+    background-image: url(/images/epic_pr_best_skin.png);
     background-repeat: no-repeat;
     background-size: cover;
     .prBestSkinModel {
@@ -475,6 +486,15 @@
     flex: 1;
     height: 100%;
     width: 100%;
+}
+
+.prBestSkinImg {
+    object-fit: "contain";
+    transition: transform 0.5s ease;
+}
+
+.prBestSkinImg:hover {
+    transform: rotate(9deg);
 }
 
 .prStuffsCnt {

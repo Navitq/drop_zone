@@ -10,7 +10,7 @@ interface ItemSmInt {
     gunStyle: string,
     gunPrice: number,
     imgPath: string,
-    type: "usuall" | "rare" | "elite" | "epic"
+    type: "usuall" | "rare" | "elite" | "epic" | "classified"
 }
 // синий фиолтовый красный золотой
 function ItemSm(props: ItemSmInt): React.ReactNode {

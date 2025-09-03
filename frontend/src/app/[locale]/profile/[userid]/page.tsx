@@ -33,13 +33,13 @@ export default function ProfilePage(): React.ReactNode {
         </div>
       </div>
       <div className={style.prCasesData}>
-        
+
         <div className={style.prBestObjectCnt}>
           <PrBestObject>
             <PrBestCase imgPath='/images/case_mock.png' caseName={"Весення кура"}></PrBestCase>
           </PrBestObject>
           <PrBestObject>
-            <PrBestSkin imgPath='/images/example_profile_knife.png' type='epic' gunModel={"Knife"} gunStyle={"Zakalka"} gunPrice={32.42}></PrBestSkin>
+            <PrBestSkin imgPath='/images/example_profile_knife.png' type='elite' gunModel={"Knife"} gunStyle={"Zakalka"} gunPrice={32.42}></PrBestSkin>
           </PrBestObject>
         </div>
         <PrStuffsCnt></PrStuffsCnt>

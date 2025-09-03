@@ -46,7 +46,8 @@
     "md_profile": "Profile",
     "md_faq": "FAQ",
     "md_support": "Support",
-    "md_exit": "Log out"
+    "md_exit": "Log out",
+    "case_modal": "Case"
   },
     "cases":{
       "example":"Example case"

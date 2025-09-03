@@ -9,13 +9,13 @@ interface GunData {
     gunStyle: string
     gunPrice: number
     imgPath: string
-    type: "usuall" | "rare" | "elite" | "epic"
+    type: "usuall" | "rare" | "elite" | "epic" | "classified"
 }
 
 interface CtSlotDataInt {
     data: GunData
 }
-// синий фиолтовый красный золотой
+// синий фиолтовый розовый красный золотой
 function CtSlotData(props: CtSlotDataInt): React.ReactNode {
 
     return (

@@ -11,7 +11,7 @@ interface RafflesCaseInt {
     currentPlayerAmount: number,
     participationPrice: number,
     imgPath: string,
-    type: "usuall" | "rare" | "elite" | "epic",
+    type: "usuall" | "rare" | "elite" | "epic" | "classified",
     endTime: string // ISO string или timestamp конца раффла
 }
 

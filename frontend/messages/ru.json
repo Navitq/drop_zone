@@ -46,7 +46,8 @@
     "md_profile": "Профиль",
     "md_faq": "FAQ",
     "md_support": "Поддержка",
-    "md_exit": "Выйти"
+    "md_exit": "Выйти",
+    "case_modal": "Кейс"
   },
   "cases":{
     "example":"Пример кейса"

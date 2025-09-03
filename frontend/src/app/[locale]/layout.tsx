@@ -38,12 +38,12 @@ export default async function LocaleLayout({
         <StoreProvider>
           <div className='global-container'>
             <NextIntlClientProvider>
-              {/* <BackGround></BackGround> */}
+              <BackGround></BackGround>
               <Header></Header>
-              {/* <main className='global-content'>
+              <main className='global-content'>
                 {children}
-              </main> */}
-              {/* <Footer></Footer> */}
+              </main>
+              <Footer></Footer>
             </NextIntlClientProvider>
           </div>
         </StoreProvider>

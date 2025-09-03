@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 
 interface PrBestSkinInt {
-    type: "usuall" | "rare" | "elite" | "epic",
+    type: "usuall" | "rare" | "elite" | "epic" | "classified",
     imgPath: string,
     gunModel: string,
     gunStyle: string,
@@ -21,7 +21,7 @@ function PrBestSkin(props: PrBestSkinInt): React.ReactNode {
                 <div><span className={style.prBestSkinModel}>{`${props.gunModel}`}&nbsp;&nbsp;|</span><span className={style.prBestSkinStyle}>&nbsp;{`${props.gunStyle}`}</span></div>
             </div>
             <div className={style.prBestSkinImgCnt}>
-                <Image fill src={props.imgPath} alt={`${props.gunModel}, ${props.gunStyle}`}></Image>
+                <Image className={style.prBestSkinImg} fill src={props.imgPath} alt={`${props.gunModel}, ${props.gunStyle}`}></Image>
             </div>
             <div className={style.prBestSkinPrice}>
                 {props.gunPrice} Dc

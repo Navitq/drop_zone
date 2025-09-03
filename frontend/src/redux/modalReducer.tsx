@@ -1,13 +1,30 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { strict } from 'assert';
 
 interface BattlesRules {
     isVisible: boolean
+}
+
+interface GunData {
+    gunModel: string
+    gunStyle: string
+    gunPrice: number
+    imgPath: string
+    type: "usuall" | "rare" | "elite" | "epic" | "classified"
+}
+
+interface stCaseInt {
+    isVisible: boolean;
+    caseId: string;
+    caseItems: GunData[];
+    caseName: string
 }
 
 interface ModalState {
     rulesBattleModal: BattlesRules,
     createBattleModal: BattlesRules,
     userModal: BattlesRules,
+    stCaseModal: stCaseInt,
 }
 
 const initialState: ModalState = {
@@ -19,6 +36,12 @@ const initialState: ModalState = {
     },
     userModal: {
         isVisible: false
+    },
+    stCaseModal: {
+        isVisible: true,
+        caseId: "",
+        caseName: "",
+        caseItems: []
     }
 };
 
@@ -44,11 +67,23 @@ export const modalSlice = createSlice({
         closeUserModal: (state) => {
             state.userModal.isVisible = false;
         },
+        showStCaseModal: (state, actions: PayloadAction<{ caseId: string, caseName: string }>) => {
+            state.stCaseModal.caseId = actions.payload.caseId;
+            state.stCaseModal.caseName = actions.payload.caseName;
+            state.stCaseModal.isVisible = true;
+        },
+        closeStCaseModal: (state) => {
+            state.stCaseModal.isVisible = false;
+            state.stCaseModal.caseId = ""
+            state.stCaseModal.caseItems = []
+            state.stCaseModal.caseName = ""
+        },
+
     }
 });
 
 
 
-export const { closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
+export const { closeStCaseModal, showStCaseModal, closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
 
 export default modalSlice.reducer;
