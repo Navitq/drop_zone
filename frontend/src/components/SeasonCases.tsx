@@ -6,11 +6,11 @@ import BigCase from '@/components/BigCase'
 function SeasonCases(): React.ReactNode {
     return (
         <div className={style.bgCaseBlock}>
-            <BigCase imgUrl='/images/example_bg_case.png' caseNameKey='example'></BigCase>
-            <BigCase imgUrl='/images/example_bg_case.png' caseNameKey='example'></BigCase>
-            <BigCase imgUrl='/images/example_bg_case.png' caseNameKey='example'></BigCase>
-            <BigCase imgUrl='/images/example_bg_case.png' caseNameKey='example'></BigCase>
-            <BigCase imgUrl='/images/example_bg_case.png' caseNameKey='example'></BigCase>
+            <BigCase caseId={"23"} imgUrl='/images/example_bg_case.png' caseName='example'></BigCase>
+            <BigCase caseId={"23"} imgUrl='/images/example_bg_case.png' caseName='example'></BigCase>
+            <BigCase caseId={"23"} imgUrl='/images/example_bg_case.png' caseName='example'></BigCase>
+            <BigCase caseId={"23"} imgUrl='/images/example_bg_case.png' caseName='example'></BigCase>
+            <BigCase caseId={"23"} imgUrl='/images/example_bg_case.png' caseName='example'></BigCase>
 
         </div>
     )

@@ -7,7 +7,7 @@ import StandartCase from '@/components/StandartCase';
 
 interface Case {
     id: string;
-    caseNameKey: string;
+    caseName: string;
     description?: string;
     urlImg: string
 }
@@ -19,7 +19,7 @@ function CaseShelf(props: { caseUrl: string }): React.ReactNode {
         try {
             // const response = await axios.get<Case[]>(props.caseUrl);
             // console.log("API ответ:", response.data);
-            const response = { data: [{ id: '123', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '214', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '55', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '41235', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '4', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '44445', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '23123', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '55532', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '1245', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '55124', caseNameKey: "example", description: "example", urlImg: '/images/case_mock.png' }] }
+            const response = { data: [{ id: '123', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '214', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '55', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '41235', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '4', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '44445', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '23123', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '55532', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '1245', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }, { id: '55124', caseName: "example", description: "example", urlImg: '/images/case_mock.png' }] }
             setCaseList(response.data);
         } catch (error) {
             console.error("Ошибка при получении данных:", error);
@@ -33,7 +33,7 @@ function CaseShelf(props: { caseUrl: string }): React.ReactNode {
     return (
         <div className={style.caseShelfCnt}>
             {caseList?.map(item => (
-                <StandartCase imgUrl={item.urlImg} caseId={item.id} caseNameKey={item.caseNameKey} key={item.id} ></StandartCase>
+                <StandartCase imgUrl={item.urlImg} caseId={item.id} caseName={item.caseName} key={item.id} ></StandartCase>
             ))}
         </div>
     );

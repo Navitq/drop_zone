@@ -11,7 +11,7 @@ import { useAppDispatch } from '@/lib/hooks'
 import { showStCaseModal } from '@/redux/modalReducer'
 
 interface caseInt {
-    caseNameKey: string,
+    caseName: string,
     imgUrl: string,
     caseId: string,
 }
@@ -26,8 +26,8 @@ function StandartCase(props: caseInt): React.ReactNode {
 
     return (
         <div className={style.stCaseCnt}>
-            <div className={style.stCaseImgCnt} onClick={() => { openCaseData({ caseId: props.caseId, caseName: "вечерняя кура" }) }}>
-                <Image src={props.imgUrl} width={330} height={375} alt={t(props.caseNameKey)}></Image>
+            <div className={style.stCaseImgCnt} onClick={() => { openCaseData({ caseId: props.caseId, caseName: props.caseName }) }}>
+                <Image src={props.imgUrl} width={330} height={375} alt={t(props.caseName)}></Image>
             </div>
             <CaseInfoBlock price={49} caseNameKey={"example"}></CaseInfoBlock>
         </div>
