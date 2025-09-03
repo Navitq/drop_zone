@@ -100,29 +100,34 @@
     pointer-events: none;
 }
 
-.smItemInfoCnt{
+.smItemInfoCnt, .scmCaseInfoCnt{
     @extend %flex-center;
 }
 
-.smItemInfoBlck {
+.smItemInfoBlck, .scmCaseInfoBlck {
     @extend %flex-center;
     flex-direction: column;
-    margin-top: 7px;
     width: 100%;
 }
-
-.smItemImgCnt {
+.smItemInfoBlck {
+    margin-top: 7px;
+}
+.scmCaseInfoBlck {
+    margin-top: 9px;
+}
+.smItemImgCnt, .scmCaseImgCnt {
     @extend %flex-center;
     position: relative;
     flex: 1;
     width: 100%;
     img {
-        width: 95%;
-        max-width: 100%;
+        // width: 95%;
+        // max-width: 100%;
+        object-fit: contain;
     }
 }
 
-.smItemGunModel, .smItemGunStyle, .smItemGunStyle {
+.smItemGunModel, .smItemGunStyle, .smItemGunStyle, .scmCaseGunModelm, .scmCaseGunStyle {
     font-family: var(--font-headRegular);
     font-size: 14px;
     text-align: center;
@@ -134,16 +139,26 @@
     margin-right: 3px;
 }
 
-.smItemGunStyle, .smItemGunPrice {
+.scmCaseGunModel {
+    margin-right: 3px;
+}
+
+.smItemGunStyle, .smItemGunPrice, .scmCaseGunPrice {
     font-family: var(--font-textRegular);
     font-size: 14px;
-    line-height: 12px;
+    line-height: 14px;
     text-align: center;
 }
 
 .smItemGunPrice {
     margin-bottom: 7px;
     margin-top: 7px;
+}
+
+.scmCaseGunPrice {
+    margin-top: 7px;
+    font-size: 12px;
+    line-height: 12px;
 }
 
 .smItemGunPriceMode {
@@ -157,4 +172,107 @@
 
 .smItemGunModel, .smItemGunStyle {
     font-size: 16px;
+    line-height: 16px;
+}
+
+.scmCaseGunModel, .scmCaseGunStyle {
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.ScmCaseItem {
+    height: 107px;
+    width: 170px;
+    padding: 10px 5px 6px 5px;
+}
+
+.ScmCaseItem {
+    @extend %flex-center;
+    border-width: 1px;
+    border-style: solid;
+    flex-direction: column;
+    border: 0px solid;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    outline: none;
+    justify-content: space-between;
+
+    &.usuallScmCaseItem {
+        background-image: url(/images/blue_item_background.png);
+        &::before {
+            background: linear-gradient(180deg, rgba(0, 81, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+        }
+        .scmCaseGunPrice {
+            color: rgba(184, 208, 255, 1);
+        }
+        .scmCaseGunModel {
+            color: rgba(0, 140, 255, 1);
+        }
+    }
+    &.rareScmCaseItem {
+        background-image: url(/images/violet_item_background.png);
+        &::before {
+            background: linear-gradient(180deg, rgba(123, 0, 255, 0.5) 0%, rgba(56, 56, 56, 0) 107.01%);
+        }
+        .scmCaseGunPrice {
+            color: rgba(228, 203, 255, 1);
+        }
+        .scmCaseGunModel {
+            color: rgba(179, 108, 255, 1)
+        }
+    }
+
+    &.classifiedScmCaseItem {
+        background-image: url(/images/pink_item_background.png);
+        &::before {
+            background: linear-gradient(180deg, rgba(212, 0, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+        }
+        .scmCaseGunPrice {
+            color: rgba(255, 217, 248, 1);
+        }
+        .scmCaseGunModel {
+            color: rgba(255, 56, 229, 1)
+        }
+    }
+
+    &.eliteScmCaseItem {
+        background-image: url(/images/red_item_background.png);
+        &::before {
+            background: linear-gradient(180deg, rgba(221, 36, 38, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
+        }
+        .scmCaseGunPrice {
+            color: rgba(255, 217, 217, 1);
+        }
+        .scmCaseGunModel {
+            color: rgba(255, 80, 80, 1);
+        }
+    }
+    &.epicScmCaseItem {
+        background-image: url(/images/gold_item_background.png);
+        &::before {
+            background: linear-gradient(180deg, rgba(255, 195, 0, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+        }
+        .scmCaseGunPrice {
+            color: rgba(254, 245, 163, 1);
+        }
+        .scmCaseGunModel{
+            color: rgba(255, 195, 0, 1);
+        }
+    }
+}
+
+.ScmCaseItem::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* растянуть на весь блок */
+    border-radius: 10px;
+    padding: 1px; /* толщина рамки */
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    border-collapse: collapse;
+    mask-composite: exclude; /* создаёт рамку с градиентом и скруглёнными углами */
+    pointer-events: none;
 }
