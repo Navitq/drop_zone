@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import style from '@/styles/homePage.module.scss'
-import axios from "axios";
+// import axios from "axios";
 import StandartCase from '@/components/StandartCase';
 
 interface Case {

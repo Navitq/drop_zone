@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useTranslations } from 'next-intl';
 
 import style from '@/styles/contracts.module.scss'
 
@@ -10,7 +9,6 @@ import CtScinsSlots from '@/components/CtScinsSlots';
 import CtStaff from '@/components/CtStaff'
 
 export default function ContractPage(): React.ReactNode {
-  const t = useTranslations('contracts');
   return (
     <div className={style.contracts}>
       <div className={style.contractsTitle}>

@@ -1,7 +1,6 @@
 import React from 'react'
 import style from '@/styles/battles.module.scss'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl';
 
 interface BattleStateCntInt {
     imgPath: string;
@@ -10,7 +9,6 @@ interface BattleStateCntInt {
 }
 
 function BattleStateCnt(props: BattleStateCntInt) {
-    const t = useTranslations("battles")
     return (
         <div className={style.bstCnt}>
             <div className={style.bstStateCnt}>

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import style from '@/styles/battles.module.scss';
+// import style from '@/styles/battles.module.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
