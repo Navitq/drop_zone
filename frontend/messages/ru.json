@@ -87,7 +87,11 @@
     "alt_card_menu": "Изображение стопки кредитных кард",
     "alt_wallet_menu": "Изображение кошелька",
     "alt_cryptocurrency_menu": "Изображение криптовалюта",
-    "alt_sell_skin": "Изображение пистолета"
+    "alt_sell_skin": "Изображение пистолета",
+    "enter_promo": "ввести промокод",
+    "sum_promo": "Сумма",
+    "top_up": "пополнить",
+    "receive_on_balance": "Получить на баланс"
   },
   "faq": {
     "t_item_1":"Я пополнил баланс, а денег на сайте нет. Что делать?",
@@ -205,6 +209,11 @@
     "confirm": "подтвердить",
     "expectation": "ожидание",
     "participants": "участников",
-    "leave_battle": "покинуть сражение"
+    "leave_battle": "покинуть сражение",
+    "players_image_alt": "Изображение игрока",
+    "player_waiting": "Ожидание",
+    "player_waiting_alt": "Изображение часов",
+    "player_ready": "Готов",
+    "player_ready_alt": "Изображение галочки"
   }
 }

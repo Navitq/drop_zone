@@ -19,7 +19,8 @@
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-select": "^5.10.2",
-    "react-tabs": "^6.1.0"
+    "react-tabs": "^6.1.0",
+    "swiper": "^11.2.10"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

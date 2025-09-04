@@ -5,12 +5,19 @@ import { useTranslations } from 'next-intl'
 import SortByCountries from "@/components/SortByCountries"
 import PmwMenuItem from "@/components/PmwMenuItem"
 import PaymentSystemCard from '@/components/PaymentSystemCard'
+import PmwPriceBlock from '@/components/PmwPriceBlock'
+import CaseBtnText from '@/components/CaseBtnText'
 
 import Image from 'next/image'
 
 
 function PaymentModalWrapped(): React.ReactNode {
     const t = useTranslations('header')
+
+    function setCurrentPrice() {
+        return;
+    }
+
     return (
         <div className={style.pmwCnt} onClick={(e) => { e.stopPropagation() }}>
             <div className={style.pmwHeaderBlock}>
@@ -95,7 +102,28 @@ function PaymentModalWrapped(): React.ReactNode {
                 <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
             </div>
             <div className={style.pmwPaymentData}>
-
+                <div className={style.pmwPromoCodeBlock}>
+                    <div className={style.pmwPromoCode}>
+                        <input placeholder={`${t('enter_promo')}`} type="text" className={style.pmwPromoCodeInput} />
+                    </div>
+                </div>
+                <div className={style.pmwPriceBlockChanger}>
+                    <div className={style.pmwSumAmount}>
+                        <input placeholder={`${t('sum_promo')}, Dc`} type="text" className={style.pmwPromoCodeInput} />
+                    </div>
+                    <PmwPriceBlock sum={10} setSum={() => { setCurrentPrice() }}></PmwPriceBlock>
+                    <PmwPriceBlock sum={100} setSum={() => { setCurrentPrice() }}></PmwPriceBlock>
+                    <PmwPriceBlock sum={300} setSum={() => { setCurrentPrice() }}></PmwPriceBlock>
+                    <PmwPriceBlock sum={500} setSum={() => { setCurrentPrice() }}></PmwPriceBlock>
+                    <PmwPriceBlock sum={1000} setSum={() => { setCurrentPrice() }}></PmwPriceBlock>
+                </div>
+                <div className={style.pmwPriceBlockChangerBttn}>
+                    <div className={style.pmwTopUpAmountBlock}>
+                        <div className={style.pmwTopUpTitle}>{`${t('receive_on_balance')}:`}</div>
+                        <div className={style.pmwTopUpAmount}>{`${760} Dc`}</div>
+                    </div>
+                    <CaseBtnText text={t('top_up')}></CaseBtnText>
+                </div>
             </div>
         </div>
     )

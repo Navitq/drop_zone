@@ -75,6 +75,7 @@
     "log_in": "log in",
     "balance_replenishment": "Balance replenishment",
     "rm_divider_alt": "Divider image",
+    "divider_alt": "Divider image",
     "countrie": "Countrie",
     "ruassia_st": "Ruassia",
     "china_st": "China",
@@ -87,7 +88,11 @@
     "alt_card_menu": "Cards set image",
     "alt_wallet_menu": "Wallet image",
     "alt_cryptocurrency_menu": "Cryptocurrency image",
-    "alt_sell_skin": "Gun image"
+    "alt_sell_skin": "Gun image",
+    "enter_promo": "enter promocode",
+    "sum_promo": "Sum",
+    "top_up":"top up",
+    "receive_on_balance": "Receive on balance"
     },
   "faq": {
     "t_item_1": "I topped up my balance, but the money does not appear on the site. What should I do?",
@@ -205,6 +210,11 @@
     "confirm": "confirm",
     "expectation": "waiting for",
     "participants": "participants",
-    "leave_battle": "leave the battle"
+    "leave_battle": "leave the battle",
+    "players_image_alt": "Players avatar",
+    "player_waiting": "Waiting",
+    "player_waiting_alt": "Clock image",
+    "player_ready": "Ready",
+    "player_ready_alt": "Check image"
   }
 }
