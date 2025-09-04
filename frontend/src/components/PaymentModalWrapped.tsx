@@ -4,8 +4,10 @@ import { useTranslations } from 'next-intl'
 
 import SortByCountries from "@/components/SortByCountries"
 import PmwMenuItem from "@/components/PmwMenuItem"
+import PaymentSystemCard from '@/components/PaymentSystemCard'
 
 import Image from 'next/image'
+
 
 function PaymentModalWrapped(): React.ReactNode {
     const t = useTranslations('header')
@@ -29,6 +31,71 @@ function PaymentModalWrapped(): React.ReactNode {
                     <PmwMenuItem text={t('cryptocurrency_menu')} alt={t('alt_cryptocurrency_menu')} imgPath={"/images/cryptocurrency_payment.svg"}></PmwMenuItem>
                     <PmwMenuItem text={t('sell_skin_menu')} alt={t('alt_sell_skin')} imgPath={"/images/gun_payment.svg"}></PmwMenuItem>
                 </div>
+            </div>
+            <div className={style.pmwPaymentsSystem}>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard><PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+                <PaymentSystemCard paymentSystemName="1123123123" imgPath="/images/example_payment_system.png" paymentSystemId="231"></PaymentSystemCard>
+            </div>
+            <div className={style.pmwPaymentData}>
+
             </div>
         </div>
     )

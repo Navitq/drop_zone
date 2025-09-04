@@ -137,21 +137,21 @@
 }
 
 // Chrome, Safari, Edge
-.scmCaseItemsStore::-webkit-scrollbar {
+.scmCaseItemsStore::-webkit-scrollbar, .pmwPaymentsSystem::-webkit-scrollbar {
   width: 5px;
 }
 
-.scmCaseItemsStore::-webkit-scrollbar-track {
+.scmCaseItemsStore::-webkit-scrollbar-track, .pmwPaymentsSystem::-webkit-scrollbar-track {
   background: transparent;
-
 }
 
-.scmCaseItemsStore::-webkit-scrollbar-thumb {
+.scmCaseItemsStore::-webkit-scrollbar-thumb, .pmwPaymentsSystem::-webkit-scrollbar-thumb {
   background: rgba(75, 75, 75, 1);
   border-radius: 10px;
+
 }
 
-.scmCaseItemsStore::-webkit-scrollbar-button {
+.scmCaseItemsStore::-webkit-scrollbar-button, .pmwPaymentsSystem::-webkit-scrollbar-button {
   display: none;  // стрелки убираем
   width: 0;
   height: 0;
@@ -163,7 +163,7 @@
     padding: 45px 70px 45px 55px;
     max-width: 1097px;
     width:  100vw;
-    min-height: 722px;
+    max-height: 722px;
     justify-content: space-between;
     flex: 1;
 }
@@ -190,6 +190,7 @@
 
 .pmwHeaderBlock {
     width: 100%;
+    margin-bottom: 20px;
 }
 
 .pmwSeparatorCnt {
@@ -223,4 +224,63 @@
 .pmwMenuText:hover {
     text-shadow: 0px 0px 15px 0px rgba(255, 255, 255, 1);
 
+}
+
+// .pmwPaymentsSystem {
+//     @extend %flexStart;
+//     flex-wrap: wrap;
+//     justify-content: space-between;
+//     gap: 10px;
+//     height: auto;
+// }
+
+.pmwPaymentsSystem {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); /* колонки растягиваются по ширине контейнера */
+    grid-auto-rows: min-content; /* высота строк под контент */
+    gap: 25px; /* row-gap и column-gap */
+    width: 100%;
+    height: 100vh; /* или 100% родителя */
+    overflow: auto;
+    padding-right: 10px;
+    box-sizing: content-box;
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(75, 75, 75, 1) transparent;
+}
+
+
+.pscCnt {
+    @extend %flexCenter;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 170px;
+    width: 100%;
+    height: 107px;
+    border: 1px solid rgba(255, 195, 0, 0.15);
+    border-radius: 10px;
+    padding: 15px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) -30.35%, rgba(255, 255, 255, 0.15) 119.77%);
+    overflow: hidden; // чтобы контент не вылазил
+    &:hover {
+        box-shadow: 0px 0px 30px 0px rgba(255, 195, 0, 0.5);
+    }
+    .pscImgCnt {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    img {
+        object-fit: contain;
+    }
+}
+
+.pmwPaymentsSystem {
+    margin: 0px -30px 0px -30px;
+    padding: 0px 30px 0px 30px;
+}
+
+.pmwPaymentData {
+    @extend %flexStart;
+    flex-direction: column;
 }
