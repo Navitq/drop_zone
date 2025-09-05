@@ -101,7 +101,7 @@ function BattleRouletteCnt(): React.ReactNode {
   };
 
   return (
-    <div className={`${style.bstCnt} bstCnt`}>
+    <div className={`${style.bstCntRoulet} bstCnt`}>
       <div className={style.swiperCnt}>
         <Swiper
           direction="vertical"
@@ -124,7 +124,7 @@ function BattleRouletteCnt(): React.ReactNode {
         </Swiper>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+      {/* <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
         <button
           onClick={() => {
             const target = Math.floor(Math.random() * slides.length);
@@ -138,7 +138,7 @@ function BattleRouletteCnt(): React.ReactNode {
         <button onClick={() => spinToSlide(slides.length - 1)}>To last</button>
 
         <button onClick={stopAll}>Stop</button>
-      </div>
+      </div> */}
     </div>
   );
 }
