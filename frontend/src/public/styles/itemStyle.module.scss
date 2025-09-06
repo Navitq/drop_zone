@@ -185,8 +185,22 @@
     width: 170px;
     padding: 10px 5px 6px 5px;
 }
+.scmCaseRoulletItem{
 
-.ScmCaseItem {
+    .scmCaseGunModel {
+        height: 20px !important;
+        line-height: 100%;
+        font-size: 20px !important;
+    }
+    .smItemGunStyle {
+        height: 16px !important;
+        padding: 0px !important;
+        line-height: 100%;
+        font-size: 20px !important;
+    }
+}
+
+.ScmCaseItem, .scmCaseRoulletItem {
     @extend %flex-center;
     border-width: 1px;
     border-style: solid;
@@ -278,16 +292,22 @@
 }
 
 
-:global(.bstCnt) .ScmCaseItem{
+:global(.bstCnt) .ScmCaseItem,
+:global(.bcmwCnt) .ScmCaseItem{
     transform: scale(1); // пример — увеличить активный слайд
     transition: transform 0.1s ease, opacity 0.1s ease;
     filter: blur(3px);              // # new — размытие
 }
 
-:global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem{
+:global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem,
+:global(.bcmwCnt) :global(.swiper-slide-active) .ScmCaseItem {
     transform: scale(1.177); // пример — увеличить активный слайд
     opacity: 1;
     transition: transform 0.1s ease, opacity 0.1s ease;
     filter: blur(0px);
     box-shadow: 0px 0px 50px 0px rgba(255, 195, 0, 0.25);
+}
+:global(.bcmwCnt) :global(.swiper-slide-active) .ScmCaseItem {
+    box-shadow: 0px 0px 50px 0px rgba(255, 195, 0, 0.05);
+
 }

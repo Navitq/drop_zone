@@ -16,7 +16,7 @@ interface GunData {
     type: "usuall" | "rare" | "elite" | "epic" | "classified"
 }
 
-function CtSlot(props: { data: GunData, index: number }): React.ReactNode {
+function CtSlot(props: { data?: GunData, index: number }): React.ReactNode {
 
     const t = useTranslations('contracts');
 

@@ -5,6 +5,7 @@ import LogoCnt from '@/components/LogoCnt'
 import NavigatianMenu from '@/components/NavigatianMenu'
 import HeaderUserInfo from '@/components/HeaderUserInfo'
 import PaymentModal from '@/components/PaymentModal'
+import BuyCaseModal from '@/components/BuyCaseModal'
 import Link from 'next/link'
 import { FRONTEND_PATHS } from '@/utilites/urls'
 
@@ -28,6 +29,7 @@ function Header() {
 
             </div>
             <PaymentModal></PaymentModal>
+            <BuyCaseModal></BuyCaseModal>
         </header>
     )
 }

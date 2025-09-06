@@ -24,12 +24,18 @@ interface PaymentInt {
     isVisible: boolean;
 }
 
+interface rulletCaseModalInt {
+    isVisible: boolean;
+    caseId: string;
+}
+
 interface ModalState {
     rulesBattleModal: BattlesRules,
     createBattleModal: BattlesRules,
     userModal: BattlesRules,
     stCaseModal: StCaseInt,
     paymentModal: PaymentInt,
+    rulletCaseModal: rulletCaseModalInt,
 }
 
 const initialState: ModalState = {
@@ -50,6 +56,10 @@ const initialState: ModalState = {
     },
     paymentModal: {
         isVisible: false
+    },
+    rulletCaseModal: {
+        isVisible: true,
+        caseId: ""
     }
 };
 
@@ -92,12 +102,19 @@ export const modalSlice = createSlice({
         closePaymentModal: (state) => {
             state.paymentModal.isVisible = false;
         },
+        showRulletCaseModal: (state, actions: PayloadAction<string>) => {
+            state.rulletCaseModal.isVisible = true;
 
+        },
+        closeRulletCaseModal: (state) => {
+            state.rulletCaseModal.isVisible = false;
+            state.rulletCaseModal.caseId = ""
+        }
     }
 });
 
 
 
-export const { showPaymentModal, closePaymentModal, closeStCaseModal, showStCaseModal, closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
+export const { showRulletCaseModal, closeRulletCaseModal, showPaymentModal, closePaymentModal, closeStCaseModal, showStCaseModal, closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
 
 export default modalSlice.reducer;

@@ -8,7 +8,7 @@ import CaseInfoBlock from '@/components/CaseInfoBlock'
 import { useTranslations } from 'next-intl'
 import { useAppDispatch } from '@/lib/hooks'
 
-import { showStCaseModal } from '@/redux/modalReducer'
+import { showStCaseModal, showRulletCaseModal } from '@/redux/modalReducer'
 
 interface caseInt {
     caseName: string,
@@ -18,7 +18,12 @@ interface caseInt {
 
 function StandartCase(props: caseInt): React.ReactNode {
     const t = useTranslations("cases")
+
     const dispatch = useAppDispatch()
+
+    function openRulletCase() {
+        dispatch(showRulletCaseModal(props.caseId))
+    }
 
     function openCaseData(data: { caseId: string, caseName: string }) {
         dispatch(showStCaseModal(data))
@@ -29,7 +34,7 @@ function StandartCase(props: caseInt): React.ReactNode {
             <div className={style.stCaseImgCnt} onClick={() => { openCaseData({ caseId: props.caseId, caseName: props.caseName }) }}>
                 <Image src={props.imgUrl} width={330} height={375} alt={t(props.caseName)}></Image>
             </div>
-            <CaseInfoBlock price={49} caseNameKey={"example"}></CaseInfoBlock>
+            <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={49} caseNameKey={"example"}></CaseInfoBlock>
         </div>
     )
 }

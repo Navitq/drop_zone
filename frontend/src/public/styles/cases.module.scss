@@ -100,6 +100,7 @@
   transition: background-color 0.3s ease, transform 0.3s ease;
   border: none;
   white-space: nowrap;
+  color: rgba(0, 0, 0, 1);
   &:hover {
     background-color: rgba(255, 163, 36, 1);
     color: rgba(255, 255, 255, 1);
@@ -149,5 +150,3 @@
         background-color: rgba(174, 174, 174, 1);
     }
 }
-
-

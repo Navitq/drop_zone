@@ -47,7 +47,11 @@
     "md_faq": "FAQ",
     "md_support": "Support",
     "md_exit": "Log out",
-    "case_modal": "Case"
+    "case_modal": "Case",
+    "top_arrow_choice_alt": "Win direction arrow (downward direction)",
+    "down_arrow_choice_alt": "Win direction arrow (upward direction)",
+    "take": "take",
+    "sell": "sell"
   },
     "cases":{
       "example":"Example case"

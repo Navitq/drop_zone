@@ -33,6 +33,7 @@
     box-shadow: 0px 0px 135px 0px rgba(255, 195, 0, 0.25);
     position: relative;
     border-radius: 10px;
+    overflow: hidden;
 }
 
 .modalCntClose {
@@ -376,4 +377,133 @@
     font-size: 22px;
     line-height: 120%;
     color: rgba(255, 195, 0, 1);
+}
+
+.bcmRulletCnt {
+    .modalCnt {
+        background: none;
+        box-shadow: none;
+    }
+    .modalCntClose {
+        display: none;
+    }
+}
+
+.bcmwCnt {
+    @extend %flexCenter;
+    flex-direction: column;
+    max-width: 1614px;
+    width: 100%;
+    overflow: hidden;      // обрезаем лишнее
+    padding: 0px 30px;
+}
+
+.bcmwSwiperCnt {
+    width: 100%;
+    height: auto;          // авто-высота
+    overflow: hidden;
+}
+
+.bcmwSwiperSlide {
+    @extend %flexCenter;
+    flex: 0 0 auto;
+    height: 150px !important;
+    width: 170px !important;  // фиксированная ширина, Swiper подстраивается под auto
+    transition: transform 0.3s ease;
+}
+
+.bcmwSwiperSlideContentCnt {
+    @extend %flexCenter;
+    height: 100%;
+}
+
+.bcmwSwiperCnt {
+    overflow: hidden;
+}
+
+
+.swiperCnt {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+}
+
+.bcmwCntRoulet {
+    @extend %flexStart;
+    width: 100%;
+    max-height: 325px;
+    margin: 0 auto;
+}
+
+.bcmwSliderSwiper {
+    width: 100%;
+    height: 100%;
+}
+
+// :global(.swiper-slide) {
+//   flex: 0 0 auto;
+//   width: 170px;
+//   transition: transform 0.3s ease, margin 0.3s ease;
+// }
+
+:global(.swiper-slide-active) {
+    width: 230px !important;
+}
+
+// :global(.swiper-slide-prev),
+// :global(.swiper-slide-next) {
+//   margin-left: 10px;   // отступ от центрального слайда
+//   margin-right: 10px;
+//   transform: scale(1.1);
+// }
+
+.bcmwCaseData {
+    @extend %flexCenter;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.bcmwCaseName {
+    font-family: var(--font-headBold);
+    font-size: 30px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+    margin-bottom: 25px;
+}
+
+.bcmwCaseArrow {
+    width: 150px;
+    position: relative;
+    height: 20px;
+    img {
+        object-fit: contain;
+    }
+}
+
+.bcmwCaseData {
+    margin-bottom: 17px;
+}
+
+.bcmwCaseArrowCnt {
+    margin-top: 17px;
+    margin-bottom: 15px;
+}
+
+.wonGunInfo {
+    @extend %flexCenter ;
+    flex-direction: row !important;
+    background-image: none !important;
+    border: none !important;
+    border-radius: 0px !important;
+    height: auto !important;
+    margin-bottom: 30px;
+}
+
+.wonGunBttn {
+     @extend %flexCenter ;
+}
+
+.wonGunBttnTake {
+    margin-right: 26px;
 }

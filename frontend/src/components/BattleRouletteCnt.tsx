@@ -8,16 +8,17 @@ import ScmCaseItem from '@/components/ScmCaseItem'
 
 import 'swiper/css';
 
+
 function BattleRouletteCnt(): React.ReactNode {
 
   const swiperRef = useRef<any>(null);
   const isSpinningRef = useRef(false);            // быстрый флаг для логики
   const [spinning, setSpinning] = useState(false); // чтобы обновлять props (allowTouchMove)
   const timeoutsRef = useRef<number[]>([]);
-  const slides = Array.from({ length: 10 }, () => ({
+  const slides = Array.from({ length: 10 }, (value, index) => ({
     imgPath: "/images/example_gun_blue.png",
     gunModel: "AK-47",
-    type: "usuall",
+    type: index % 5 === 0 ? "usuall" : index % 5 === 1 ? "rare" : index % 5 === 2 ? "elite" : index % 5 === 3 ? "epic" : "classified",
     gunStyle: "LIZARD PIZARD",
     gunPrice: 58.48,
   }));
