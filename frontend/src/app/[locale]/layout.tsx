@@ -6,8 +6,9 @@ import Footer from '@/components/Footer';
 import { headBold, headRegular, textRegular, textBold } from '@/fonts/fonts'
 import Header from '@/components/Header';
 import BackGround from '@/components/BackGround';
-
+import { cookies } from 'next/headers'
 import StoreProvider from '@/app/StoreProvider'
+import { getUser } from '@/lib/getUser';
 
 export default async function LocaleLayout({
   children,
@@ -24,18 +25,23 @@ export default async function LocaleLayout({
     textBold.variable
   ].join(' ')
 
-  // Ensure that the incoming `locale` is valid
+
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
+  const cookieStore = cookies()
+  const cookieHeader = cookieStore.toString()
+
+  const user = await getUser(cookieHeader)
+  const preloadedState = user ? {  userData: user, isAuth: true, isLoading: false } : {}
 
   return (
     <html lang={locale} className={fontsClass}>
 
       <body>
-        <StoreProvider>
+        <StoreProvider preloadedState={preloadedState}>
           <div className='global-container'>
             <NextIntlClientProvider>
               <BackGround></BackGround>

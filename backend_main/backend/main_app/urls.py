@@ -9,8 +9,8 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     # path("", views.index, name="TokenObtainPairView"),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('me/', views.me_view,
+         name='me_view'),
     path('oauth2/google/login/', views.google_login_view,
          name='google_oauth2_login'),
     path('oauth2/google/callback/', views.google_callback_view,

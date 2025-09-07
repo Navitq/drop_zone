@@ -5,14 +5,15 @@ from .redis_models import OAuthState
 from asgiref.sync import sync_to_async
 import secrets
 from django.http import JsonResponse, HttpResponseRedirect
-from .redis_models import OAuthState, OAuthCodeVerifier  # импорт модели
+from .redis_models import OAuthState  # импорт модели
 import aiohttp
 from .models import SocialAccount, User
 import json
 import hashlib
 import base64
 from urllib.parse import quote
-import requests
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -140,6 +141,14 @@ def create_state_token() -> str:
     return state
 
 
+def me_view(request):
+    if not request.token_data:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    print(request.token_data, 11111111111112)
+    return JsonResponse(request.token_data)
+
+
+# @api_view(['GET'])
 def vk_login_view(request):
     state = create_state_token()
     data = create_code_verified()
@@ -156,6 +165,7 @@ def vk_login_view(request):
     pass
 
 
+# @api_view(['GET'])
 def steam_login_view(request):
     """Редирект пользователя на Steam для авторизации"""
 
@@ -172,6 +182,7 @@ def steam_login_view(request):
     return JsonResponse({"auth_url": steam_openid_url})
 
 
+# @api_view(['GET'])
 def google_login_view(request):
     # Генерация уникального state
     state = create_state_token()
@@ -193,10 +204,12 @@ def google_login_view(request):
     return JsonResponse({"auth_url": google_auth_url})
 
 
+# @api_view(['GET'])
 async def vk_callback_view(request):
     pass
 
 
+# @api_view(['GET'])
 async def steam_callback_view(request):
     """Асинхронная обработка Steam login с JWT и cookie"""
     data = request.GET.copy()
@@ -274,6 +287,7 @@ async def steam_callback_view(request):
     return response
 
 
+# @api_view(['GET'])
 async def google_callback_view(request):
     state = request.GET.get("state")
     code = request.GET.get("code")
@@ -289,6 +303,7 @@ async def google_callback_view(request):
         return JsonResponse({"error": "Invalid or expired state"}, status=407)
     google_id = user_info.get("id")
     email = user_info.get("email")
+    name = user_info.get("name")
     verified_email = user_info.get("verified_email")
     first_name = user_info.get("given_name", "")
     last_name = user_info.get("family_name", "")
@@ -322,7 +337,7 @@ async def google_callback_view(request):
         print(15555555555555555555555555555555555555555)
         # Создаём нового пользователя
         user = await sync_to_async(lambda: User.objects.create_user(
-            username=email or f"google_{google_id}",
+            username=name or email or f"google_{google_id}",
             email=email,
             first_name=first_name,
             last_name=last_name,
@@ -367,17 +382,8 @@ async def google_callback_view(request):
     # --- Разовый заголовок / данные пользователя ---
     # Можно передать через JSON в GET параметре или через заголовок, пример через заголовок:
     # Устанавливаем custom заголовок с info пользователя (разовый)
-    user_data = {
-        "id": str(user.id),
-        "username": user.username,
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "avatar_url": user.avatar_url
-    }
 
     # Django HttpResponse не позволяет напрямую ставить dict в заголовок, поэтому можно сериализовать JSON
-    response["X-User-Data"] = json.dumps(user_data)  # разовый заголовок
 
     return response
 

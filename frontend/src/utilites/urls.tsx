@@ -25,7 +25,8 @@ export const BACKEND_PATHS: Urls = {
     vkAuth: '/oauth2/vk/login/',
     googleAuth: `/oauth2/google/login/`,
     steamAuth: `/oauth2/steam/login/`,
-    refreshTocken: '/token/refresh/'
+    refreshTocken: '/token/refresh/',
+    me: '/me/',
 }
 
 
