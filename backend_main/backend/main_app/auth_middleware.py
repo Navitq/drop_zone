@@ -1,11 +1,8 @@
 import json
 from django.http import JsonResponse
-from django.conf import settings
-from django.utils.deprecation import MiddlewareMixin
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.exceptions import TokenError
 
 User = get_user_model()
 
@@ -23,16 +20,18 @@ class JWTAuthenticationMiddleware:
         ]
 
     def __call__(self, request):
+        if request.path in self.exclude_paths:
+            return self.get_response(request)
         access_token = request.COOKIES.get("access_token")
         refresh_token = request.COOKIES.get("refresh_token")
 
         request.user = None
         request.token_data = None
+        request._clear_cookies = False  # флаг очистки
 
         if access_token:
             try:
                 token = AccessToken(access_token)
-                print(token, 123141231)
                 request.token_data = {
                     "id": token.get("id"),
                     "username": token.get("username"),
@@ -49,22 +48,55 @@ class JWTAuthenticationMiddleware:
                         new_access["avatar"] = refresh.get("avatar")
                         new_access["provider"] = refresh.get("provider")
                         request._new_access_token = str(new_access)
+                        request.token_data = {
+                            "id": refresh.get("id"),
+                            "username": refresh.get("username"),
+                            "avatar": refresh.get("avatar"),
+                            "provider": refresh.get("provider"),
+                        }
                     except TokenError:
-                        return JsonResponse({"detail": "Unauthorized"}, status=401)
+                        request._clear_cookies = True
                 else:
-                    return JsonResponse({"detail": "Unauthorized"}, status=401)
+                    request._clear_cookies = True
+        else:
+            if refresh_token:
+                try:
+                    refresh = RefreshToken(refresh_token)
+                    new_access = AccessToken()
+                    new_access["id"] = refresh.get("id")
+                    new_access["username"] = refresh.get("username")
+                    new_access["avatar"] = refresh.get("avatar")
+                    new_access["provider"] = refresh.get("provider")
+                    request._new_access_token = str(new_access)
+                    request.token_data = {
+                        "id": refresh.get("id"),
+                        "username": refresh.get("username"),
+                        "avatar": refresh.get("avatar"),
+                        "provider": refresh.get("provider"),
+                    }
+                except TokenError:
+                    request._clear_cookies = True
+            else:
+                request._clear_cookies = True
+
+        if request._clear_cookies:
+            response = JsonResponse({"detail": "Unauthorized"}, status=401)
+            response.delete_cookie("access_token")
+            response.delete_cookie("refresh_token")
+            return response
 
         response = self.get_response(request)
 
+        # обновляем access если он был пересоздан
         if hasattr(request, "_new_access_token"):
+            response.delete_cookie("access_token")
             response.set_cookie(
-                "access",
+                "access_token",
                 request._new_access_token,
                 httponly=True,
                 secure=True,
                 samesite="Lax",
                 max_age=5 * 60,
             )
-        if request.token_data:
-            response["X-User-Data"] = json.dumps(request.token_data)
+
         return response

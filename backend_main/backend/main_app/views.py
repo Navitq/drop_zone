@@ -14,6 +14,7 @@ import base64
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .serializers import MyTokenObtainPairSerializer, MyRefreshToken
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -248,7 +249,7 @@ async def steam_callback_view(request):
     # Логиним пользователя
 
     # Генерируем JWT
-    refresh = await sync_to_async(RefreshToken.for_user)(user)
+    refresh = MyRefreshToken.for_user(user, social_account)
     access_token = str(refresh.access_token)
 
     # Формируем JSON с данными пользователя
@@ -345,7 +346,7 @@ async def google_callback_view(request):
         ))()
 
         # Создаём социальный аккаунт
-        await sync_to_async(lambda: SocialAccount.objects.create(
+        social_account = await sync_to_async(lambda: SocialAccount.objects.create(
             user=user,
             provider='google',
             provider_user_id=google_id,
@@ -354,7 +355,7 @@ async def google_callback_view(request):
             extra_data=user_info
         ))()
     # автоматически использует кастомный сериализатор
-    refresh = RefreshToken.for_user(user)
+    refresh = MyRefreshToken.for_user(user, social_account)
     access_token = str(refresh.access_token)
 
     response = HttpResponseRedirect(REDIRECT_OAUTH_CLIENT_PATH)

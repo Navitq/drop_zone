@@ -31,11 +31,13 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const cookieStore = cookies()
-  const cookieHeader = cookieStore.toString()
+  const cookieStore = await cookies()
+  const allCookies = cookieStore.getAll(); // массив всех кук
+
+  const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join("; ");
 
   const user = await getUser(cookieHeader)
-  const preloadedState = user ? {  userData: user, isAuth: true, isLoading: false } : {}
+  const preloadedState = user ? { userData: user, isAuth: true, isLoading: false } : {}
 
   return (
     <html lang={locale} className={fontsClass}>
