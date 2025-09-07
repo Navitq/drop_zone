@@ -111,3 +111,32 @@
 .itemBlock:last-child {
     margin-bottom: 0px;
 }
+
+
+@media (max-width: 1024px){
+    .faqTitleCnt {
+        margin-bottom: 16px;
+    }
+    .headBlock[data-state="open"]::after {
+        width: 22px;
+        height: 14px;
+    }
+
+    .headBlock {
+        padding: 16px 20px;
+        min-height: 69px;
+    }
+
+    .headBlock[data-state="closed"]::after {
+        width: 22px;
+        height: 17px;
+    }
+
+    .headCnt {
+        font-size: 16px;
+    }
+    .txtBlock {
+        padding: 17px 20px;
+        font-size: 14px;
+    }
+}

@@ -58,7 +58,7 @@ const initialState: ModalState = {
         isVisible: false
     },
     rulletCaseModal: {
-        isVisible: true,
+        isVisible: false,
         caseId: ""
     }
 };

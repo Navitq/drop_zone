@@ -14,3 +14,9 @@
 .sortCnt {
     background-color: black !important;
 }
+
+@media (max-width: 1024px){
+    .blockTitle {
+        font-size: 20px;
+    }
+}
