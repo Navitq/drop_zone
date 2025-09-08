@@ -335,7 +335,6 @@ async def google_callback_view(request):
         await sync_to_async(user.save)()
 
     except SocialAccount.DoesNotExist:
-        print(15555555555555555555555555555555555555555)
         # Создаём нового пользователя
         user = await sync_to_async(lambda: User.objects.create_user(
             username=name or email or f"google_{google_id}",

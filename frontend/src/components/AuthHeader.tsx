@@ -13,8 +13,10 @@ import { closeUserModal, showUserModal, showPaymentModal } from '@/redux/modalRe
 function AuthHeader(): React.ReactNode {
     const t = useTranslations('header');
     const dispatch = useAppDispatch()
-    const isVisible = useAppSelector(state => state.modal.userModal.isVisible)
-    console.log(isVisible)
+    const { isVisible } = useAppSelector(state => state.modal.userModal)
+    const avatar = useAppSelector(state => state.user.userData.avatar)
+
+    console.log(avatar)
 
     function handleOutsideClick() {
         document.removeEventListener('click', handleOutsideClick);
@@ -44,7 +46,7 @@ function AuthHeader(): React.ReactNode {
             </div>
             <div className={style.userIconBlock} onClick={() => { showModal() }}>
                 <div className={style.userIconCnt}>
-                    <Image priority={true} className={style.userIcon} src="/images/user_mock.jpg" height={20} width={20} alt={t("user_icon")}></Image>
+                    <Image priority={true} className={style.userIcon} src={avatar || "/images/user_mock.jpg"} height={20} width={20} alt={t("user_icon")}></Image>
                 </div>
                 <AnimatePresence initial={false} mode="wait">
                     {
