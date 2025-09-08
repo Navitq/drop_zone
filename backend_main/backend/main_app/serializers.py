@@ -10,6 +10,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['id'] = user.id
         token['username'] = user.username
         token['avatar'] = user.avatar_url
+        token['token_version'] = user.token_version
         if social_account:
             token['provider'] = social_account.provider
         return token
@@ -22,6 +23,7 @@ class MyRefreshToken(RefreshToken):
         token['id'] = str(user.id)  # ⚡ UUID → string
         token['username'] = user.username
         token['avatar'] = getattr(user, "avatar_url", "")
+        token['token_version'] = user.token_version
         if social_account:
             token['provider'] = social_account.provider
         return token

@@ -1,9 +1,11 @@
+'use client'
 import React from 'react'
 
 import style from '@/styles/profile.module.scss'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { useAppSelector } from '@/lib/hooks'
 
 interface PrOwnerInfoInt {
     imgPath?: string,
@@ -15,17 +17,18 @@ interface PrOwnerInfoInt {
 
 function PrOwnerInfo(props: PrOwnerInfoInt): React.ReactNode {
     const t = useTranslations('profile');
+    const { avatar, username, id, provider } = useAppSelector(state => state.user.userData)
     return (
         <div className={style.prOwnerInfo}>
             <div className={style.prOwnerImageCnt}>
-                <Image className={style.prImage} alt={`${t('user_image')} ${props.nickName}`} src={props.imgPath || '/images/'} width={168} height={168} ></Image>
+                <Image className={style.prImage} alt={`${t('user_image')} ${props.nickName}`} src={avatar || props.imgPath || '/images/'} width={168} height={168} ></Image>
             </div>
             <div className={style.prOwnerDataBlock}>
                 <div className={style.prOwnerDataCnt}>
                     <div className={style.prNicknameAccountCnt}>
-                        <div className={style.prNickname}>{props.nickName}</div>
+                        <div className={style.prNickname}>{username || props.nickName}</div>
                         <Link href={props.link} target="_blank" rel="noopener noreferrer">
-                            <div className={style.prAccountType}>{`${props.accountType}-${t('account')}`}</div>
+                            <div className={style.prAccountType}>{`${provider || props.accountType}-${t('account')}`}</div>
                         </Link>
                     </div>
                     <div className={style.prAccountBalanceCnt}>

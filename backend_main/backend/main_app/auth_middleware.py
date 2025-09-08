@@ -47,6 +47,8 @@ class JWTAuthenticationMiddleware:
                         new_access["username"] = refresh.get("username")
                         new_access["avatar"] = refresh.get("avatar")
                         new_access["provider"] = refresh.get("provider")
+                        new_access["token_version"] = refresh.get(
+                            "token_version")
                         request._new_access_token = str(new_access)
                         request.token_data = {
                             "id": refresh.get("id"),
@@ -67,6 +69,8 @@ class JWTAuthenticationMiddleware:
                     new_access["username"] = refresh.get("username")
                     new_access["avatar"] = refresh.get("avatar")
                     new_access["provider"] = refresh.get("provider")
+                    new_access["token_version"] = refresh.get(
+                        "token_version")
                     request._new_access_token = str(new_access)
                     request.token_data = {
                         "id": refresh.get("id"),
