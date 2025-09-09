@@ -1,4 +1,4 @@
-from redis_om import HashModel,  Field, get_redis_connection, Migrator
+from redis_om import HashModel, JsonModel,  Field, get_redis_connection, Migrator
 # Подключение к Redis
 redis = get_redis_connection(
     host="localhost",
@@ -23,6 +23,34 @@ class OAuthCodeVerifier(HashModel):
     class Meta:
         database = redis
         global_ttl = 300
+
+
+class CaseRedisStandart(JsonModel):
+    id: str = Field(index=True)
+    name: dict
+    icon_url: str
+    items: list[dict]
+
+    class Meta:
+        global_key_prefix = "items"
+        model_key_prefix = "caseStandart"
+        database = redis
+
+    def get_name(self, lang="ru"):
+        return self.name.get(lang, next(iter(self.name.values())))
+
+
+class ItemRedisStandart(JsonModel):
+    id: str = Field(index=True)
+    item_model: str
+    price: int
+    icon_url: str
+    rarity: str
+
+    class Meta:
+        global_key_prefix = "items"
+        model_key_prefix = "itemStandart"
+        database = redis
 
 
 Migrator().run()

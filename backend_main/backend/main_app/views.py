@@ -14,7 +14,7 @@ import base64
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import MyTokenObtainPairSerializer, MyRefreshToken
+from .serializers import MyRefreshToken
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
