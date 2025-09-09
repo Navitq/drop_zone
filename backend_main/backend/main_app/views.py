@@ -288,7 +288,16 @@ async def steam_callback_view(request):
     return response
 
 
+def get_season_cases(request):
+    pass
+
+
+def get_standart_cases(request):
+    pass
+
 # @api_view(['GET'])
+
+
 async def google_callback_view(request):
     state = request.GET.get("state")
     code = request.GET.get("code")

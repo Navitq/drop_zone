@@ -125,21 +125,21 @@ function BattleRouletteCnt(): React.ReactNode {
         </Swiper>
       </div>
 
-      {/* <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
         <button
           onClick={() => {
             const target = Math.floor(Math.random() * slides.length);
             spinToSlide(target);
           }}
         >
-          Spin random
+          Spin
         </button>
 
-        <button onClick={() => spinToSlide(0)}>To slide 1</button>
-        <button onClick={() => spinToSlide(slides.length - 1)}>To last</button>
+        {/* <button onClick={() => spinToSlide(0)}>To slide 1</button>
+        <button onClick={() => spinToSlide(slides.length - 1)}>To last</button> */}
 
-        <button onClick={stopAll}>Stop</button>
-      </div> */}
+        {/* <button onClick={stopAll}>Stop</button> */}
+      </div>
     </div>
   );
 }

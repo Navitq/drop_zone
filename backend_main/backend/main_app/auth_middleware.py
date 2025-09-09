@@ -16,10 +16,12 @@ class JWTAuthenticationMiddleware:
             "/api/oauth2/vk/login/",
             "/api/oauth2/google/callback/",
             "/api/oauth2/steam/callback/",
-            "/api/oauth2/vk/callback/",
+            "/api/oauth2/vk/callback/"
         ]
 
     def __call__(self, request):
+        if request.path.startswith("/api/admin/"):
+            return self.get_response(request)
         if request.path in self.exclude_paths:
             return self.get_response(request)
         access_token = request.COOKIES.get("access_token")
