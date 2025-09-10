@@ -1,6 +1,7 @@
 // lib/getUser.ts
 import axios from "axios";
 import { BACKEND_PATHS } from "@/utilites/urls";
+
 export async function getUser(cookieHeader?: string) {
   if (!cookieHeader) return null; // --- нет куки, сразу возвращаем null
 

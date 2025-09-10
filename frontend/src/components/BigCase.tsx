@@ -18,7 +18,7 @@ interface caseInt {
 function BigCase(props: caseInt): React.ReactNode {
     const t = useTranslations("cases")
     const dispatch = useAppDispatch()
-    
+
     function openRulletCase() {
         dispatch(showRulletCaseModal(props.caseId))
     }
@@ -26,7 +26,7 @@ function BigCase(props: caseInt): React.ReactNode {
     return (
         <div className={style.bgCaseCnt}>
             <div className={style.bgCaseImgCnt} onClick={() => { dispatch(showStCaseModal({ caseId: props.caseId, caseName: props.caseName })) }}>
-                <Image src={props.imgUrl} width={350} height={310} alt={t(props.caseName)}></Image>
+                <Image src={props.imgUrl} width={350} height={310} alt={props.caseName}></Image>
             </div>
             <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={49} caseNameKey={"example"}></CaseInfoBlock>
         </div>

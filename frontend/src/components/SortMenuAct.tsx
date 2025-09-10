@@ -23,9 +23,13 @@ const DropdownIndicator = (props: DropdownIndicatorProps) => {
     return (
         <components.DropdownIndicator {...props}>
             {menuIsOpen ? (
-                <Image src="/images/arrow_down.svg" width={16} height={16} alt="arrow icon" style={{ width: 16, height: 16 }} />
+                <div className={'sortArrowCnt'}>
+                    <Image src="/images/arrow_down.svg" fill alt="arrow icon" />
+                </div>
             ) : (
-                <Image src="/images/arrow_up.svg" width={16} height={16} alt="arrow icon" style={{ width: 16, height: 16 }} />
+                <div className={'sortArrowCnt'}>
+                    <Image src="/images/arrow_up.svg" fill alt="arrow icon" />
+                </div>
             )}
         </components.DropdownIndicator>
     );

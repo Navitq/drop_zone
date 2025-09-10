@@ -18,6 +18,6 @@ urlpatterns = [
     path('oauth2/steam/login/', views.steam_login_view, name='vk_oauth2_login'),
     path('oauth2/steam/callback/',
          views.steam_callback_view, name='vk_oauth2_callback'),
-    path('get-season-cases/', views.get_season_cases, name='get_season_cases'),
-    path('get-standart-cases/', views.get_standart_cases, name='get_season_cases'),
+    path('cases/<str:case_type>/',
+         views.get_cases_by_type, name='get_cases_by_type')
 ]

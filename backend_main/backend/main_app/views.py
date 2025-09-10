@@ -15,7 +15,7 @@ from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-
+from .redis_models import CaseRedisStandart
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_TOKEN_URL = os.getenv("GOOGLE_TOKEN_URL")
@@ -288,14 +288,20 @@ async def steam_callback_view(request):
     return response
 
 
-def get_season_cases(request):
-    pass
-
-
-def get_standart_cases(request):
-    pass
-
-# @api_view(['GET'])
+async def get_cases_by_type(request, case_type: str):
+    """
+    Возвращает все кейсы определенного типа из Redis.
+    URL: /api/cases/<case_type>/
+    """
+    try:
+        print(case_type)
+        all_cases = await sync_to_async(lambda: list(CaseRedisStandart.find()))()
+        filtered_cases = [
+            case.model_dump() for case in all_cases if case.type == case_type
+        ]
+        return JsonResponse(filtered_cases, safe=False)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 async def google_callback_view(request):

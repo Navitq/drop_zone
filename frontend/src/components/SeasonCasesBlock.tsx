@@ -4,6 +4,7 @@ import TitleHomePage from '@/components/TitleHomePage'
 import SeasonCases from '@/components/SeasonCases'
 
 function SeasonCasesBlock(): React.ReactNode {
+    
     return (
         <div className={`${style.actTitleCnt} ${style.actTitleSeasonCnt}`}>
             <div className={style.actTitleSeasonTxt}>

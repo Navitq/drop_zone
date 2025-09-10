@@ -13,12 +13,24 @@
     flex-direction: column;
 }
 
+// .caseShelfCnt {
+//     @extend %flexCenter;
+//     justify-content: space-around;
+//     flex-wrap: wrap;
+//     row-gap: 92px;
+// }
+
 .caseShelfCnt {
-    @extend %flexCenter;
-    justify-content: space-around;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); /* колонки растягиваются по ширине контейнера */
+    grid-auto-rows: min-content; /* высота строк под контент */
+    gap: 15px; /* row-gap и column-gap */
     row-gap: 92px;
+    width: 100%;
+    height: auto; /* или 100% родителя */
+    /* выравниваем элементы к левому краю */
 }
+
 
 .actTitleCnt {
     @extend %flexCenter;
@@ -208,6 +220,18 @@
     padding: 0px 25px;
 }
 
+
+// .bgCaseBlock {
+//     display: grid;
+//     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); /* колонки растягиваются по ширине контейнера */
+//     grid-auto-rows: min-content; /* высота строк под контент */
+//     gap: 0px; /* row-gap и column-gap */
+//     row-gap: 92px;
+//     width: 100%;
+//     height: auto; /* или 100% родителя */
+//     /* выравниваем элементы к левому краю */
+// }
+
 .mainContentSize {
     flex: 1;
     display: flex;
@@ -243,4 +267,69 @@
         color: rgba(255, 255, 255, 1);
     }
 
+}
+
+
+@media (max-width: 1720px){
+
+    .bgCaseBlock {
+        margin-top: 35px;
+        padding: 0px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); /* колонки растягиваются по ширине контейнера */
+        grid-auto-rows: min-content; /* высота строк под контент */
+        gap: 0px; /* row-gap и column-gap */
+        row-gap: 42px;
+        width: 100%;
+        height: auto; /* или 100% родителя */
+        /* выравниваем элементы к левому краю */
+    }
+    .bgCaseBlock {
+
+    }
+}
+
+
+@media (max-width: 1439px) {
+
+    .mainContentSize {
+        padding: 0px 13px;
+    }
+    .caseShelfCnt {
+        row-gap: 50px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .actTitleSeasonCnt {
+        margin-top: 0px;
+    }
+    .actTitleCnt {
+        margin-bottom: 30px;
+        margin-top: 50px;
+    }
+    .caseShelfCnt, .bgCaseBlock {
+        grid-template-columns: repeat(auto-fill, minmax(249px, 1fr)); /* колонки растягиваются по ширине контейнера */
+        gap: 15px; /* row-gap и column-gap */
+        row-gap: 35px;
+        height: auto; /* или 100% родителя */
+    }
+}
+
+
+@media (max-width: 768px) {
+    .actTitleCnt {
+        margin-bottom: 10px;
+        margin-top: 40px;
+    }
+    .caseShelfCnt, .bgCaseBlock {
+        grid-template-columns: repeat(auto-fill, minmax(166px, 1fr)); /* колонки растягиваются по ширине контейнера */
+        gap: 5px; /* row-gap и column-gap */
+        row-gap: 22px;
+        height: auto; /* или 100% родителя */
+        margin-top: 20px;
+    }
+    .homePage {
+        margin-top: 27px;
+    }
 }

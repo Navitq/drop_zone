@@ -35,7 +35,7 @@ function ActualCases(): React.ReactNode {
                 {/* <SortMenuAct typeKey={'sort'} pointsKey={['popularity', 'price_up', 'price_down', 'name']}></SortMenuAct> */}
                 <SortMenuAct options={options}></SortMenuAct>
             </div>
-            <CaseShelf caseUrl={BACKEND_PATHS.getActualCases}></CaseShelf>
+            <CaseShelf caseUrl={'standart_case'}></CaseShelf>
         </div>
     )
 }

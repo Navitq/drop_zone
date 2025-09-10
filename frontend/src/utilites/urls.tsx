@@ -1,5 +1,12 @@
-interface Urls {
-    [key: string]: string;
+type caseType = "bloger_case" | "season_case" | "standart_case"
+interface BackendPaths {
+    getCases: string,
+    vkAuth: string,
+    googleAuth: string,
+    steamAuth: string,
+    refreshTocken: string,
+    me: string,
+    getCase: (typed: caseType) => string,
 }
 
 interface FrontendPaths {
@@ -16,17 +23,14 @@ interface FrontendPaths {
     battlesConnect: (id: string) => string;
 }
 
-export const BACKEND_PATHS: Urls = {
-    getActualCases: "",
-    getBlogerCases: "",
-    getUser: '',
-    getPosts: '',
-    createPost: '',
+export const BACKEND_PATHS: BackendPaths = {
+    getCases: '/cases/<str:case_type>/',
     vkAuth: '/oauth2/vk/login/',
     googleAuth: `/oauth2/google/login/`,
     steamAuth: `/oauth2/steam/login/`,
     refreshTocken: '/token/refresh/',
     me: '/me/',
+    getCase: (typed: caseType) => `/cases/${typed}/`,
 }
 
 

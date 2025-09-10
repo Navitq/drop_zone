@@ -7,10 +7,10 @@ from .redis_models import CaseRedisStandart, ItemRedisStandart
 
 def load_to_redis():
     """Заливаем данные в Redis"""
+
     try:
         # проверим доступность Redis
         CaseRedisStandart.db().ping()
-
         # очищаем
         CaseRedisStandart.find().delete()
         ItemRedisStandart.find().delete()
@@ -21,9 +21,8 @@ def load_to_redis():
                 id=str(case.id),
                 name=case.name,
                 icon_url=case.icon_url,
-                items=[{"id": ci.steam_item.id} for ci in case.items.all()]
+                type=case.type,
             ).save()
-
         # предметы
         for item in SteamItemCs.objects.all():
             ItemRedisStandart(

@@ -4,6 +4,15 @@
     align-items: center;
 }
 
+.sortArrowCnt {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    img {
+        object-fit: contain;
+    }
+}
+
 .sort-select-cnt {
     min-width: 220px;
     .sort-select__control{
@@ -71,6 +80,90 @@
         }
         .sort-select__option {
             height: 43px;
+        }
+    }
+}
+
+@media (max-width: 1439px) {
+    .sort-select-cnt {
+        min-width: 170px;
+
+        .sort-select__control {
+            min-height: 40px;
+        }
+
+
+
+        .sort-select__placeholder, .sort-select__option, .sort-select__single-value, .sort-select__input-container {
+            font-size: 18px;
+        }
+
+        .sort-select__value-container {
+            padding-left: 20px;
+        }
+
+        .sort-select__indicator {
+            padding-right: 20px;
+        }
+
+        .sort-select__menu {
+            background-color: rgba(6, 6, 7, 1);
+            border-radius: 5px;
+        }
+        .sort-select__menu-list {
+            padding: 5px;
+        }
+
+        .sort-select__option {
+            height: 40px;
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+
+}
+
+@media (max-width: 768px) {
+    .sort-select-cnt {
+        min-width: 140px;
+
+        .sort-select__control {
+            min-height: 33px;
+        }
+
+        .sortArrowCnt {
+            position: relative;
+            width: 12px;
+            height: 12px;
+            img {
+                object-fit: contain;
+            }
+        }
+
+
+        .sort-select__placeholder, .sort-select__option, .sort-select__single-value, .sort-select__input-container {
+            font-size: 14px;
+        }
+
+        .sort-select__value-container {
+            padding-left: 12px;
+        }
+
+        .sort-select__indicator {
+            padding-right: 12px;
+        }
+
+        .sort-select__menu {
+            border-radius: 5px;
+            margin-top: 3px;
+        }
+        .sort-select__menu-list {
+            padding: 3px;
+        }
+
+        .sort-select__option {
+            height: 33px;
         }
     }
 }

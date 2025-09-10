@@ -221,6 +221,11 @@ class ItemsOrders(models.Model):
 
 
 class Case(models.Model):
+    CASE_TYPE_CHOICES = [
+        ("standart_case", "Стандартный кейс"),
+        ("season_case", "Сезонный кейс"),
+        ("bloger_case", "Блогерский кейс"),
+    ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # {"en": "Blue Case", "ru": "Синий кейс"}
     name_ru = models.CharField(max_length=70, null=False, blank=False)
@@ -228,6 +233,8 @@ class Case(models.Model):
     name = models.JSONField(default=dict, blank=True)
     icon_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(
+        max_length=20, choices=CASE_TYPE_CHOICES, default="standart_case")
 
     class Meta:
         verbose_name = "Case"

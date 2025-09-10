@@ -10,7 +10,7 @@ function BlogerCases(): React.ReactNode {
             <div className={style.actTitleCnt}>
                 <TitleHomePage textKey="bloger_case_title"></TitleHomePage>
             </div>
-            <CaseShelf caseUrl={BACKEND_PATHS.getBloger}></CaseShelf>
+            <CaseShelf caseUrl={'bloger_case'}></CaseShelf>
         </div>
     )
 }

@@ -16,7 +16,10 @@ class JWTAuthenticationMiddleware:
             "/api/oauth2/vk/login/",
             "/api/oauth2/google/callback/",
             "/api/oauth2/steam/callback/",
-            "/api/oauth2/vk/callback/"
+            "/api/oauth2/vk/callback/",
+            "/api/cases/standart_case/",
+            "/api/cases/season_case/",
+            "/api/cases/bloger_case/",
         ]
 
     def __call__(self, request):

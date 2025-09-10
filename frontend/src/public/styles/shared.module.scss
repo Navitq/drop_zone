@@ -17,6 +17,12 @@
 
 @media (max-width: 1024px){
     .blockTitle {
+        font-size: 30px;
+    }
+}
+
+@media (max-width: 768px){
+    .blockTitle {
         font-size: 20px;
     }
 }

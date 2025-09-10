@@ -11,7 +11,7 @@ export default function HomePage() {
     <div className={style.homePage}>
       <SeasonCasesBlock></SeasonCasesBlock>
       <div className={style.mainContentSize}>
-        <AdvertisementBlock></AdvertisementBlock>
+        {/* <AdvertisementBlock></AdvertisementBlock> */}
         <ActualCases></ActualCases>
         <BlogerCases></BlogerCases>
       </div>
