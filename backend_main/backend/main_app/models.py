@@ -225,7 +225,7 @@ class Case(models.Model):
     # {"en": "Blue Case", "ru": "Синий кейс"}
     name_ru = models.CharField(max_length=70, null=False, blank=False)
     name_en = models.CharField(max_length=70, null=False, blank=False)
-    name = models.JSONField(default=dict)
+    name = models.JSONField(default=dict, blank=True)
     icon_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -239,6 +239,7 @@ class Case(models.Model):
             "ru": self.name_ru,
             "en": self.name_en
         }
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.get_name("en")  # default fallback
