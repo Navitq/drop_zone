@@ -1,7 +1,7 @@
 
 from django.db.utils import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
-from .models import Case, SteamItemCs
+from .models import Case, CaseItem
 from .redis_models import CaseRedisStandart, ItemRedisStandart
 
 
@@ -24,15 +24,16 @@ def load_to_redis():
                 type=case.type,
             ).save()
         # предметы
-        for item in SteamItemCs.objects.all():
+        for case_item in CaseItem.objects.select_related('steam_item', 'case').all():
             ItemRedisStandart(
-                id=str(item.id),
-                icon_url=item.icon_url,
-                item_model=item.item_model,
-                price=item.price,
-                rarity=item.rarity,
+                id=str(case_item.steam_item.id),
+                icon_url=case_item.steam_item.icon_url,
+                item_model=case_item.steam_item.item_model,
+                price=case_item.steam_item.price,
+                item_style=case_item.steam_item.item_style,
+                rarity=case_item.steam_item.rarity,
+                case_id=str(case_item.case.id)
             ).save()
-
         print("✅ Redis синхронизирован")
 
     except RedisConnectionError:

@@ -213,7 +213,7 @@
     justify-content: space-between;
 
     &.usuallScmCaseItem {
-        background-image: url(/images/blue_item_background.png);
+        background-image: url(/images/blue_scm_item_background.png);
         &::before {
             background: linear-gradient(180deg, rgba(0, 81, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
         }
@@ -225,7 +225,7 @@
         }
     }
     &.rareScmCaseItem {
-        background-image: url(/images/violet_item_background.png);
+        background-image: url(/images/violet_scm_item_background.png);
         &::before {
             background: linear-gradient(180deg, rgba(123, 0, 255, 0.5) 0%, rgba(56, 56, 56, 0) 107.01%);
         }
@@ -238,7 +238,7 @@
     }
 
     &.classifiedScmCaseItem {
-        background-image: url(/images/pink_item_background.png);
+        background-image: url(/images/pink_scm_item_background.png);
         &::before {
             background: linear-gradient(180deg, rgba(212, 0, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
         }
@@ -251,7 +251,7 @@
     }
 
     &.eliteScmCaseItem {
-        background-image: url(/images/red_item_background.png);
+        background-image: url(/images/red_scm_item_background.png);
         &::before {
             background: linear-gradient(180deg, rgba(221, 36, 38, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
         }
@@ -263,7 +263,7 @@
         }
     }
     &.epicScmCaseItem {
-        background-image: url(/images/gold_item_background.png);
+        background-image: url(/images/yellow_scm_item_background.png);
         &::before {
             background: linear-gradient(180deg, rgba(255, 195, 0, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
         }

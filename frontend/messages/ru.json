@@ -53,6 +53,10 @@
     "take": "забрать",
     "sell": "продать"
   },
+  "background": {
+    "season_background_alt": "Фон сезонных кейсов",
+    "season_grass_alt": "Фон травы"
+  },
   "cases":{
     "example":"Пример кейса"
   },

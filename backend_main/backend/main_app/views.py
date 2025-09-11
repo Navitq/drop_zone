@@ -1,5 +1,6 @@
 # import secrets
 import os
+from redis_om.model.model import NotFoundError
 from rest_framework_simplejwt.tokens import RefreshToken
 from .redis_models import OAuthState
 from asgiref.sync import sync_to_async
@@ -15,7 +16,8 @@ from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart
+from .redis_models import CaseRedisStandart, ItemRedisStandart
+
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_TOKEN_URL = os.getenv("GOOGLE_TOKEN_URL")
@@ -145,7 +147,6 @@ def create_state_token() -> str:
 def me_view(request):
     if not request.token_data:
         return JsonResponse({"error": "Unauthorized"}, status=401)
-    print(request.token_data, 11111111111112)
     return JsonResponse(request.token_data)
 
 
@@ -302,6 +303,44 @@ async def get_cases_by_type(request, case_type: str):
         return JsonResponse(filtered_cases, safe=False)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+async def get_case_content(request, case_id):
+    # Получаем кейс из Redis
+    print(11111)
+    try:
+        case = await sync_to_async(lambda: list(
+            CaseRedisStandart.find(CaseRedisStandart.id == case_id).all()
+        ))()
+
+    except NotFoundError:
+        print(321312)
+        return JsonResponse({"error": "Case not found"}, status=404)
+    # Получаем все предметы этого кейса
+    items = await sync_to_async(lambda: list(
+        ItemRedisStandart.find(ItemRedisStandart.case_id == case_id).all()
+    ))()
+    print(33333)
+    # Преобразуем предметы в словари
+    items_list = [
+        {
+            "id": item.id,
+            "gunModel": item.item_model,
+            "gunStyle": item.item_style,
+            "gunPrice": item.price,
+            "imgPath": item.icon_url,
+            "type": item.rarity
+        }
+        for item in items
+    ]
+
+    return JsonResponse({
+        "id": case[0].id,
+        "name": case[0].name,
+        "icon_url": case[0].icon_url,
+        "type": case[0].type,
+        "items": items_list
+    })
 
 
 async def google_callback_view(request):

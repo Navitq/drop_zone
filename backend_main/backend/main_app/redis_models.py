@@ -52,9 +52,11 @@ class CaseRedisStandart(JsonModel):
 class ItemRedisStandart(JsonModel):
     id: str = Field(index=True)
     item_model: str
+    item_style: str
     price: int
     icon_url: str
     rarity: str
+    case_id: str = Field(index=True)
 
     class Meta:
         global_key_prefix = "items"

@@ -23,7 +23,7 @@ class JWTAuthenticationMiddleware:
         ]
 
     def __call__(self, request):
-        if request.path.startswith("/api/admin/"):
+        if request.path.startswith("/api/admin/") or request.path.startswith("/api/cases/get_case_content/"):
             return self.get_response(request)
         if request.path in self.exclude_paths:
             return self.get_response(request)

@@ -6,12 +6,14 @@ interface BattlesRules {
 }
 
 interface GunData {
+    id: string
     gunModel: string
     gunStyle: string
     gunPrice: number
     imgPath: string
     type: "usuall" | "rare" | "elite" | "epic" | "classified"
 }
+
 
 interface StCaseInt {
     isVisible: boolean;
@@ -85,9 +87,10 @@ export const modalSlice = createSlice({
         closeUserModal: (state) => {
             state.userModal.isVisible = false;
         },
-        showStCaseModal: (state, actions: PayloadAction<{ caseId: string, caseName: string }>) => {
+        showStCaseModal: (state, actions: PayloadAction<{ caseId: string, caseName: string, items: GunData[] }>) => {
             state.stCaseModal.caseId = actions.payload.caseId;
             state.stCaseModal.caseName = actions.payload.caseName;
+            state.stCaseModal.caseItems = actions.payload.items;
             state.stCaseModal.isVisible = true;
         },
         closeStCaseModal: (state) => {

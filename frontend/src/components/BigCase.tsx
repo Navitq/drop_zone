@@ -8,6 +8,8 @@ import Image from 'next/image'
 import CaseInfoBlock from '@/components/CaseInfoBlock'
 import { useAppDispatch } from '@/lib/hooks'
 import { showStCaseModal, showRulletCaseModal } from '@/redux/modalReducer'
+import api from "@/lib/api";
+import { BACKEND_PATHS } from '@/utilites/urls';
 
 interface caseInt {
     caseName: string,
@@ -23,9 +25,15 @@ function BigCase(props: caseInt): React.ReactNode {
         dispatch(showRulletCaseModal(props.caseId))
     }
 
+    async function getItemsData() {
+        const response = await api.get(BACKEND_PATHS.getCaseItems(props.caseId));
+        console.log(response.data)
+        dispatch(showStCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.items }))
+    }
+
     return (
         <div className={style.bgCaseCnt}>
-            <div className={style.bgCaseImgCnt} onClick={() => { dispatch(showStCaseModal({ caseId: props.caseId, caseName: props.caseName })) }}>
+            <div className={style.bgCaseImgCnt} onClick={() => { getItemsData() }}>
                 <Image src={props.imgUrl} width={350} height={310} alt={props.caseName}></Image>
             </div>
             <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={49} caseNameKey={"example"}></CaseInfoBlock>

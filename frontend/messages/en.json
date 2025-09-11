@@ -52,7 +52,11 @@
     "down_arrow_choice_alt": "Win direction arrow (upward direction)",
     "take": "take",
     "sell": "sell"
-  },
+    },
+    "background": {
+    "season_background_alt": "Season case background",
+    "season_grass_alt": "Grass background"
+    },
     "cases":{
       "example":"Example case"
     },

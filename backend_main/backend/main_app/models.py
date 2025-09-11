@@ -44,7 +44,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     token_version = models.PositiveIntegerField(
         blank=True, null=False, default=0)
     objects = CustomUserManager()
-
+    money_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='customuser_set',
@@ -265,6 +269,8 @@ class CaseItem(models.Model):
         Case, on_delete=models.CASCADE, related_name='items')
     steam_item = models.ForeignKey('SteamItemCs', on_delete=models.CASCADE)
     drop_chance = models.FloatField(
+        null=False,
+        blank=False,
         help_text="Шанс выпадения предмета в процентах (0-100)"
     )
 
