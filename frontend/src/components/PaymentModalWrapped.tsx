@@ -28,7 +28,6 @@ function PaymentModalWrapped(): React.ReactNode {
                     </div>
                 </div>
                 <div className={style.pmwSeparatorCnt}>
-                    <Image alt={t('divider_alt')} src={"/images/payment_divider.svg"} width={377} height={1}></Image>
                 </div>
                 <div className={style.pmwNavigation}>
                     <SortByCountries></SortByCountries>

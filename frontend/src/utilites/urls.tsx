@@ -6,6 +6,7 @@ interface BackendPaths {
     steamAuth: string,
     refreshTocken: string,
     me: string,
+    playCaseGame: (typed: string) => string,
     getCaseItems: (typed: string) => string,
     getCase: (typed: caseType) => string,
 }
@@ -19,7 +20,8 @@ export const BACKEND_PATHS: BackendPaths = {
     steamAuth: `/oauth2/steam/login/`,
     refreshTocken: '/token/refresh/',
     me: '/me/',
-    getCaseItems: (typed: caseType) => `/cases/get_case_content/${typed}/`,
+    playCaseGame: (typed: string) => `/cases/open_case/${typed}/`,
+    getCaseItems: (typed: string) => `/cases/get_case_content/${typed}/`,
     getCase: (typed: caseType) => `/cases/${typed}/`,
 }
 

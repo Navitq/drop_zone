@@ -6,6 +6,9 @@ import NavigatianMenu from '@/components/NavigatianMenu'
 import HeaderUserInfo from '@/components/HeaderUserInfo'
 import PaymentModal from '@/components/PaymentModal'
 import BuyCaseModal from '@/components/BuyCaseModal'
+import UnAuthModal from '@/components/UnAuthModal'
+import NoMoneyModal from '@/components/NoMoneyModal'
+
 import Link from 'next/link'
 import { FRONTEND_PATHS } from '@/utilites/urls'
 
@@ -30,6 +33,8 @@ function Header() {
             </div>
             <PaymentModal></PaymentModal>
             <BuyCaseModal></BuyCaseModal>
+            <UnAuthModal></UnAuthModal>
+            <NoMoneyModal></NoMoneyModal>
         </header>
     )
 }

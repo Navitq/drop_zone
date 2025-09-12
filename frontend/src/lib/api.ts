@@ -23,7 +23,7 @@ api.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-        if (!refreshToken) throw new Error("No refresh token");
+        if (!refreshToken) throw error;
 
         // Запрос на обновление токена
         const res = await axios.post(
@@ -43,15 +43,9 @@ api.interceptors.response.use(
 
         return api(originalRequest);
       } catch (err) {
-        console.error("Refresh token failed", err);
-        // Можно редиректить на страницу логина
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
         return Promise.reject(err);
       }
     }
-
     return Promise.reject(error);
   }
 );

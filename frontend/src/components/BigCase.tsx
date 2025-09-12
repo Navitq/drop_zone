@@ -26,9 +26,13 @@ function BigCase(props: caseInt): React.ReactNode {
     }
 
     async function getItemsData() {
-        const response = await api.get(BACKEND_PATHS.getCaseItems(props.caseId));
-        console.log(response.data)
-        dispatch(showStCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.items }))
+        try {
+            const response = await api.get(BACKEND_PATHS.getCaseItems(props.caseId));
+            console.log(response.data)
+            dispatch(showStCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.items }))
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (

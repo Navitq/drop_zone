@@ -37,7 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     avatar_url = models.URLField(blank=True, null=True)
-
+    roulet_chance = models.FloatField(default=1)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
@@ -236,6 +236,12 @@ class Case(models.Model):
     name_en = models.CharField(max_length=70, null=False, blank=False)
     name = models.JSONField(default=dict, blank=True)
     icon_url = models.URLField(blank=True, null=True)
+    price = models.DecimalField(
+        max_digits=10,       # всего цифр
+        decimal_places=2,    # знаков после запятой
+        null=False,
+        blank=False
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     type = models.CharField(
         max_length=20, choices=CASE_TYPE_CHOICES, default="standart_case")

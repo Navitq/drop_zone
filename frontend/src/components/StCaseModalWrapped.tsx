@@ -29,7 +29,7 @@ function StCaseModalWrapped({ close }: () => void): React.ReactNode {
                         return <ScmCaseItem key={value.id} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} />
                     })
                 }
-                <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="usuall" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
+                {/* <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="usuall" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
                 <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="rare" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
                 <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="classified" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
                 <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="elite" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
@@ -48,7 +48,7 @@ function StCaseModalWrapped({ close }: () => void): React.ReactNode {
                 <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="rare" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
                 <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="classified" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
                 <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="elite" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
-                <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="epic" gunStyle="LIZARD PIZARD" gunPrice={58.48} />
+                <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="epic" gunStyle="LIZARD PIZARD" gunPrice={58.48} /> */}
             </div>
         </div>
     )

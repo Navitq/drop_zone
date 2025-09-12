@@ -19,7 +19,9 @@ urlpatterns = [
     path('oauth2/steam/callback/',
          views.steam_callback_view, name='vk_oauth2_callback'),
     path('cases/get_case_content/<str:case_id>/',
-         views.get_case_content, name='get_case_content'),
+         views.get_case_content_view, name='get_case_content'),
+    path('cases/open_case/<str:case_id>/',
+         views.get_open_case_view, name='get_open_case'),
     path('cases/<str:case_type>/',
-         views.get_cases_by_type, name='get_cases_by_type'),
+         views.get_cases_by_type_view, name='get_cases_by_type'),
 ]

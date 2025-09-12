@@ -23,7 +23,7 @@
     "terms_of_service": "Terms of Service",
     "season_case_title": "Seasonal cases:",
     "actual_case_title": "Actual",
-    "bloger_case_title": "Блогерские",
+    "bloger_case_title": "Blogger",
     "sort": "sort",
     "srt_popularity": "by popularity",
     "srt_price_down": "in ascending order",
@@ -100,7 +100,12 @@
     "enter_promo": "enter promocode",
     "sum_promo": "Sum",
     "top_up":"top up",
-    "receive_on_balance": "Receive on balance"
+    "receive_on_balance": "Receive on balance",
+    "you_are_unauth": "You are not authorized",
+    "auth_first": "Log in to access all the features of the site",
+    "go_to_auth": "login",
+    "no_money": "Not enough funds",
+    "no_money_no_case": "There are not enough funds on the balance, you need to top up the balance to open a case"
     },
   "faq": {
     "t_item_1": "I topped up my balance, but the money does not appear on the site. What should I do?",

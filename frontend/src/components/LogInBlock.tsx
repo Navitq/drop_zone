@@ -13,8 +13,12 @@ function LogInBlock(): React.ReactNode {
     const t = useTranslations('header');
 
     async function handleLogin(url: string) {
-        const res = await api.get(url); // url относительный к baseURL из api.ts
-        window.location.href = res.data.auth_url; // редиректим на Google
+        try {
+            const res = await api.get(url); // url относительный к baseURL из api.ts
+            window.location.href = res.data.auth_url; // редиректим на Google
+        } catch (err) {
+            console.log(err)
+        }
     }
 
 

@@ -39,6 +39,7 @@ class CaseRedisStandart(JsonModel):
     name: dict
     icon_url: str
     type: str
+    price: float
 
     class Meta:
         global_key_prefix = "items"
@@ -57,6 +58,7 @@ class ItemRedisStandart(JsonModel):
     icon_url: str
     rarity: str
     case_id: str = Field(index=True)
+    drop_chance: float
 
     class Meta:
         global_key_prefix = "items"

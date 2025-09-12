@@ -22,6 +22,7 @@ def load_to_redis():
                 name=case.name,
                 icon_url=case.icon_url,
                 type=case.type,
+                price=case.price,
             ).save()
         # предметы
         for case_item in CaseItem.objects.select_related('steam_item', 'case').all():
@@ -32,6 +33,7 @@ def load_to_redis():
                 price=case_item.steam_item.price,
                 item_style=case_item.steam_item.item_style,
                 rarity=case_item.steam_item.rarity,
+                drop_chance=case_item.drop_chance,
                 case_id=str(case_item.case.id)
             ).save()
         print("✅ Redis синхронизирован")

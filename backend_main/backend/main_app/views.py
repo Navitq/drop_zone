@@ -1,22 +1,24 @@
 # import secrets
 import os
+import random
+import json
+import hashlib
+import base64
+import aiohttp
+import secrets
 from redis_om.model.model import NotFoundError
 from rest_framework_simplejwt.tokens import RefreshToken
 from .redis_models import OAuthState
 from asgiref.sync import sync_to_async
-import secrets
 from django.http import JsonResponse, HttpResponseRedirect
 from .redis_models import OAuthState  # импорт модели
-import aiohttp
 from .models import SocialAccount, User
-import json
-import hashlib
-import base64
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
 from .redis_models import CaseRedisStandart, ItemRedisStandart
+from django.db import DatabaseError
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -144,6 +146,59 @@ def create_state_token() -> str:
     return state
 
 
+async def deduct_user_money(user, case):
+    """Списываем стоимость кейса с пользователя и сохраняем в БД."""
+    try:
+        user.money_amount -= case.price
+        await sync_to_async(user.save)()
+        return True
+    except Exception as err:
+        return False
+
+
+async def spin_roulette_wheel(case, user):
+    # Получаем все предметы
+    items = await sync_to_async(lambda: list(
+        ItemRedisStandart.find(ItemRedisStandart.case_id == case.id).all()
+    ))()
+
+    # Сортируем по drop_chance (необязательно, но для прозрачности)
+    items.sort(key=lambda x: x.drop_chance)
+
+    # Генерируем рандомное число до 100 и умножаем на шанс пользователя
+    roll = random.uniform(0, 100) * user.roulet_chance
+
+    cumulative = 0
+    for item in items:
+        cumulative += item.drop_chance
+        if roll <= cumulative:
+            del item.drop_chance
+            return item  # Этот предмет выпал
+
+    # На всякий случай — если не попали (редко), возвращаем последний
+    del items[0].drop_chance
+    return items[0]
+
+
+async def check_user_money(request, case_id):
+    """Проверяем money_amount пользователя из токена."""
+    try:
+        cases = await sync_to_async(lambda: list(
+            CaseRedisStandart.find(CaseRedisStandart.id == case_id).all()
+        ))()
+        if not cases:
+            return Response({"detail": "Case not found"}, status=404)
+        user_id = request.token_data.get("id")
+        user = await sync_to_async(User.objects.get)(id=user_id)
+        print(user.money_amount, cases[0].price)
+        if user.money_amount < cases[0].price:
+            return JsonResponse({"detail": "Insufficient funds"}, status=402)
+        return {user, cases[0]}
+    except NotFoundError:
+        return JsonResponse({"detail": "Insufficient funds"}, status=503)
+
+
+# @api_view(['GET'])
 def me_view(request):
     if not request.token_data:
         return JsonResponse({"error": "Unauthorized"}, status=401)
@@ -289,7 +344,8 @@ async def steam_callback_view(request):
     return response
 
 
-async def get_cases_by_type(request, case_type: str):
+# @api_view(['GET'])
+async def get_cases_by_type_view(request, case_type: str):
     """
     Возвращает все кейсы определенного типа из Redis.
     URL: /api/cases/<case_type>/
@@ -305,9 +361,8 @@ async def get_cases_by_type(request, case_type: str):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-async def get_case_content(request, case_id):
-    # Получаем кейс из Redis
-    print(11111)
+# @api_view(['GET'])
+async def get_case_content_view(request, case_id):
     try:
         case = await sync_to_async(lambda: list(
             CaseRedisStandart.find(CaseRedisStandart.id == case_id).all()
@@ -320,7 +375,6 @@ async def get_case_content(request, case_id):
     items = await sync_to_async(lambda: list(
         ItemRedisStandart.find(ItemRedisStandart.case_id == case_id).all()
     ))()
-    print(33333)
     # Преобразуем предметы в словари
     items_list = [
         {
@@ -343,6 +397,21 @@ async def get_case_content(request, case_id):
     })
 
 
+# @api_view(['GET'])
+async def get_open_case_view(request, case_id):
+    money_check = await check_user_money(request, case_id)
+    if isinstance(money_check, JsonResponse):
+        return money_check  # 402
+    if isinstance(money_check, dict) and "user" in money_check and "case" in money_check:
+        isFundsWrittenof = await deduct_user_money(money_check["user"], money_check["case"])
+        if isFundsWrittenof is True:
+            prize_item = await spin_roulette_wheel(money_check["case"], money_check["user"])
+            
+        # Логика открытия кейса
+    return JsonResponse({"Error": "server error"}, status=501)
+
+
+# @api_view(['GET'])
 async def google_callback_view(request):
     state = request.GET.get("state")
     code = request.GET.get("code")
