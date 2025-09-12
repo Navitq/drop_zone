@@ -6,13 +6,14 @@ import hashlib
 import base64
 import aiohttp
 import secrets
+from decimal import Decimal
 from redis_om.model.model import NotFoundError
 from rest_framework_simplejwt.tokens import RefreshToken
 from .redis_models import OAuthState
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse, HttpResponseRedirect
 from .redis_models import OAuthState  # импорт модели
-from .models import SocialAccount, User
+from .models import SocialAccount, User, InventoryItem, SteamItemCs
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -29,6 +30,15 @@ REDIRECT_OAUTH_CLIENT_PATH = os.getenv("REDIRECT_OAUTH_CLIENT_PATH")
 STEAM_OPENID_URL = os.getenv("STEAM_OPENID_URL")
 STEAM_DOMEN_REALM = os.getenv("STEAM_DOMEN_REALM")
 STEAM_REDIRECT_URI = os.getenv("STEAM_REDIRECT_URI")
+
+
+EXTERIOR_CHOICES = [
+    ("factory_new", "Factory New"),
+    ("minimal_wear", "Minimal Wear"),
+    ("field_tested", "Field-Tested"),
+    ("well_worn", "Well-Worn"),
+    ("battle_scarred", "Battle-Scarred"),
+]
 
 
 def check_state_scrf(state: str) -> bool:
@@ -149,10 +159,11 @@ def create_state_token() -> str:
 async def deduct_user_money(user, case):
     """Списываем стоимость кейса с пользователя и сохраняем в БД."""
     try:
-        user.money_amount -= case.price
+        user.money_amount -= Decimal(str(case.price))
         await sync_to_async(user.save)()
         return True
     except Exception as err:
+        print(err)
         return False
 
 
@@ -167,7 +178,8 @@ async def spin_roulette_wheel(case, user):
 
     # Генерируем рандомное число до 100 и умножаем на шанс пользователя
     roll = random.uniform(0, 100) * user.roulet_chance
-
+    if roll >= 100:
+        items[-1]
     cumulative = 0
     for item in items:
         cumulative += item.drop_chance
@@ -180,12 +192,46 @@ async def spin_roulette_wheel(case, user):
     return items[0]
 
 
+async def spin_state_wheel(user):
+    # случайное число 0-99, умножаем на шанс пользователя
+    rand_num = int(random.randint(0, 99) * user.item_state_chance)
+    if rand_num > 99:
+        return EXTERIOR_CHOICES[-1][0]
+    # ограничиваем максимум 99
+    rand_num = min(rand_num, 99)
+
+    range_size = 100 // len(EXTERIOR_CHOICES)
+    index = rand_num // range_size
+
+    if index >= len(EXTERIOR_CHOICES):
+        index = len(EXTERIOR_CHOICES) - 1
+
+    return EXTERIOR_CHOICES[int(round(index))][0]
+
+
+async def create_order(item_state: str, item, user):
+    """
+    Создаёт InventoryItem для пользователя и сохраняет в БД.
+    """
+    try:
+        steam_item = await sync_to_async(SteamItemCs.objects.get)(id=item.id)
+
+        await sync_to_async(InventoryItem.objects.create)(
+            steam_item=steam_item,
+            owner=user,
+            exterior_wear=item_state,
+        )
+    except DatabaseError as e:
+        print(f"Ошибка при создании InventoryItem: {e}")
+
+
 async def check_user_money(request, case_id):
     """Проверяем money_amount пользователя из токена."""
     try:
         cases = await sync_to_async(lambda: list(
             CaseRedisStandart.find(CaseRedisStandart.id == case_id).all()
         ))()
+
         if not cases:
             return Response({"detail": "Case not found"}, status=404)
         user_id = request.token_data.get("id")
@@ -193,7 +239,7 @@ async def check_user_money(request, case_id):
         print(user.money_amount, cases[0].price)
         if user.money_amount < cases[0].price:
             return JsonResponse({"detail": "Insufficient funds"}, status=402)
-        return {user, cases[0]}
+        return {"user": user, "case": cases[0]}
     except NotFoundError:
         return JsonResponse({"detail": "Insufficient funds"}, status=503)
 
@@ -399,19 +445,35 @@ async def get_case_content_view(request, case_id):
 
 # @api_view(['GET'])
 async def get_open_case_view(request, case_id):
-    money_check = await check_user_money(request, case_id)
-    if isinstance(money_check, JsonResponse):
-        return money_check  # 402
-    if isinstance(money_check, dict) and "user" in money_check and "case" in money_check:
-        isFundsWrittenof = await deduct_user_money(money_check["user"], money_check["case"])
-        if isFundsWrittenof is True:
-            prize_item = await spin_roulette_wheel(money_check["case"], money_check["user"])
-            
-        # Логика открытия кейса
-    return JsonResponse({"Error": "server error"}, status=501)
-
+    try:
+        print(-111111111)
+        money_check = await check_user_money(request, case_id)
+        print(000000)
+        if isinstance(money_check, JsonResponse):
+            return money_check  # 402
+        if isinstance(money_check, dict) and "user" in money_check and "case" in money_check:
+            print(1111111111)
+            isFundsWrittenof = await deduct_user_money(money_check["user"], money_check["case"])
+            if isFundsWrittenof is True:
+                print(222222222222)
+                prize_item = await spin_roulette_wheel(money_check["case"], money_check["user"])
+                print(3333333333)
+                item_state = await spin_state_wheel(money_check["user"])
+                print(4444444444)
+                await create_order(item_state, prize_item, money_check["user"])
+                print(5555555555)
+                prize_dict = prize_item.dict()
+                prize_dict["item_state"] = item_state
+                return JsonResponse({"prize_item": prize_dict}, status=200)
+            # Логика открытия кейса
+        return JsonResponse({"Error": "server error"}, status=501)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error": str(e)}, status=500)
 
 # @api_view(['GET'])
+
+
 async def google_callback_view(request):
     state = request.GET.get("state")
     code = request.GET.get("code")
