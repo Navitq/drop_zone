@@ -354,6 +354,12 @@
         height: 20px !important;
     }
 
+    .scmGoodState {
+        width: 11px;
+        height: 11px;
+        font-size: 4px;
+    }
+
     :global(.bcmwCnt) :global(.wonGunInfo) .scmCaseGunModel {
         line-height: 100% !important;
         height: 16px !important;
