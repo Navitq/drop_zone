@@ -57,7 +57,7 @@ function BigCase(props: caseInt): React.ReactNode {
             <div className={style.bgCaseImgCnt} onClick={() => { getItemsData() }}>
                 <Image src={props.imgUrl} width={350} height={310} alt={props.caseName}></Image>
             </div>
-            <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={props.price} caseNameKey={"example"}></CaseInfoBlock>
+            <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={props.price} caseNameKey={props.caseName}></CaseInfoBlock>
         </div>
     )
 }

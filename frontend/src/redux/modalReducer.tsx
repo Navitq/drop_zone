@@ -134,7 +134,7 @@ export const modalSlice = createSlice({
             state.paymentModal.isVisible = false;
         },
         showRulletCaseModal: (state, actions: PayloadAction<{ caseId: string, caseName: string, items: GunData[], prize_item: GunData }>) => {
-
+            console.log(actions.payload)
             const index: number = actions.payload.items.findIndex(item => item.id === actions.payload.prize_item.id);
             if (index !== -1) {
                 state.rulletCaseModal.items[index] = actions.payload.prize_item;

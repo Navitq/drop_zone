@@ -489,8 +489,16 @@ async def get_open_case_view(request, case_id):
                 prize_item = await spin_roulette_wheel(money_check["case"], money_check["user"])
                 item_state = await spin_state_wheel(money_check["user"])
                 await create_order(item_state, prize_item, money_check["user"])
-                prize_dict = prize_item.dict()
-                prize_dict["item_state"] = item_state
+                prize_dict = {
+                    "id": prize_item.id,
+                    "gunModel": prize_item.item_model,
+                    "gunStyle": prize_item.item_style,
+                    "gunPrice": prize_item.price,
+                    "imgPath": prize_item.icon_url,
+                    "type": prize_item.rarity,
+                    "price": prize_item.price,
+                    "state": item_state
+                }
                 items_list = await get_case_items(money_check["case"].id)
                 return JsonResponse({"prize_item": prize_dict, "case_items": items_list}, status=200)
             # Логика открытия кейса

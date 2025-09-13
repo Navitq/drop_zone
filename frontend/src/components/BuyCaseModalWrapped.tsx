@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import style from '@/styles/modal.module.scss';
 import { Virtual } from 'swiper/modules';
@@ -13,35 +13,38 @@ import BattleModalBtn from '@/components/BattleModalBtn'
 import 'swiper/css';
 import { useTranslations } from 'next-intl';
 import { useAppSelector } from '@/lib/hooks';
+import { motion } from "motion/react"
 
 function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode {
     const swiperRef = useRef<any>(null);
     const isSpinningRef = useRef(false);
-    const [spinning, setSpinning] = useState(false);
     const timeoutsRef = useRef<number[]>([]);
     const t = useTranslations("homePage")
+    const [showPrize, setShowPrize] = useState(false);
 
-
-    const { caseId, caseName, items, prize_index } = useAppSelector(state => state.modal.rulletCaseModal)
-
+    const { caseName, items, prize_index, prize_item } = useAppSelector(state => state.modal.rulletCaseModal)
     // 👉 базовый массив предметов
-    const baseSlides = [
-        { imgPath: "/images/example_gun_blue.png", gunModel: "AK-47", type: "usuall", gunStyle: "STYLE 1", gunPrice: 10.25 },
-        { imgPath: "/images/example_gun_blue.png", gunModel: "M4A1", type: "rare", gunStyle: "STYLE 2", gunPrice: 20.50 },
-        { imgPath: "/images/example_gun_blue.png", gunModel: "AWP", type: "elite", gunStyle: "STYLE 3", gunPrice: 35.75 },
-        { imgPath: "/images/example_gun_blue.png", gunModel: "Glock", type: "epic", gunStyle: "STYLE 4", gunPrice: 50.00 },
-        { imgPath: "/images/example_gun_blue.png", gunModel: "Deagle", type: "classified", gunStyle: "STYLE 5", gunPrice: 75.00 },
-    ];
 
     // 👉 размножаем массив, чтобы Swiper был заполнен (например, до 100 элементов)
-    const slides = Array.from({ length: 20 }, (_, i) => baseSlides[i % baseSlides.length]);
+    const slides = useMemo(() => {
+        if (!items || items.length === 0) return [];
+        return Array.from({ length: 30 }, (_, i) => items[i % items.length]);
+    }, [items]);
+
+
+    useEffect(() => {
+        if (prize_index < 0) {
+            return;
+        }
+        spinToSlide(prize_index)
+    }, [prize_index]);
+
 
     useEffect(() => {
         return () => {
             timeoutsRef.current.forEach((id) => clearTimeout(id));
             timeoutsRef.current = [];
             isSpinningRef.current = false;
-            setSpinning(false);
         };
     }, []);
 
@@ -49,7 +52,6 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
         timeoutsRef.current.forEach((id) => clearTimeout(id));
         timeoutsRef.current = [];
         isSpinningRef.current = false;
-        setSpinning(false);
     };
 
     const spinToSlide = (
@@ -57,14 +59,12 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
         options?: { rounds?: number; minDuration?: number; maxDuration?: number }
     ) => {
         if (!swiperRef.current || isSpinningRef.current) return;
-
         isSpinningRef.current = true;
-        setSpinning(true);
 
         const slidesCount = slides.length;
-        const rounds = options?.rounds ?? (2 + Math.floor(Math.random() * 2));
+        const rounds = options?.rounds ?? 1;
         const minDuration = options?.minDuration ?? 60;
-        const maxDuration = options?.maxDuration ?? 600;
+        const maxDuration = options?.maxDuration ?? 400;
 
         const currentReal = swiperRef.current.realIndex;
         const distance = (targetIndex - currentReal + slidesCount) % slidesCount;
@@ -89,9 +89,9 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
                 if (s === totalSteps - 1) {
                     const cleanup = window.setTimeout(() => {
                         isSpinningRef.current = false;
-                        setSpinning(false);
                     }, duration + 20);
                     timeoutsRef.current.push(cleanup);
+                    setTimeout(() => { setShowPrize(true) }, 500)
                 }
             }, cumulative);
 
@@ -99,12 +99,13 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
         }
     };
 
+
+
     return (
         <div className={`${style.bcmwCnt} bcmwCnt`} onClick={(e) => e.stopPropagation()}>
             <div className={style.bcmwCaseData}>
-                <div className={style.bcmwCaseName}>Some case name</div>
-                <div className={style.bcmwCaseArrow}>
-                    <Image fill src={"/images/down_direction_case_arrow.svg"} alt={t("top_arrow_choice_alt")}></Image>
+                <div className={style.bcmwCaseName}>{caseName}</div>
+                <div className={`${style.bcmwCaseArrow} ${style.bcmwCaseArrowTop}`}>
                 </div>
             </div>
             <div className={style.bcmwSwiperCnt}>
@@ -113,12 +114,14 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
                     slidesPerView={"auto"}
                     autoHeight={false}
                     loop={true}
-                    allowTouchMove={!spinning}
+                    allowTouchMove={false}
                     className={style.bcmwSliderSwiper}
                     onSwiper={(swiper) => (swiperRef.current = swiper)}
                     spaceBetween={3}
                     centeredSlides={true}
+
                 >
+
                     {slides.map((value, num) => (
                         <SwiperSlide className={style.bcmwSwiperSlide} key={num}>
                             <div className={style.bcmwSwiperSlideContentCnt}>
@@ -128,27 +131,37 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
                                     type={value.type}
                                     gunStyle={value.gunStyle}
                                     gunPrice={value.gunPrice}
+                                    state={value.state}
                                 />
                             </div>
                         </SwiperSlide>
                     ))}
+
                 </Swiper>
             </div>
             <div className={`${style.bcmwCaseData} ${style.bcmwCaseArrowCnt}`}>
-                <div className={style.bcmwCaseArrow}>
-                    <Image fill src={"/images/top_direction_case_arrow.svg"} alt={t("top_arrow_choice_alt")}></Image>
+                <div className={`${style.bcmwCaseArrow} ${style.bcmwCaseArrowBottom}`}>
                 </div>
             </div>
-            <div className={`${style.wonGunInfo} ${style_two.usuallScmCaseItem} ${style_two.scmCaseRoulletItem}`}>
-                <div className={style_two.scmCaseGunModel}>М4А1 | </div>
-                <div className={style_two.smItemGunStyle}>Some gun style</div>
-            </div>
-            <div className={style.wonGunBttn}>
-                <div className={style.wonGunBttnTake}>
-                    <CaseBtnText text={t('take')}></CaseBtnText>
-                </div>
-                <BattleModalBtn text={t('sell')}></BattleModalBtn>
-            </div>
+            {showPrize && (
+                <motion.div
+                    initial={{ opacity: 0, }}
+                    animate={{ opacity: 1, }}
+                    transition={{ duration: 2.0, ease: "easeOut" }}
+
+                >
+                    <div className={`${style.wonGunInfo} ${style_two[`${prize_item?.type}ScmCaseItem`]} ${style_two.scmCaseRoulletItem} wonGunInfo`}>
+                        <div className={style_two.scmCaseGunModel}>{prize_item?.gunModel} |</div>
+                        <div className={`${style_two.smItemGunStyle} ${style_two.smItemGunStyleRoullet}`}>{prize_item?.gunStyle}</div>
+                    </div>
+                    <div className={style.wonGunBttn}>
+                        <div className={style.wonGunBttnTake}>
+                            <CaseBtnText text={t('take')} />
+                        </div>
+                        <BattleModalBtn text={t('sell')} />
+                    </div>
+                </motion.div>
+            )}
 
 
 

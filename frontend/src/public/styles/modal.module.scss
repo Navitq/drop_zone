@@ -482,7 +482,9 @@
 // }
 
 .bcmwSliderSwiper :global(.swiper-slide-active) {
-    width: 230px !important;
+    // width: 230px !important;
+    z-index: 125;
+    // transform: scale(1.3);
 }
 
 // :global(.swiper-slide-prev),
@@ -509,11 +511,15 @@
 
 .bcmwCaseArrow {
     width: 150px;
-    position: relative;
     height: 20px;
-    img {
-        object-fit: contain;
-    }
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.bcmwCaseArrowTop {
+    background-image: url(/images/down_direction_case_arrow.svg);
+}
+.bcmwCaseArrowBottom {
+    background-image: url(/images/top_direction_case_arrow.svg);
 }
 
 .bcmwCaseData {
@@ -532,7 +538,9 @@
     border: none !important;
     border-radius: 0px !important;
     height: auto !important;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
+    justify-content: center !important;
+    width: auto !important;
 }
 
 .wonGunBttn {
@@ -603,6 +611,33 @@
 }
 
 @media (max-width: 768px) {
+    .bcmwCaseArrowCnt {
+        margin-bottom: 10px;
+    }
+    .bcmwCnt {
+        padding: 0 ;
+    }
+    .bcmwCaseArrowTop {
+        width: 120px;
+        height: 10px;
+        background-image: url(/images/mobile_down_direction_case_arrow.svg);
+    }
+    .bcmwCaseArrowBottom {
+        width: 120px;
+        height: 10px;
+        background-image: url(/images/mobile_top_direction_case_arrow.svg);
+    }
+    .bcmwCaseName {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+    .bcmwSwiperSlide {
+        height: 70px !important;
+        width: 100px !important;
+    }
+    .wonGunInfo {
+        margin-bottom: 15px;
+    }
     .nmmwBtnCnt{
         display: flex;
         justify-content: center;

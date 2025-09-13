@@ -172,7 +172,7 @@
 
 .smItemGunModel, .smItemGunStyle {
     font-size: 16px;
-    line-height: 16px;
+    line-height: 17px;
 }
 
 .scmCaseGunModel, .scmCaseGunStyle {
@@ -199,6 +199,11 @@
         line-height: 100%;
         font-size: 20px !important;
     }
+}
+
+.smItemGunStyleRoullet {
+    height: 20px;
+    padding-top: 2px
 }
 
 .ScmCaseItem, .scmCaseRoulletItem {
@@ -318,10 +323,10 @@
 .scmGoodState {
     @extend %flex-center;
     font-family: var(--font-headBold);
-    font-size: 9px;
     position: absolute;
-    width: 25px;
-    height: 25px;
+    width: 21px;
+    height: 21px;
+    font-size: 8px;
     background-color: #7d8091;
     border-radius: 50%;
     color: #000;
@@ -331,8 +336,10 @@
 }
 
 :global(.bcmwCnt) .scmGoodState {
-    display: block;
+    display: flex;
 }
+
+
 
 @media (max-width: 1439px) {
 
@@ -343,6 +350,15 @@
 }
 
 @media (max-width: 768px) {
+    :global(.bcmwCnt) :global(.wonGunInfo) .scmCaseGunStyle {
+        height: 20px !important;
+    }
+
+    :global(.bcmwCnt) :global(.wonGunInfo) .scmCaseGunModel {
+        line-height: 100% !important;
+        height: 16px !important;
+        font-size: 16px !important;
+    }
 
     .ScmCaseItem, .scmCaseRoulletItem {
         @extend %flex-center;

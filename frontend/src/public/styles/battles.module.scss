@@ -120,6 +120,7 @@
     font-size: 24px;
     line-height: 24px;
     font-family: var(--font-headBold);
+    padding-bottom: 12;
     &:hover {
        background-color: rgba(255, 169, 49, 0.3);
     }
@@ -999,4 +1000,37 @@
     width: 100%;
     height: 100vh; /* или 100% родителя */
     overflow: auto;
+}
+
+:global(.bcmwCnt) .mnHeadBtnRulesCnt {
+    margin-right: 0px;
+}
+
+@media (max-width: 1439px) {
+
+}
+
+@media (max-width: 1024px) {
+
+    :global(.bcmwCnt)  .mnHeadBtnRulesCnt, .mnHeadBtnRules {
+        height: 38px;
+    }
+    :global(.bcmwCnt)  .mnHeadBtnRules {
+        font-size: 19px;
+        line-height: 19px;
+    }
+}
+
+@media (max-width: 768px) {
+    :global(.bcmwCnt)  .mnHeadBtnRulesCnt, .mnHeadBtnRules {
+        height: 29px;
+        padding: 0px;
+    }
+    :global(.bcmwCnt)  .mnHeadBtnRules {
+        padding-bottom: 2px;
+        font-size: 14px;
+        line-height: 14px;
+        padding-right: 14px;
+        padding-left: 14px;
+    }
 }
