@@ -22,7 +22,7 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
     const t = useTranslations("homePage")
 
 
-    const { caseId, caseName, items, prize_index } = useAppSelector(state => state.modal.rulletCaseModal.)
+    const { caseId, caseName, items, prize_index } = useAppSelector(state => state.modal.rulletCaseModal)
 
     // 👉 базовый массив предметов
     const baseSlides = [
