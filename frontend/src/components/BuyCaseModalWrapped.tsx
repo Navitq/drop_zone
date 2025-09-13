@@ -12,6 +12,7 @@ import BattleModalBtn from '@/components/BattleModalBtn'
 
 import 'swiper/css';
 import { useTranslations } from 'next-intl';
+import { useAppSelector } from '@/lib/hooks';
 
 function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode {
     const swiperRef = useRef<any>(null);
@@ -19,6 +20,9 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
     const [spinning, setSpinning] = useState(false);
     const timeoutsRef = useRef<number[]>([]);
     const t = useTranslations("homePage")
+
+
+    const { caseId, caseName, items, prize_index } = useAppSelector(state => state.modal.rulletCaseModal.)
 
     // 👉 базовый массив предметов
     const baseSlides = [

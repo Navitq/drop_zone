@@ -4,10 +4,12 @@ import style from '@/styles/cases.module.scss'
 
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
+import { AxiosError } from "axios";
 
 import CaseInfoBlock from '@/components/CaseInfoBlock'
 import { useAppDispatch } from '@/lib/hooks'
-import { showStCaseModal, showRulletCaseModal } from '@/redux/modalReducer'
+import { showStCaseModal, showRulletCaseModal, showNoMoneyModal, showUnAuthModal } from '@/redux/modalReducer'
+
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
 
@@ -15,14 +17,29 @@ interface caseInt {
     caseName: string,
     imgUrl: string,
     caseId: string,
+    price: number
 }
 
 function BigCase(props: caseInt): React.ReactNode {
     const t = useTranslations("cases")
     const dispatch = useAppDispatch()
 
-    function openRulletCase() {
-        dispatch(showRulletCaseModal(props.caseId))
+    async function openRulletCase() {
+        try {
+            const response = await api.get(BACKEND_PATHS.playCaseGame(props.caseId));
+            console.log(response.data)
+            dispatch(showRulletCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.items }))
+        } catch (err) {
+            const error = err as AxiosError;
+            console.log(error.status)
+            if (error.response?.status === 401) {
+                dispatch(showUnAuthModal())
+            } else if (error.response?.status === 402) {
+                dispatch(showNoMoneyModal())
+            } else {
+                console.error("Неизвестная ошибка", error);
+            }
+        }
     }
 
     async function getItemsData() {
@@ -40,7 +57,7 @@ function BigCase(props: caseInt): React.ReactNode {
             <div className={style.bgCaseImgCnt} onClick={() => { getItemsData() }}>
                 <Image src={props.imgUrl} width={350} height={310} alt={props.caseName}></Image>
             </div>
-            <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={49} caseNameKey={"example"}></CaseInfoBlock>
+            <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={props.price} caseNameKey={"example"}></CaseInfoBlock>
         </div>
     )
 }

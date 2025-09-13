@@ -12,12 +12,14 @@ interface caseInt {
     caseName: string,
     imgUrl: string,
     caseId: string,
+    price: number
 }
 
 interface caseBlogerIncome {
     id: string,
     name: { en: string, ru: string },
     icon_url: string,
+    price: number
 }
 
 function SeasonCases(): React.ReactNode {
@@ -40,6 +42,7 @@ function SeasonCases(): React.ReactNode {
                         caseName: value.name[locale as 'en' | 'ru'],
                         imgUrl: value.icon_url,
                         caseId: value.id,
+                        price: value.price
                     }
                 })
             })
@@ -51,7 +54,7 @@ function SeasonCases(): React.ReactNode {
     return (
         <div className={style.bgCaseBlock}>
             {seasonCases.map((c) => (
-                <BigCase key={c.caseId} caseId={c.caseId} imgUrl={c.imgUrl} caseName={c.caseName} />
+                <BigCase key={c.caseId} price={c.price} caseId={c.caseId} imgUrl={c.imgUrl} caseName={c.caseName} />
             ))}
         </div>
     )

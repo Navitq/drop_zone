@@ -5,13 +5,17 @@ interface BattlesRules {
     isVisible: boolean
 }
 
+type items_state = 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
+
+
 interface GunData {
     id: string
     gunModel: string
     gunStyle: string
     gunPrice: number
     imgPath: string
-    type: "usuall" | "rare" | "elite" | "epic" | "classified"
+    type: "usuall" | "rare" | "elite" | "epic" | "classified",
+    state: items_state
 }
 
 
@@ -29,6 +33,10 @@ interface PaymentInt {
 interface rulletCaseModalInt {
     isVisible: boolean;
     caseId: string;
+    caseName: string;
+    items: GunData[];
+    prize_item: GunData | null;
+    prize_index: number,
 }
 
 interface unAuthModalInt {
@@ -77,7 +85,11 @@ const initialState: ModalState = {
     },
     rulletCaseModal: {
         isVisible: false,
-        caseId: ""
+        caseId: '',
+        caseName: '',
+        items: [],
+        prize_item: null,
+        prize_index: -1,
     }
 };
 
@@ -121,13 +133,28 @@ export const modalSlice = createSlice({
         closePaymentModal: (state) => {
             state.paymentModal.isVisible = false;
         },
-        showRulletCaseModal: (state, actions: PayloadAction<string>) => {
-            state.rulletCaseModal.isVisible = true;
+        showRulletCaseModal: (state, actions: PayloadAction<{ caseId: string, caseName: string, items: GunData[], prize_item: GunData }>) => {
 
+            const index: number = actions.payload.items.findIndex(item => item.id === actions.payload.prize_item.id);
+            if (index !== -1) {
+                state.rulletCaseModal.items[index] = actions.payload.prize_item;
+                state.rulletCaseModal.prize_index = index;
+            } else {
+                state.rulletCaseModal.prize_index = -1;
+            }
+            state.rulletCaseModal.isVisible = true;
+            state.rulletCaseModal.caseId = actions.payload.caseId;
+            state.rulletCaseModal.caseName = actions.payload.caseName;
+            state.rulletCaseModal.items = actions.payload.items;
+            state.rulletCaseModal.prize_item = actions.payload.prize_item;
         },
         closeRulletCaseModal: (state) => {
             state.rulletCaseModal.isVisible = false;
-            state.rulletCaseModal.caseId = ""
+            state.rulletCaseModal.caseId = '';
+            state.rulletCaseModal.caseName = '';
+            state.rulletCaseModal.items = [];
+            state.rulletCaseModal.prize_item = null;
+            state.rulletCaseModal.prize_index = -1;
         },
         closeUnAuthModal: (state) => {
             state.unAuthModal.isVisible = false;

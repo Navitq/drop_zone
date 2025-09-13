@@ -26,7 +26,7 @@ function StCaseModalWrapped({ close }: () => void): React.ReactNode {
             <div className={style.scmCaseItemsStore}>
                 {
                     caseItems.map((value) => {
-                        return <ScmCaseItem key={value.id} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} />
+                        return <ScmCaseItem state={value.state} key={value.id} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} />
                     })
                 }
                 {/* <ScmCaseItem imgPath="/images/example_gun_blue.png" gunModel="AK-47" type="usuall" gunStyle="LIZARD PIZARD" gunPrice={58.48} />

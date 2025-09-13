@@ -14,12 +14,14 @@ interface caseInt {
     caseName: string,
     imgUrl: string,
     caseId: string,
+    price: number,
 }
 
 interface caseBlogerIncome {
     id: string,
     name: { en: string, ru: string },
     icon_url: string,
+    price: number,
 }
 
 function CaseShelf(props: { caseUrl: caseType }): React.ReactNode {
@@ -43,6 +45,7 @@ function CaseShelf(props: { caseUrl: caseType }): React.ReactNode {
                         caseName: value.name[locale as 'en' | 'ru'],
                         imgUrl: value.icon_url,
                         caseId: value.id,
+                        price: value.price,
                     }
                 })
             })
@@ -54,7 +57,7 @@ function CaseShelf(props: { caseUrl: caseType }): React.ReactNode {
     return (
         <div className={style.caseShelfCnt}>
             {caseList?.map(item => (
-                <StandartCase imgUrl={item.imgUrl} caseId={item.caseId} caseName={item.caseName} key={item.caseId} ></StandartCase>
+                <StandartCase price={item.price} imgUrl={item.imgUrl} caseId={item.caseId} caseName={item.caseName} key={item.caseId} ></StandartCase>
             ))}
         </div>
     );

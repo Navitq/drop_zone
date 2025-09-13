@@ -192,6 +192,23 @@ async def spin_roulette_wheel(case, user):
     return items[0]
 
 
+async def spin_state_wheel_fake():
+    # случайное число 0-99, умножаем на шанс пользователя
+    rand_num = int(random.randint(0, 99))
+    if rand_num > 99:
+        return EXTERIOR_CHOICES[-1][0]
+    # ограничиваем максимум 99
+    rand_num = min(rand_num, 99)
+
+    range_size = 100 // len(EXTERIOR_CHOICES)
+    index = rand_num // range_size
+
+    if index >= len(EXTERIOR_CHOICES):
+        index = len(EXTERIOR_CHOICES) - 1
+
+    return EXTERIOR_CHOICES[int(round(index))][0]
+
+
 async def spin_state_wheel(user):
     # случайное число 0-99, умножаем на шанс пользователя
     rand_num = int(random.randint(0, 99) * user.item_state_chance)
@@ -242,6 +259,39 @@ async def check_user_money(request, case_id):
         return {"user": user, "case": cases[0]}
     except NotFoundError:
         return JsonResponse({"detail": "Insufficient funds"}, status=503)
+
+
+async def get_case(case_id):
+    """Возвращает кейс по ID или бросает исключение."""
+    case = await sync_to_async(lambda: list(
+        CaseRedisStandart.find(CaseRedisStandart.id == case_id).all()
+    ))()
+    if not case:
+        raise NotFoundError("Case not found")
+    return case[0]
+
+
+async def get_case_items(case_id):
+    """Возвращает список предметов кейса в виде массива словарей."""
+    items = await sync_to_async(lambda: list(
+        ItemRedisStandart.find(ItemRedisStandart.case_id == case_id).all()
+    ))()
+    if not items:
+        raise NotFoundError("Items not found for this case")
+
+    return [
+        {
+            "id": item.id,
+            "gunModel": item.item_model,
+            "gunStyle": item.item_style,
+            "gunPrice": item.price,
+            "imgPath": item.icon_url,
+            "type": item.rarity,
+            "price": item.price,
+            "state": await spin_state_wheel_fake()
+        }
+        for item in items
+    ]
 
 
 # @api_view(['GET'])
@@ -408,63 +458,41 @@ async def get_cases_by_type_view(request, case_type: str):
 
 
 # @api_view(['GET'])
+
 async def get_case_content_view(request, case_id):
     try:
-        case = await sync_to_async(lambda: list(
-            CaseRedisStandart.find(CaseRedisStandart.id == case_id).all()
-        ))()
+        case = await get_case(case_id)
+        items_list = await get_case_items(case_id)
 
-    except NotFoundError:
-        print(321312)
-        return JsonResponse({"error": "Case not found"}, status=404)
-    # Получаем все предметы этого кейса
-    items = await sync_to_async(lambda: list(
-        ItemRedisStandart.find(ItemRedisStandart.case_id == case_id).all()
-    ))()
-    # Преобразуем предметы в словари
-    items_list = [
-        {
-            "id": item.id,
-            "gunModel": item.item_model,
-            "gunStyle": item.item_style,
-            "gunPrice": item.price,
-            "imgPath": item.icon_url,
-            "type": item.rarity
-        }
-        for item in items
-    ]
-
-    return JsonResponse({
-        "id": case[0].id,
-        "name": case[0].name,
-        "icon_url": case[0].icon_url,
-        "type": case[0].type,
-        "items": items_list
-    })
+        return JsonResponse({
+            "id": case.id,
+            "name": case.name,
+            "icon_url": case.icon_url,
+            "type": case.type,
+            "items": items_list
+        })
+    except NotFoundError as e:
+        return JsonResponse({"error": str(e)}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 # @api_view(['GET'])
 async def get_open_case_view(request, case_id):
     try:
-        print(-111111111)
         money_check = await check_user_money(request, case_id)
-        print(000000)
         if isinstance(money_check, JsonResponse):
             return money_check  # 402
         if isinstance(money_check, dict) and "user" in money_check and "case" in money_check:
-            print(1111111111)
             isFundsWrittenof = await deduct_user_money(money_check["user"], money_check["case"])
             if isFundsWrittenof is True:
-                print(222222222222)
                 prize_item = await spin_roulette_wheel(money_check["case"], money_check["user"])
-                print(3333333333)
                 item_state = await spin_state_wheel(money_check["user"])
-                print(4444444444)
                 await create_order(item_state, prize_item, money_check["user"])
-                print(5555555555)
                 prize_dict = prize_item.dict()
                 prize_dict["item_state"] = item_state
-                return JsonResponse({"prize_item": prize_dict}, status=200)
+                items_list = await get_case_items(money_check["case"].id)
+                return JsonResponse({"prize_item": prize_dict, "case_items": items_list}, status=200)
             # Логика открытия кейса
         return JsonResponse({"Error": "server error"}, status=501)
     except Exception as e:

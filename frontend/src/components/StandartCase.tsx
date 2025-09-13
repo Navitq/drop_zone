@@ -17,6 +17,7 @@ interface caseInt {
     caseName: string,
     imgUrl: string,
     caseId: string,
+    price: number
 }
 
 function StandartCase(props: caseInt): React.ReactNode {
@@ -27,7 +28,7 @@ function StandartCase(props: caseInt): React.ReactNode {
         try {
             const response = await api.get(BACKEND_PATHS.playCaseGame(props.caseId));
             console.log(response.data)
-            dispatch(showRulletCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.items }))
+            dispatch(showRulletCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.case_items, prize_item:  response.data.prize_item }))
         } catch (err) {
             const error = err as AxiosError;
             console.log(error.status)
@@ -56,7 +57,7 @@ function StandartCase(props: caseInt): React.ReactNode {
             <div className={style.stCaseImgCnt} onClick={() => { openCaseData() }}>
                 <Image src={props.imgUrl} width={330} height={375} alt={props.caseName}></Image>
             </div>
-            <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={49} caseNameKey={"example"}></CaseInfoBlock>
+            <CaseInfoBlock buyCaseModal={() => { openRulletCase() }} price={props.price} caseNameKey={"example"}></CaseInfoBlock>
         </div>
     )
 }
