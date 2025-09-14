@@ -4,8 +4,8 @@ from django.db.backends.signals import connection_created
 from django.dispatch import receiver
 from redis.exceptions import ConnectionError as RedisConnectionError
 from django.db.models.signals import post_save, post_delete
-from .utils import load_to_redis, load_advertisement
-from .models import Case, CaseItem, SteamItemCs, Advertisement
+from .utils import load_to_redis, load_advertisement, load_background_main
+from .models import Case, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage
 import os
 
 
@@ -35,5 +35,19 @@ def advertisement_saved(sender, instance, created, **kwargs):
     try:
         pass
         load_advertisement()
+    except RedisConnectionError:
+        pass
+
+
+@receiver(post_save, sender=BackgroundMainPage)
+def background_main_saved(sender, instance, created, **kwargs):
+    """
+    Срабатывает при создании или изменении кейса
+    """
+    if not os.environ.get("RUN_MAIN") == "true":
+        return
+    try:
+        pass
+        load_background_main()
     except RedisConnectionError:
         pass

@@ -361,3 +361,10 @@ class Advertisement(models.Model):
 
     def __str__(self):
         return f"{self.title_1} / {self.title_2}"
+
+
+class BackgroundMainPage(models.Model):
+    pc_background_url = models.URLField(null=False, blank=False)
+    mobile_background_url = models.URLField(null=False, blank=False)
+    pc_background_grass_url = models.URLField(null=False, blank=False)
+    mobile_background_grass_url = models.URLField(null=False, blank=False)

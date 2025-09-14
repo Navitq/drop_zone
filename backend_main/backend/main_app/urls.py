@@ -28,4 +28,6 @@ urlpatterns = [
          views.advertisement_view, name='get_cases_by_type'),
     path('csrf/',
          views.get_csrf_view, name='get_cases_by_type'),
+    path('main-page-background/',
+         views.get_main_page_background_view, name='get_cases_by_type'),
 ]

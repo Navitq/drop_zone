@@ -1,8 +1,8 @@
 
 from django.db.utils import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
-from .models import Case, CaseItem, Advertisement
-from .redis_models import CaseRedisStandart, ItemRedisStandart, AdvertisementRedis
+from .models import Case, CaseItem, Advertisement, BackgroundMainPage
+from .redis_models import CaseRedisStandart, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
 
 
 def load_advertisement():
@@ -67,6 +67,33 @@ def load_to_redis():
                 case_id=str(case_item.case.id)
             ).save()
         print("✅ Redis синхронизирован")
+
+    except RedisConnectionError:
+        raise
+    except OperationalError:
+        print("❌ Postgres ещё не готов — ждём…")
+
+
+def load_background_main():
+    try:
+        # проверим доступность Redis
+        BackgroundMainPageRedis.db().ping()
+        ad = BackgroundMainPage.objects.order_by('-id').first()
+        if not ad:
+            return
+
+        # Очищаем старую запись в Redis
+        BackgroundMainPageRedis.find().delete()
+
+        # Сохраняем только последний объект
+        BackgroundMainPageRedis(
+            pc_background_url=ad.pc_background_url,
+            mobile_background_url=ad.mobile_background_url,
+            pc_background_grass_url=ad.pc_background_grass_url,
+            mobile_background_grass_url=ad.mobile_background_grass_url,
+        ).save()
+
+        print("✅ Redis синхронизирован: сохранена последняя запись BackgroundMainPageRedis")
 
     except RedisConnectionError:
         raise

@@ -84,4 +84,16 @@ class AdvertisementRedis(JsonModel):
         database = redis
 
 
+class BackgroundMainPageRedis(JsonModel):
+    pc_background_url: str
+    mobile_background_url: str
+    pc_background_grass_url: str
+    mobile_background_grass_url: str
+
+    class Meta:
+        global_key_prefix = "BackgroundMainPage"
+        model_key_prefix = "BackgroundMainPage"
+        database = redis
+
+
 Migrator().run()

@@ -16,7 +16,7 @@ from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart, ItemRedisStandart, OAuthState
+from .redis_models import CaseRedisStandart, AdvertisementRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
 from django.db import DatabaseError
 from django.views.decorators.csrf import ensure_csrf_cookie
 from datetime import datetime, timezone
@@ -526,29 +526,50 @@ async def get_open_case_view(request, case_id):
 
 @async_require_methods(["GET"])
 async def advertisement_view(request):
-    # Получаем последний объект асинхронно
-    ad = await sync_to_async(Advertisement.objects.order_by('-id').first)()
+    try:
+        # Получаем последний объект асинхронно
+        ad = await sync_to_async(lambda: AdvertisementRedis.find().first())()
+        if not ad:
+            # Если нет объектов, отдаём пустой массив
+            return JsonResponse([], safe=False, status=404)
 
-    if not ad:
-        # Если нет объектов, отдаём пустой массив
-        return JsonResponse([], safe=False)
+        data = [
+            {
+                "title": ad.title_1,
+                "subTitle": ad.subTitle_1,
+                "imgUrl": ad.imgUrl_1,
+                "timer": seconds_until(ad.data_and_time),
+            },
+            {
+                "title": ad.title_2,
+                "subTitle": ad.subTitle_2,
+                "imgUrl": ad.imgUrl_2,
+            },
+        ]
 
-    data = [
-        {
-            "title": ad.title_1,
-            "subTitle": ad.subTitle_1,
-            "imgUrl": ad.imgUrl_1,
-            "timer":   seconds_until(ad.data_and_time)
-        },
-        {
-            "title": ad.title_2,
-            "subTitle": ad.subTitle_2,
-            "imgUrl": ad.imgUrl_2
-        }
-    ]
+        return JsonResponse(data, safe=False)
 
-    return JsonResponse(data, safe=False)
-    # @api_view(['GET'])
+    except Exception as e:
+        # Логируем ошибку и возвращаем 500
+        print(f"❌ Ошибка в advertisement_view: {e}")
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
+
+
+@async_require_methods(["GET"])
+async def get_main_page_background_view(request):
+    try:
+        # Получаем последний объект асинхронно
+        ad = await sync_to_async(lambda: BackgroundMainPageRedis.find().first())()
+        if not ad:
+            # Если нет объектов, отдаём пустой массив
+            return JsonResponse([], safe=False, status=404)
+
+        return JsonResponse(ad.dict(), safe=False)
+
+    except Exception as e:
+        # Логируем ошибку и возвращаем 500
+        print(f"❌ Ошибка в BackgroundMainPageRedis: {e}")
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
 
 
 @async_require_methods(["GET"])
