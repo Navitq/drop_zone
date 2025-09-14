@@ -13,7 +13,7 @@ from .redis_models import OAuthState
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse, HttpResponseRedirect
 from .redis_models import OAuthState  # импорт модели
-from .models import SocialAccount, User, InventoryItem, SteamItemCs
+from .models import SocialAccount, User, Advertisement, InventoryItem, SteamItemCs
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -508,6 +508,32 @@ async def get_open_case_view(request, case_id):
         return JsonResponse({"error": str(e)}, status=500)
 
 # @api_view(['GET'])
+
+
+async def advertisement_view(request):
+    # Получаем последний объект асинхронно
+    ad = await sync_to_async(Advertisement.objects.order_by('-id').first)()
+
+    if not ad:
+        # Если нет объектов, отдаём пустой массив
+        return JsonResponse([], safe=False)
+
+    data = [
+        {
+            "title": ad.title_1,
+            "subTitle": ad.subTitle_1,
+            "imgUrl": ad.imgUrl_1,
+            "timer": ad.timer_1
+        },
+        {
+            "title": ad.title_2,
+            "subTitle": ad.subTitle_2,
+            "imgUrl": ad.imgUrl_2
+        }
+    ]
+
+    return JsonResponse(data, safe=False)
+    # @api_view(['GET'])
 
 
 async def google_callback_view(request):

@@ -4,6 +4,7 @@ import SeasonCasesBlock from '@/components/SeasonCasesBlock';
 import ActualCases from '@/components/ActualCases'
 import BlogerCases from '@/components/BlogerCases'
 import AdvertisementBlock from '@/components/AdvertisementBlock'
+import AdvertisementBlockMobie from '@/components/AdvertisementBlockMobie'
 import StCaseModal from '@/components/StCaseModal'
 
 export default function HomePage() {
@@ -11,8 +12,9 @@ export default function HomePage() {
     <div className={style.homePage}>
       <SeasonCasesBlock></SeasonCasesBlock>
       <div className={style.mainContentSize}>
-        {/* <AdvertisementBlock></AdvertisementBlock> */}
+        <AdvertisementBlock></AdvertisementBlock>
         <ActualCases></ActualCases>
+        <AdvertisementBlockMobie></AdvertisementBlockMobie>
         <BlogerCases></BlogerCases>
       </div>
       <StCaseModal></StCaseModal>

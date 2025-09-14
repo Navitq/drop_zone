@@ -32,9 +32,9 @@ def try_load_with_retry():
             print("✅ Redis готов")
 
             # тут вызываем загрузку
-            from .utils import load_to_redis
+            from .utils import load_to_redis, load_advertisement
             load_to_redis()
-
+            load_advertisement()
             break  # всё ок, выходим из цикла
         except OperationalError:
             print("⏳ Ждём Postgres...")

@@ -3,6 +3,8 @@ import userReducer, { initialState as userInitialState } from '@/redux/userReduc
 import modalReducer from '@/redux/modalReducer'
 import battlesCreateReducer from '@/redux/battlesCreateReducer'
 import activeBattleReducer from '@/redux/activeBattleReducer'
+import advertisementReducer from '@/redux/advertisementReducer'
+
 import { merge } from 'lodash'
 
 // export const makeStore = () => {
@@ -40,6 +42,7 @@ export const makeStore = (preloadedState: Partial<AuthState> = {} ) => configure
     modal: modalReducer,
     battlesCreate: battlesCreateReducer,
     activeBattle: activeBattleReducer,
+    advertisement: advertisementReducer,
   },
   preloadedState:  {
     user: merge({}, userInitialState, preloadedState),

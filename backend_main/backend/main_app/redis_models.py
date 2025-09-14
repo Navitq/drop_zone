@@ -66,4 +66,21 @@ class ItemRedisStandart(JsonModel):
         database = redis
 
 
+class AdvertisementRedis(JsonModel):
+    title_1: dict
+    subTitle_1: dict
+    imgUrl_1: str
+    timer_1: int
+
+    # Второй объект без timer
+    title_2: dict
+    subTitle_2: dict
+    imgUrl_2: str
+
+    class Meta:
+        global_key_prefix = "Advertisement"
+        model_key_prefix = "AdvertisementMain"
+        database = redis
+
+
 Migrator().run()

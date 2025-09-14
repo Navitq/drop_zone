@@ -4,6 +4,12 @@
     align-items: center;
 }
 
+%flexStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
 .homePage {
     margin-top: 116px;
 }
@@ -269,8 +275,50 @@
 
 }
 
+.abWrapper {
+    width: 100%;
+}
+
+.abWrapperSmall {
+    @extend %flexCenter;
+    width: fit-content;
+    min-width: 312px;
+}
+
+.abWrapperLeft, .abWrapperRight {
+        display: flex;
+        align-items: center;
+}
+.abWrapperLeft {
+    justify-content: flex-start;
+}
+.abWrapperRight {
+    justify-content: flex-end;
+}
+
+.abWrapperMobile {
+    display: none;
+}
+
+.bdButtonCntLink{
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    height: 100%;
+}
 
 @media (max-width: 1720px){
+    .abWrapperSmall {
+        width: 100%;
+        max-width: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .advertisementCnt {
+        gap: 35px;
+        flex-direction: column;
+    }
 
     .bgCaseBlock {
         margin-top: 35px;
@@ -301,6 +349,9 @@
 }
 
 @media (max-width: 1024px) {
+    .abWrapperSmall {
+        display: none;
+    }
     .actTitleSeasonCnt {
         margin-top: 0px;
     }
@@ -318,6 +369,36 @@
 
 
 @media (max-width: 768px) {
+    .abWrapper {
+        margin-top: 30px;
+    }
+    .bilbordCnt {
+        max-width: 460px;
+        min-height: 180px;
+        .bdTitle {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .bdSubTitle {
+            font-size: 16px;
+        }
+        .bdTimerCnt {
+            margin-top: 10px;
+        }
+        .bdButtonCnt {
+            max-height: 26px;
+        }
+        .bdButton {
+            border-radius: 7px;
+            font-size: 16px;
+        }
+    }
+    .abWrapperRight {
+        display: none;
+    }
+    .abWrapperMobile {
+        display: flex;
+    }
     .actTitleCnt {
         margin-bottom: 10px;
         margin-top: 40px;

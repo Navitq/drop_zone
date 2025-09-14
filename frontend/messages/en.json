@@ -51,7 +51,11 @@
     "top_arrow_choice_alt": "Win direction arrow (downward direction)",
     "down_arrow_choice_alt": "Win direction arrow (upward direction)",
     "take": "take",
-    "sell": "sell"
+    "sell": "sell",
+    "to_upgrades": "go to upgrades",
+    "go_to": "go to",
+    "events": "Events",
+    "events_is_chance": "Each event is a chance to get top skins and bonuses!"
     },
     "background": {
     "season_background_alt": "Season case background",

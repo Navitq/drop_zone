@@ -1,16 +1,52 @@
-import React from 'react'
+'use client'
+import React, { useEffect } from 'react'
 import style from '@/styles/homePage.module.scss'
 
 import Bilboard from '@/components/Bilboard'
 import SmallBilboard from '@/components/SmallBilboard'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { useLocale, useTranslations } from 'next-intl'
+import { BACKEND_PATHS, FRONTEND_PATHS } from '@/utilites/urls'
+import { setAdvertisement } from '@/redux/advertisementReducer'
+
+import api from "@/lib/api";
 
 function AdvertisementBlock(): React.ReactNode {
+    const { advertisementItems } = useAppSelector(state => state.advertisement)
+    const dispatch = useAppDispatch();
+    const locale = useLocale()
+    const t = useTranslations("homePage")
+
+    async function getAdvertisement() {
+        try {
+            const response = await api.get(BACKEND_PATHS.advertisement);
+            dispatch(setAdvertisement(response.data))
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    useEffect(() => {
+        getAdvertisement()
+    }, [])
+
+
+    if (advertisementItems.length < 2) {
+        return null
+    }
+
     return (
         <div className={style.advertisementCnt}>
-            <Bilboard seconds={10001} subTitle={'Успей выбить легендарный скин до конца недели!'} title={'АК-47 Топливный инжектор'} butText={"text daw"} classPosition={"bd_left"} time={true} imgUrl={'/images/bd_ak.png'}></Bilboard>
-            <SmallBilboard title={'Ивенты'} subTitle={"Каждый ивент — шанс забрать топовые скины и бонусы!"} btnTitle={"перейти"}></SmallBilboard>
-            <Bilboard subTitle={'Заходи в Апгрейд и выбивай скины!'} title={'Обновите инвентарь'} butText={"text daw"} imgUrl={'/images/bd_bomb.png'}></Bilboard>
-        </div >
+            <div className={`${style.abWrapper} ${style.abWrapperLeft}`}>
+                <Bilboard linkTo={FRONTEND_PATHS.raffles} seconds={advertisementItems[0].timer ? advertisementItems[0].timer : 14000} title={advertisementItems[0].title[locale as 'en' | 'ru']} subTitle={advertisementItems[0].subTitle[locale as 'en' | 'ru']} butText={t('raffles')} classPosition={"bd_left"} imgUrl={advertisementItems[0].imgUrl}></Bilboard>
+            </div>
+            <div className={`${style.abWrapperSmall}`}>
+                <SmallBilboard title={t('events')} subTitle={t("events_is_chance")} btnTitle={t("go_to")}></SmallBilboard>
+            </div>
+            <div className={`${style.abWrapper} ${style.abWrapperRight}`}>
+                <Bilboard linkTo={FRONTEND_PATHS.upgrades} subTitle={advertisementItems[1].subTitle[locale as 'en' | 'ru']} title={advertisementItems[1].title[locale as 'en' | 'ru']} butText={t('to_upgrades')} imgUrl={advertisementItems[1].imgUrl}></Bilboard>
+            </div>
+        </div>
     )
 }
 

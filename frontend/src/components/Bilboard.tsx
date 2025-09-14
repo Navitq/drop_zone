@@ -2,15 +2,16 @@ import React from 'react'
 
 import style from '@/styles/homePage.module.scss'
 import BdTime from '@/components/BdTime'
+import Link from 'next/link'
 
 interface BilboardInt {
     classPosition?: string,
-    time?: boolean,
     imgUrl: string,
     title: string,
     subTitle: string,
     seconds?: number,
     butText: string
+    linkTo: string
 }
 
 function Bilboard(props: BilboardInt): React.ReactNode {
@@ -25,10 +26,12 @@ function Bilboard(props: BilboardInt): React.ReactNode {
                 <div className={style.bdSubTitle}>
                     {props.subTitle}
                 </div>
-                {props.time ? <BdTime seconds={props.seconds ? props.seconds : 0}></BdTime> : null}
+                {props.seconds ? <BdTime seconds={props.seconds ? props.seconds : 0}></BdTime> : null}
             </div>
             <div className={style.bdButtonCnt}>
-                <button className={style.bdButton}>{props.butText}</button>
+                <Link href={props.linkTo} className={`${style.bdButtonCntLink} ${style.bdButtonCntLink}`}>
+                    <button className={style.bdButton}>{props.butText}</button>
+                </Link>
             </div>
         </div>
     )

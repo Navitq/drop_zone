@@ -24,4 +24,6 @@ urlpatterns = [
          views.get_open_case_view, name='get_open_case'),
     path('cases/<str:case_type>/',
          views.get_cases_by_type_view, name='get_cases_by_type'),
+    path('advertisement/',
+         views.advertisement_view, name='get_cases_by_type'),
 ]

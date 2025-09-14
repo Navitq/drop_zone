@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SocialAccount, User, SteamItemCs, InventoryItem, ItemsOrders, Case, CaseItem
+from .models import SocialAccount, Advertisement, User, SteamItemCs, InventoryItem, ItemsOrders, Case, CaseItem
 
 # Register your models here.
 admin.site.register(SocialAccount)
@@ -8,6 +8,7 @@ admin.site.register(SteamItemCs)
 admin.site.register(InventoryItem)
 admin.site.register(ItemsOrders)
 admin.site.register(CaseItem)
+admin.site.register(Advertisement)
 
 
 class CaseItemInline(admin.TabularInline):  # или StackedInline

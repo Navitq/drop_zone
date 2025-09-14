@@ -312,3 +312,53 @@ class CaseItem(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()  # вызывает clean() перед сохранением
         super().save(*args, **kwargs)
+
+
+class Advertisement(models.Model):
+    # Первый объект с timer
+    title_1 = models.JSONField(default=dict, blank=True)
+
+    title_1_ru = models.CharField(max_length=255, null=False, blank=False)
+    title_1_en = models.CharField(max_length=255, null=False, blank=False)
+
+    subTitle_1 = models.JSONField(default=dict, blank=True)
+
+    subTitle_1_ru = models.CharField(max_length=255, null=False, blank=False)
+    subTitle_1_en = models.CharField(max_length=255, null=False, blank=False)
+    imgUrl_1 = models.CharField(max_length=255, null=False, blank=False)
+    timer_1 = models.PositiveIntegerField()
+
+    # Второй объект без timer
+    title_2 = models.JSONField(default=dict, blank=True)
+
+    title_2_ru = models.CharField(max_length=255, null=False, blank=False)
+    title_2_en = models.CharField(max_length=255, null=False, blank=False)
+
+    subTitle_2 = models.JSONField(default=dict, blank=True)
+
+    subTitle_2_ru = models.CharField(max_length=255, null=False, blank=False)
+    subTitle_2_en = models.CharField(max_length=255, null=False, blank=False)
+    imgUrl_2 = models.CharField(max_length=255, null=False, blank=False)
+
+    def save(self, *args, **kwargs):
+        """Автоматически формируем name_json из name_ru и name_en."""
+        self.title_1 = {
+            "ru": self.title_1_ru,
+            "en": self.title_1_en
+        }
+        self.title_2 = {
+            "ru": self.title_2_ru,
+            "en": self.title_2_en
+        }
+        self.subTitle_1 = {
+            "ru": self.subTitle_1_ru,
+            "en": self.subTitle_1_en
+        }
+        self.subTitle_2 = {
+            "ru": self.subTitle_2_ru,
+            "en": self.subTitle_2_en
+        }
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.title_1} / {self.title_2}"
