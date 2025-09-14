@@ -21,7 +21,7 @@ def load_advertisement():
             title_1=ad.title_1,
             subTitle_1=ad.subTitle_1,
             imgUrl_1=ad.imgUrl_1,
-            timer_1=ad.timer_1,
+            data_and_time=ad.data_and_time,
             title_2=ad.title_2,
             subTitle_2=ad.subTitle_2,
             imgUrl_2=ad.imgUrl_2

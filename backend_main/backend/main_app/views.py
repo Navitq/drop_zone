@@ -9,17 +9,18 @@ import secrets
 from decimal import Decimal
 from redis_om.model.model import NotFoundError
 from rest_framework_simplejwt.tokens import RefreshToken
-from .redis_models import OAuthState
 from asgiref.sync import sync_to_async
-from django.http import JsonResponse, HttpResponseRedirect
-from .redis_models import OAuthState  # импорт модели
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from .models import SocialAccount, User, Advertisement, InventoryItem, SteamItemCs
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart, ItemRedisStandart
+from .redis_models import CaseRedisStandart, ItemRedisStandart, OAuthState
 from django.db import DatabaseError
+from django.views.decorators.csrf import ensure_csrf_cookie
+from datetime import datetime, timezone
+from .custom_decorators import async_require_methods
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -43,7 +44,6 @@ EXTERIOR_CHOICES = [
 
 def check_state_scrf(state: str) -> bool:
     try:
-        print(77777777, f'!{state}!')
         obj = OAuthState.find(OAuthState.state == state).first()
         print(obj, 4444444444)
         return obj is not None
@@ -141,19 +141,34 @@ def generate_pkce_pair(length: int = 64):
     }
 
 
-def create_code_verified() -> object:
+async def create_code_verified() -> dict:
     data = generate_pkce_pair()
     code_verifier = data["code_verifier"]
     code_challenge = data["code_challenge"]
-    OAuthState(code_verifier=code_verifier,
-               code_challenge=code_challenge).save()
+
+    # Асинхронное сохранение в базу
+    await sync_to_async(OAuthState.objects.create)(
+        code_verifier=code_verifier,
+        code_challenge=code_challenge
+    )
+
     return data
 
 
-def create_state_token() -> str:
+async def create_state_token() -> str:
     state = secrets.token_urlsafe(64)
-    OAuthState(state=state).save()
+    await sync_to_async(OAuthState(state=state).save)()
     return state
+
+
+def seconds_until(dt: datetime) -> int:
+    """
+    Возвращает количество секунд от текущего времени до dt.
+    Если dt в прошлом, возвращает 0.
+    """
+    now = datetime.now(timezone.utc)
+    diff = int((dt.replace(tzinfo=timezone.utc) - now).total_seconds())
+    return max(diff, 0)
 
 
 async def deduct_user_money(user, case):
@@ -294,17 +309,23 @@ async def get_case_items(case_id):
     ]
 
 
-# @api_view(['GET'])
-def me_view(request):
+@async_require_methods(["GET"])
+@ensure_csrf_cookie
+async def get_csrf_view(request):
+    return HttpResponse(status=200)
+
+
+@async_require_methods(["GET"])
+async def me_view(request):
     if not request.token_data:
         return JsonResponse({"error": "Unauthorized"}, status=401)
     return JsonResponse(request.token_data)
 
 
-# @api_view(['GET'])
-def vk_login_view(request):
-    state = create_state_token()
-    data = create_code_verified()
+@async_require_methods(["GET"])
+async def vk_login_view(request):
+    state = await create_state_token()
+    data = await create_code_verified()
     scope = "openid email profile"
     vk_auth_url = (
         "https://id.vk.com/authorize?response_type=code"
@@ -318,8 +339,8 @@ def vk_login_view(request):
     pass
 
 
-# @api_view(['GET'])
-def steam_login_view(request):
+@async_require_methods(["GET"])
+async def steam_login_view(request):
     """Редирект пользователя на Steam для авторизации"""
 
     steam_openid_url = (
@@ -335,14 +356,10 @@ def steam_login_view(request):
     return JsonResponse({"auth_url": steam_openid_url})
 
 
-# @api_view(['GET'])
-def google_login_view(request):
+@async_require_methods(["GET"])
+async def google_login_view(request):
     # Генерация уникального state
-    state = create_state_token()
-
-    # Сохраняем state в Redis OM с TTL
-
-    # Формируем URL для авторизации
+    state = await create_state_token()
     scope = "openid email profile"
 
     google_auth_url = (
@@ -353,16 +370,16 @@ def google_login_view(request):
         f"&scope={scope}"
         f"&state={state}"
     )
-    print(google_auth_url, f'!{state}!')
+
     return JsonResponse({"auth_url": google_auth_url})
 
 
-# @api_view(['GET'])
+@async_require_methods(["GET"])
 async def vk_callback_view(request):
     pass
 
 
-# @api_view(['GET'])
+@async_require_methods(["GET"])
 async def steam_callback_view(request):
     """Асинхронная обработка Steam login с JWT и cookie"""
     data = request.GET.copy()
@@ -440,7 +457,7 @@ async def steam_callback_view(request):
     return response
 
 
-# @api_view(['GET'])
+@async_require_methods(["GET"])
 async def get_cases_by_type_view(request, case_type: str):
     """
     Возвращает все кейсы определенного типа из Redis.
@@ -457,8 +474,7 @@ async def get_cases_by_type_view(request, case_type: str):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-# @api_view(['GET'])
-
+@async_require_methods(["GET"])
 async def get_case_content_view(request, case_id):
     try:
         case = await get_case(case_id)
@@ -477,7 +493,7 @@ async def get_case_content_view(request, case_id):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-# @api_view(['GET'])
+@async_require_methods(["POST"])
 async def get_open_case_view(request, case_id):
     try:
         money_check = await check_user_money(request, case_id)
@@ -507,9 +523,8 @@ async def get_open_case_view(request, case_id):
         print(e)
         return JsonResponse({"error": str(e)}, status=500)
 
-# @api_view(['GET'])
 
-
+@async_require_methods(["GET"])
 async def advertisement_view(request):
     # Получаем последний объект асинхронно
     ad = await sync_to_async(Advertisement.objects.order_by('-id').first)()
@@ -523,7 +538,7 @@ async def advertisement_view(request):
             "title": ad.title_1,
             "subTitle": ad.subTitle_1,
             "imgUrl": ad.imgUrl_1,
-            "timer": ad.timer_1
+            "timer":   seconds_until(ad.data_and_time)
         },
         {
             "title": ad.title_2,
@@ -536,6 +551,7 @@ async def advertisement_view(request):
     # @api_view(['GET'])
 
 
+@async_require_methods(["GET"])
 async def google_callback_view(request):
     state = request.GET.get("state")
     code = request.GET.get("code")

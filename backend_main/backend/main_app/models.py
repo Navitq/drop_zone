@@ -2,7 +2,6 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 from django.db.models.deletion import CASCADE
 from django.core.exceptions import ValidationError
@@ -325,9 +324,9 @@ class Advertisement(models.Model):
 
     subTitle_1_ru = models.CharField(max_length=255, null=False, blank=False)
     subTitle_1_en = models.CharField(max_length=255, null=False, blank=False)
-    imgUrl_1 = models.CharField(max_length=255, null=False, blank=False)
-    timer_1 = models.PositiveIntegerField()
-
+    imgUrl_1 = models.URLField(max_length=255, null=False, blank=False)
+    data_and_time = models.DateTimeField(
+        default=timezone.now, null=False, blank=False)
     # Второй объект без timer
     title_2 = models.JSONField(default=dict, blank=True)
 
@@ -338,7 +337,7 @@ class Advertisement(models.Model):
 
     subTitle_2_ru = models.CharField(max_length=255, null=False, blank=False)
     subTitle_2_en = models.CharField(max_length=255, null=False, blank=False)
-    imgUrl_2 = models.CharField(max_length=255, null=False, blank=False)
+    imgUrl_2 = models.URLField(max_length=255, null=False, blank=False)
 
     def save(self, *args, **kwargs):
         """Автоматически формируем name_json из name_ru и name_en."""

@@ -9,7 +9,68 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor — подставляем JWT
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;  // на сервере (SSR) document нет
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  // ищем в document.cookie запись вида "name=значение"
+  return match ? decodeURIComponent(match[2]) : null;
+  // если нашли — возвращаем значение, иначе null
+}
+
+
+api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+  const method = config.method?.toUpperCase();
+
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(method || "")) {
+    // #### Получаем CSRF из куки
+    let csrftoken = getCookie("csrftoken");
+
+    // #### Если нет csrftoken, делаем GET на /csrf/ для установки куки
+    if (!csrftoken) {
+      await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/csrf/`, { withCredentials: true });
+      csrftoken = getCookie("csrftoken");
+    }
+
+    // #### Подставляем CSRF в заголовок
+    if (csrftoken) {
+      config.headers = config.headers || {};
+      config.headers["X-CSRFToken"] = csrftoken;
+    }
+  }
+
+  // #### Подставляем JWT в Authorization
+  return config;
+});
+
+
+
+api.interceptors.response.use(
+  response => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retryCsrf?: boolean };
+
+    // #### Проверяем, что это 403 из-за CSRF и ещё не пытались повторить
+    if (error.response?.status === 403 && !originalRequest._retryCsrf) {
+      originalRequest._retryCsrf = true;
+
+      // Получаем новый CSRF
+      await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/csrf/`, { withCredentials: true });
+
+      // Берём токен из куки
+      const csrftoken = getCookie("csrftoken");
+      if (csrftoken) {
+        originalRequest.headers = originalRequest.headers || {};
+        originalRequest.headers["X-CSRFToken"] = csrftoken;
+      }
+
+      // Повторяем исходный запрос
+      return api(originalRequest);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 
 // Response interceptor — обработка 401 и обновление токена
 api.interceptors.response.use(

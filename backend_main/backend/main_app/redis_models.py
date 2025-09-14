@@ -2,6 +2,7 @@ from redis_om import HashModel, JsonModel,  Field, get_redis_connection, Migrato
 # Подключение к Redis
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -70,7 +71,7 @@ class AdvertisementRedis(JsonModel):
     title_1: dict
     subTitle_1: dict
     imgUrl_1: str
-    timer_1: int
+    data_and_time: datetime
 
     # Второй объект без timer
     title_2: dict

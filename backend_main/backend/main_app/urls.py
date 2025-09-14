@@ -26,4 +26,6 @@ urlpatterns = [
          views.get_cases_by_type_view, name='get_cases_by_type'),
     path('advertisement/',
          views.advertisement_view, name='get_cases_by_type'),
+    path('csrf/',
+         views.get_csrf_view, name='get_cases_by_type'),
 ]

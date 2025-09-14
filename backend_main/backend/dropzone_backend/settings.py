@@ -29,6 +29,8 @@ SESSION_COOKIE_SECURE = True               # только HTTPS
 SESSION_COOKIE_SAMESITE = 'Lax'            # или 'Strict'
 SESSION_COOKIE_HTTPONLY = True
 
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_HTTPONLY = False  # JS сможет прочитать
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 
