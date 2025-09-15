@@ -30,11 +30,12 @@ def try_load_with_retry():
                             port=int(REDIS_DOCKER_PORT), db=0)
             r.ping()
             print("✅ Redis готов")
-            from .utils import load_to_redis, load_advertisement, load_background_main
+            from .utils import load_to_redis, load_raffles, load_advertisement, load_background_main
 
             load_to_redis()
             load_advertisement()
             load_background_main()
+            load_raffles()
             break  # всё ок, выходим из цикла
         except OperationalError:
             print("⏳ Ждём Postgres...")

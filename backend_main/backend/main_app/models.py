@@ -119,7 +119,12 @@ class SteamItemCs(models.Model):
     item_style = models.CharField(max_length=50, null=False, blank=True)
     name = models.CharField(max_length=70, null=False, blank=True)
 
-    price = models.PositiveIntegerField(null=False, blank=False)
+    price = models.DecimalField(
+        max_digits=10,       # всего цифр
+        decimal_places=2,    # знаков после запятой
+        null=False,
+        blank=False
+    )
     commodity = models.BooleanField(default=False)  # Stackable товар или нет
     rarity = models.CharField(
         max_length=20, choices=RARITY_CHOICES, default="usuall")
@@ -368,3 +373,42 @@ class BackgroundMainPage(models.Model):
     mobile_background_url = models.URLField(null=False, blank=False)
     pc_background_grass_url = models.URLField(null=False, blank=False)
     mobile_background_grass_url = models.URLField(null=False, blank=False)
+
+
+class Raffles(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, null=False, blank=False)
+    prize_item = models.ForeignKey(
+        SteamItemCs, on_delete=models.SET_NULL, related_name="raffles", null=True, blank=False)
+    players = models.ManyToManyField(
+        User, related_name="raffles", blank=True)
+    participate_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=False,
+        blank=False
+    )
+    fake_users_amount = models.PositiveIntegerField(
+        default=0, null=True, blank=True)
+    max_users_amount = models.PositiveIntegerField(null=False, blank=False)
+    start_date = models.DateTimeField(
+        auto_now_add=True, null=False, blank=False)
+    end_date = models.DateTimeField(null=False, blank=False)
+    winner = models.ForeignKey(
+        User, on_delete=models.SET_NULL, related_name="raffles_champion", blank=True, null=True)
+
+    def clean(self):
+        # Проверяем условие
+        if self.fake_users_amount > self.max_users_amount:
+            raise ValidationError(
+                "fake_users_amount не может быть больше max_users_amount")
+        if self.participate_price < 0:
+            raise ValidationError(
+                "Цена участия не может быть меньше нуля")
+        if timezone.now() > self.end_date:
+            raise ValidationError({
+                "end_date": "Дата окончания должна быть позже даты начала"
+            })
+
+    def get_name(self, lang=None):
+        return self.name

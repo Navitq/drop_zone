@@ -1,10 +1,20 @@
+'use client'
 import React from 'react';
 import style from '@/styles/raffles.module.scss';
 import { useTranslations } from 'next-intl';
 import RafflesTimer from '@/components/RafflesTimer'
 import Image from 'next/image';
 
+import { useAppDispatch } from '@/lib/hooks'
+import { showNoMoneyModal, showUnAuthModal } from '@/redux/modalReducer'
+import { AxiosError } from "axios";
+
+import { BACKEND_PATHS } from '@/utilites/urls'
+
+import api from "@/lib/api";
+
 interface RafflesCaseInt {
+    id: string,
     gunModel: string,
     gunStyle: string,
     maxPlayerAmount: number,
@@ -17,7 +27,27 @@ interface RafflesCaseInt {
 
 function RafflesCase(props: RafflesCaseInt): React.ReactNode {
     const t = useTranslations('raffles');
+    const dispatch = useAppDispatch()
 
+    async function takePartRaffels() {
+        try {
+            const response = await api.post(BACKEND_PATHS.takePartRaffles, {
+                id: props.id
+            });
+
+            // setRafflesItems(response.data)
+        } catch (err) {
+            const error = err as AxiosError;
+            console.log(error.status)
+            if (error.response?.status === 401) {
+                dispatch(showUnAuthModal())
+            } else if (error.response?.status === 402) {
+                dispatch(showNoMoneyModal())
+            } else {
+                console.error("Неизвестная ошибка", error);
+            }
+        }
+    }
 
     return (
         <div className={`${style.rafflesCaseCnt} ${style[`${props.type}CaseType`]}`}>
@@ -51,7 +81,7 @@ function RafflesCase(props: RafflesCaseInt): React.ReactNode {
                         <RafflesTimer endTime={props.endTime}></RafflesTimer>
                     </div>
                 </div>
-                <div className={style.rafflesAplliedBtnCnt}>
+                <div className={style.rafflesAplliedBtnCnt} onClick={() => { takePartRaffels() }}>
                     <button className={style.rafflesAplliedBtn}>{t('take_part')}</button>
                 </div>
             </div>

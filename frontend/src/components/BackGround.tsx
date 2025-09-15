@@ -62,9 +62,9 @@ export default function BackGround(): React.ReactNode {
 
                         />
                     </div>
-                    <div className={background.mobile_background_grass_url}>
+                    <div className={style.backgroundMobileImgCnt}>
                         <Image
-                            src="/images/grass_mobile.png"
+                            src={background.mobile_background_grass_url}
                             alt={t('season_background_alt')}
                             fill
                         />

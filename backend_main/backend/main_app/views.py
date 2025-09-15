@@ -11,16 +11,19 @@ from redis_om.model.model import NotFoundError
 from rest_framework_simplejwt.tokens import RefreshToken
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
-from .models import SocialAccount, User, Advertisement, InventoryItem, SteamItemCs
+from .models import SocialAccount, User, Advertisement, InventoryItem, SteamItemCs, Raffles
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart, AdvertisementRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
+from .redis_models import CaseRedisStandart, AdvertisementRedis, RafflesRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
 from django.db import DatabaseError
 from django.views.decorators.csrf import ensure_csrf_cookie
 from datetime import datetime, timezone
 from .custom_decorators import async_require_methods
+from datetime import datetime, timezone
+from .custom_decorators import async_require_methods
+from django.utils import timezone as timezone_utils
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -171,6 +174,17 @@ def seconds_until(dt: datetime) -> int:
     return max(diff, 0)
 
 
+async def deduct_user_money_raffels(user, raffels):
+    """Списываем стоимость кейса с пользователя и сохраняем в БД."""
+    try:
+        user.money_amount -= Decimal(str(raffels.participate_price))
+        await sync_to_async(user.save)()
+        return True
+    except Exception as err:
+        print(err)
+        return False
+
+
 async def deduct_user_money(user, case):
     """Списываем стоимость кейса с пользователя и сохраняем в БД."""
     try:
@@ -257,6 +271,24 @@ async def create_order(item_state: str, item, user):
         print(f"Ошибка при создании InventoryItem: {e}")
 
 
+async def add_to_raffels(raffle_id,  user):
+    # Находим розыгрыш по UUID
+    raffle = await sync_to_async(Raffles.objects.get)(id=raffle_id)
+
+    # Проверяем, участвует ли уже пользователь
+    exists = await sync_to_async(lambda: raffle.players.filter(id=user.id).exists())()
+    if exists:
+        return JsonResponse({"detail": "User already in raffle"}, status=409)
+
+    await sync_to_async(raffle.players.add)(user)
+
+    return JsonResponse({
+        "detail": "User added to raffle",
+        "raffle_id": str(raffle.id),
+        "user_id": user.id,
+    }, status=207)
+
+
 async def check_user_money(request, case_id):
     """Проверяем money_amount пользователя из токена."""
     try:
@@ -272,6 +304,23 @@ async def check_user_money(request, case_id):
         if user.money_amount < cases[0].price:
             return JsonResponse({"detail": "Insufficient funds"}, status=402)
         return {"user": user, "case": cases[0]}
+    except NotFoundError:
+        return JsonResponse({"detail": "Insufficient funds"}, status=503)
+
+
+async def check_user_money_raffels(request, raffles_id):
+    """Проверяем money_amount пользователя из токена."""
+    try:
+        raffle = await sync_to_async(RafflesRedis.get)(str(raffles_id))
+        if not raffle:
+            return Response({"detail": "Raffels not found"}, status=404)
+        user_id = request.token_data.get("id")
+        user = await sync_to_async(User.objects.get)(id=user_id)
+        if user_id in raffle.players_ids:
+            return JsonResponse({"detail": "User already in raffle"}, status=409)
+        if user.money_amount < raffle.participate_price:
+            return JsonResponse({"detail": "Insufficient funds"}, status=402)
+        return {"user": user, "raffels": raffle}
     except NotFoundError:
         return JsonResponse({"detail": "Insufficient funds"}, status=503)
 
@@ -524,6 +573,25 @@ async def get_open_case_view(request, case_id):
         return JsonResponse({"error": str(e)}, status=500)
 
 
+@async_require_methods(["POST"])
+async def raffles_take_a_part_view(request):
+    try:
+        body = json.loads(request.body)
+        raffle_id = body.get("id")  # или
+        money_check = await check_user_money_raffels(request, raffle_id)
+        if isinstance(money_check, JsonResponse):
+            return money_check  # 402
+        if isinstance(money_check, dict) and "user" in money_check and "raffels" in money_check:
+            isFundsWrittenof = await deduct_user_money_raffels(money_check["user"], money_check["raffels"])
+            if isFundsWrittenof is True:
+                return await add_to_raffels(money_check["raffels"].id, money_check["user"])
+            # Логика открытия кейса
+        return JsonResponse({"Error": "server error"}, status=501)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error": str(e)}, status=500)
+
+
 @async_require_methods(["GET"])
 async def advertisement_view(request):
     try:
@@ -569,6 +637,37 @@ async def get_main_page_background_view(request):
     except Exception as e:
         # Логируем ошибку и возвращаем 500
         print(f"❌ Ошибка в BackgroundMainPageRedis: {e}")
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
+
+
+@async_require_methods(["GET"])
+async def raffles_list_view(request):
+    try:
+        all_raffles = await sync_to_async(lambda: RafflesRedis.find().all())()
+        if not all_raffles:
+            return JsonResponse([], safe=False, status=404)
+        now = timezone_utils.now()
+        raffles = [r for r in all_raffles if r.end_date > now]
+        if len(raffles) <= 0:
+            return JsonResponse([], safe=False, status=404)
+        data = []
+        for r in raffles:
+            raffle = {
+                "id": r.id,  # конвертируем UUID в строку
+                "imgPath": r.prize_item['imgUrl'],
+                "currentPlayerAmount": len(r.players_ids) + r.fake_users_amount,
+                "participationPrice": float(r.participate_price),
+                "gunModel": r.prize_item['gunModel'],
+                "gunStyle": r.prize_item['gunStyle'],
+                "type": r.prize_item['rarity'],
+                "maxPlayerAmount": r.max_users_amount,
+                "endTime": r.end_date.isoformat(),
+            }
+            data.append(raffle)
+
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        print(f"❌ Ошибка в raffles_list_view: {e}")
         return JsonResponse({"error": "Internal Server Error"}, status=500)
 
 

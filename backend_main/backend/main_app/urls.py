@@ -30,4 +30,8 @@ urlpatterns = [
          views.get_csrf_view, name='get_cases_by_type'),
     path('main-page-background/',
          views.get_main_page_background_view, name='get_cases_by_type'),
+    path('raffles/take-a-part/',
+         views.raffles_take_a_part_view, name='get_cases_by_type'),
+    path('raffles/',
+         views.raffles_list_view, name='get_cases_by_type'),
 ]

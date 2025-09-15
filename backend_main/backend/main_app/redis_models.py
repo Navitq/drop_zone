@@ -3,7 +3,7 @@ from redis_om import HashModel, JsonModel,  Field, get_redis_connection, Migrato
 import os
 from dotenv import load_dotenv
 from datetime import datetime
-
+from typing import Optional
 load_dotenv()
 
 REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
@@ -94,6 +94,16 @@ class BackgroundMainPageRedis(JsonModel):
         global_key_prefix = "BackgroundMainPage"
         model_key_prefix = "BackgroundMainPage"
         database = redis
+
+
+class RafflesRedis(JsonModel):
+    id: str = Field(primary_key=True)
+    prize_item: dict  # id SteamItemCs
+    players_ids: list[str] = []          # id пользователей
+    participate_price: float
+    fake_users_amount: int = 0
+    max_users_amount: int
+    end_date: datetime
 
 
 Migrator().run()
