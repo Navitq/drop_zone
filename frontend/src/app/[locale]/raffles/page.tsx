@@ -11,6 +11,7 @@ import RafflesCase from '@/components/RafflesCase';
 import { BACKEND_PATHS } from '@/utilites/urls'
 
 import api from "@/lib/api";
+import RafflesModal from '@/components/RafflesModal';
 
 interface RafflesCaseInt {
     id: string
@@ -59,6 +60,7 @@ export default function RafflesPage(): React.ReactNode {
                 }
                 {/* <RafflesCase endTime={"2025-08-21T23:30:00Z"} participationPrice={150} type='usuall' gunModel="М4А1" gunStyle='Buldozer' currentPlayerAmount={134} maxPlayerAmount={200} imgPath={"/images/example_raffles_violet.png"}></RafflesCase> */}
             </div>
+            <RafflesModal ></RafflesModal>
         </div >
     );
 }

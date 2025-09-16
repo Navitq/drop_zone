@@ -55,15 +55,22 @@ def background_main_saved(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Raffles)
-@receiver(m2m_changed, sender=Raffles.players.through)
-def load_raffles_saved(sender, instance, created, **kwargs):
-    """
-    Срабатывает при создании или изменении кейса
-    """
-    if not os.environ.get("RUN_MAIN") == "true":
+def raffle_saved(sender, instance, created, **kwargs):
+    # Если объект создан — всегда обрабатываем
+    if os.environ.get("RUN_MAIN") != "true":
         return
-    try:
-        pass
+    load_raffles()
+
+
+@receiver(m2m_changed, sender=Raffles.players.through)
+def raffle_players_changed(sender, instance, action, **kwargs):
+    """Срабатывает только при изменении игроков"""
+    if os.environ.get("RUN_MAIN") != "true":
+        return
+
+    # чтобы не пересекалось с post_save
+    if action in ("post_add", "post_remove", "post_clear"):
+        # если нужно тоже обновлять
         load_raffles()
-    except RedisConnectionError:
-        pass
+        print(
+            f"⚡ Игроки изменились у розыгрыша {instance.id}, но post_save не трогаем")

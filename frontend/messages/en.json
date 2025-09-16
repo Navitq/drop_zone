@@ -109,7 +109,8 @@
     "auth_first": "Log in to access all the features of the site",
     "go_to_auth": "login",
     "no_money": "Not enough funds",
-    "no_money_no_case": "There are not enough funds on the balance, you need to top up the balance to open a case"
+    "no_money_no_case": "There are not enough funds on the balance, you need to top up the balance to open a case",
+    "status_ok": "Ok"
     },
   "faq": {
     "t_item_1": "I topped up my balance, but the money does not appear on the site. What should I do?",
@@ -150,7 +151,11 @@
     "image_alt": "picture",
     "activity_price":"Cost of participation:",
     "take_part": "take part",
-    "clock_alt": "Clock picture"
+    "clock_alt": "Clock picture",
+    "ok": "Completed successfully!",
+    "successfully_added": "You are now entered into the drawing",
+    "err": "Attention! Error",
+    "err_you_already_participate": "You are already participating in this drawing!"
   },
   "contracts": {
     "your_skin_price": "The cost of your skins:",

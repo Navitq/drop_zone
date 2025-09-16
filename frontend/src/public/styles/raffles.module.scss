@@ -59,6 +59,7 @@
 
 .rafflesManIconCnt {
     @extend %flexCenter;
+    align-items: center !important;
     margin-right: 15px;
 }
 
@@ -86,6 +87,9 @@
     position: relative;
     width: 100%;
     flex: 1;
+    img {
+        object-fit: contain;
+    }
 }
 
 .weaponGameInfo {
@@ -153,6 +157,7 @@
 }
 
 .rafflesAplliedBtn {
+    @extend %flexCenter;
     font-family: var(--font-headRegular);
     font-size: 20px;
     line-height: 100%;
@@ -225,14 +230,126 @@
     }
 }
 
+.visible768px, .visible1024px{
+    display: none;
+}
+
 @media (max-width: 1439px) {
 
 }
 
 @media (max-width: 1024px) {
-
+    .rafflesCasesCnt{
+        row-gap: 49px;
+        column-gap: 20px;
+    }
+    .rafflesTitle {
+        margin-bottom: 38px;
+    }
+    .pc_visible {
+        display: none;
+    }
+    .visible1024px {
+        display: flex;
+    }
+    .rafflesCaseCnt {
+        max-width: 601px ;
+        height: 347px;
+        padding: 34px 23px 34px 23px;
+    }
+    .rafflesTitleInfo {
+        margin-bottom: 12px;
+    }
+    .weaponModel, .weaponStyle {
+        font-size: 28px;
+    }
+    .rafflesPlayerAmount {
+        font-size: 28px;
+    }
+    .priceInfoTitle {
+        font-size: 17px;
+    }
+    .weaponGameInfo {
+        margin-top: 12px;
+        height: 50px;
+    }
+    .priceInfo {
+        font-size: 25px;
+    }
+    .timerText {
+        font-size: 23px;
+    }
+    .rafflesDuration {
+        height: 21px;
+    }
+    .rafflesAplliedBtn {
+        font-size: 15px;
+    }
+    .rafflesAplliedBtnCnt {
+        padding: 13px 18px;
+        border-radius: 3px;
+    }
+    .rafflesManIconCnt {
+        margin-right: 14px;
+    }
 }
 
 @media (max-width: 768px) {
-
+    .raffles {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    .rafflesCasesCnt{
+        row-gap: 21px;
+        column-gap: 20px;
+    }
+    .rafflesTitle {
+        margin-bottom: 20px;
+    }
+    .visible1024px {
+        display: none;
+    }
+    .visible768px {
+        display: flex;
+    }
+    .rafflesCaseCnt {
+        max-width: 341px;
+        height: 197px;
+        padding: 20px 16px 20px 16px;
+    }
+    .rafflesTitleInfo {
+        margin-bottom: 7px;
+    }
+    .weaponModel, .weaponStyle {
+        font-size: 16px;
+    }
+    .rafflesPlayerAmount {
+        font-size: 15px;
+    }
+    .priceInfoTitle {
+        font-size: 10px;
+    }
+    .weaponGameInfo {
+        margin-top: 5px;
+        height: 32px;
+    }
+    .priceInfo {
+        font-size: 14px;
+    }
+    .timerText {
+        font-size: 13px;
+    }
+    .rafflesDuration {
+        height: 12px;
+    }
+    .rafflesAplliedBtn {
+        font-size: 10px;
+    }
+    .rafflesAplliedBtnCnt {
+        padding: 6px 7px;
+        border-radius: 3px;
+    }
+    .rafflesManIconCnt {
+        margin-right: 8px;
+    }
 }

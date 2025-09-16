@@ -47,6 +47,12 @@ interface noMoneyModalInt {
     isVisible: boolean;
 }
 
+interface rafflesModalInt {
+    isVisible: boolean;
+    title: string,
+    sub_title: string
+}
+
 interface ModalState {
     rulesBattleModal: BattlesRules,
     createBattleModal: BattlesRules,
@@ -55,10 +61,16 @@ interface ModalState {
     paymentModal: PaymentInt,
     rulletCaseModal: rulletCaseModalInt,
     unAuthModal: unAuthModalInt,
-    noMoneyModal: noMoneyModalInt
+    noMoneyModal: noMoneyModalInt,
+    rafflesModal: rafflesModalInt,
 }
 
 const initialState: ModalState = {
+    rafflesModal: {
+        isVisible: false,
+        title: "",
+        sub_title: ""
+    },
     unAuthModal: {
         isVisible: false
     },
@@ -168,11 +180,21 @@ export const modalSlice = createSlice({
         showNoMoneyModal: (state) => {
             state.noMoneyModal.isVisible = true;
         },
+        closeRafflesStateModal: (state) => {
+            state.rafflesModal.isVisible = false;
+            state.rafflesModal.title = "";
+            state.rafflesModal.sub_title = "";
+        },
+        showRafflesStateModal: (state, actions: PayloadAction<{ title: string, sub_title: string }>) => {
+            state.rafflesModal.isVisible = true;
+            state.rafflesModal.title = actions.payload.title;
+            state.rafflesModal.sub_title = actions.payload.sub_title;
+        },
     }
 });
 
 
 
-export const { showNoMoneyModal, closeNoMoneyModal, showUnAuthModal, closeUnAuthModal, showRulletCaseModal, closeRulletCaseModal, showPaymentModal, closePaymentModal, closeStCaseModal, showStCaseModal, closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
+export const { closeRafflesStateModal, showRafflesStateModal, showNoMoneyModal, closeNoMoneyModal, showUnAuthModal, closeUnAuthModal, showRulletCaseModal, closeRulletCaseModal, showPaymentModal, closePaymentModal, closeStCaseModal, showStCaseModal, closeUserModal, showUserModal, showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = modalSlice.actions;
 
 export default modalSlice.reducer;
