@@ -4,6 +4,12 @@
     align-items: center;
 }
 
+%flexStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
 .smItemCnt {
     height: 191px;
     width: 191px;
@@ -339,6 +345,135 @@
     display: flex;
 }
 
+.uicCnt {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    padding: 35px 20px 40px 20px;
+    border-radius: 18px;
+    position: relative;
+}
+
+.hoverUicCnt {
+    position: absolute;
+    background-color: rgba(206, 206, 206, 0.1);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+.uicCnt:hover .hoverUicCnt {
+    display: block;
+}
+
+.hoverUicCntClose {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+    width: 25px;
+    height: 25px;
+    background-image: url(/images/close_upgrade_cross.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    z-index: 5;
+}
+
+.uicImgCnt {
+    max-width: 450px;
+    height: 350px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 15px;
+    img {
+        object-fit: contain;
+    }
+}
+
+.uicItemInfo {
+    width: 100%;
+    @extend %flex-center;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.uicTextInfo {
+    @extend %flex-center;
+    flex-direction: row;
+}
+
+.uicPriceInfo {
+    width: 100%;
+    @extend %flex-center;
+    margin-top: 5px;
+    font-family: var(--font-textRegular);
+    font-size: 30px;
+}
+
+.uicGunModel, .uicGunStyle {
+    font-family: var(--font-headRegular);
+    font-size: 25px;
+}
+
+.uicGunStyle {
+    color: rgba(125, 128, 145, 1);
+}
+
+.usuallUicCnt {
+    background-image: url(/images/blue_upgrade_background.png);
+    .uicGunModel {
+        color: rgba(0, 140, 255, 1);
+    }
+    .uicPriceInfo{
+        color: rgba(184, 208, 255, 1);
+    }
+}
+
+.rareUicCnt {
+    background-image: url(/images/violet_upgrade_background.png);
+    .uicGunModel {
+        color: rgba(179, 108, 255, 1);
+    }
+    .uicPriceInfo{
+        color: rgba(228, 203, 255, 1);
+    }
+}
+
+.classifiedUicCnt {
+    background-image: url(/images/pink_upgrade_background.png);
+    .uicGunModel {
+        color: rgba(255, 56, 229, 1);
+    }
+    .uicPriceInfo{
+        color: rgba(255, 217, 248, 1);
+    }
+}
+
+
+.eliteUicCnt {
+    background-image: url(/images/red_upgrade_background.png);
+    .uicGunModel {
+        color: rgba(255, 80, 80, 1);
+    }
+    .uicPriceInfo{
+        color: rgba(255, 217, 217, 1);
+    }
+}
+
+
+.epicUicCnt {
+    background-image: url(/images/yellow_upgrade_background.png);
+    .uicGunModel {
+        color: rgba(255, 195, 0, 1);
+    }
+    .uicPriceInfo{
+        color: rgba(254, 245, 163, 1);
+    }
+}
 
 
 @media (max-width: 1439px) {

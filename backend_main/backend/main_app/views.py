@@ -671,6 +671,60 @@ async def raffles_list_view(request):
         return JsonResponse({"error": "Internal Server Error"}, status=500)
 
 
+@async_require_methods(["POST"])
+async def get_inventory_items_view(request):
+    try:
+        data = json.loads(request.body)
+
+        page = int(data.get("page", 1))
+        body = data.get("body", {})
+        client_id = body.get("client_id")
+        limit = int(body.get("limit", 25))
+
+        if not client_id:
+            return JsonResponse({"error": "client_id is required"}, status=404)
+
+        offset = (page - 1) * limit
+
+        # считаем общее количество у клиента
+
+        # достаём нужный кусок данных
+        items_qs = (
+            InventoryItem.objects
+            .filter(owner_id=client_id)
+            .select_related("steam_item")
+            .order_by("created_at")[offset: offset + limit]
+        )
+
+        items = await sync_to_async(list)(items_qs)
+
+        result = []
+        for item in items:
+            result.append({
+                "id": str(item.id),
+                "gunModel": item.steam_item.item_model,
+                "gunStyle": item.steam_item.item_style,
+                "gunPrice": float(item.steam_item.price),
+                "type": item.steam_item.rarity,
+                "imgPath": item.steam_item.icon_url,
+                "fullName": item.full_name,
+                "shortName": item.short_name,
+                "tradable": item.tradable,
+                "marketable": item.marketable,
+                "state":  item.exterior_wear,
+            })
+
+        # есть ли ещё страницы?
+
+        return JsonResponse({
+            "items": result,
+        })
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    # raffle_id = body.get("id")  # или
+
+
 @async_require_methods(["GET"])
 async def google_callback_view(request):
     state = request.GET.get("state")

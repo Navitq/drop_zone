@@ -34,4 +34,6 @@ urlpatterns = [
          views.raffles_take_a_part_view, name='get_cases_by_type'),
     path('raffles/',
          views.raffles_list_view, name='get_cases_by_type'),
+    path('get-inventory-items/',
+         views.get_inventory_items_view, name='get_cases_by_type'),
 ]

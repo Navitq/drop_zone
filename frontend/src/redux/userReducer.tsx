@@ -1,13 +1,14 @@
 import { createSlice, current } from '@reduxjs/toolkit';
 
 interface UserData {
-    id: number;
+    id: string;
     username: string;
     email: string;
     phone: string;
     address: string;
     avatar: string;
     provider: "Steam" | "Google" | "Vk" | "";
+    money_amount: number
 }
 
 interface AuthState {
@@ -19,13 +20,14 @@ interface AuthState {
 
 export const initialState: AuthState = {
     userData: {
-        id: 0,            // число
+        id: '0',            // число
         username: '',
         email: '',
         phone: '',
         address: '',
         provider: "",
-        avatar: '/images/user_mock.jpg' // путь к изображению
+        avatar: '/images/user_mock.jpg', // путь к изображению
+        money_amount: 720,
     },
     isAuth: false,
     isLoading: false,

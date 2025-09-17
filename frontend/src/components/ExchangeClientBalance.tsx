@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
 
 import style from '@/styles/upgrades.module.scss'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { setPriceBuyTipe, clearPrice } from '@/redux/upgradeReducer';
 
 
 function ExchangeClientBalance(): React.ReactNode {
 
     const [value, setValue] = useState<string>('');
     const inputRef = useRef(null);
+    const money_amont = useAppSelector(state => state.user.userData.money_amount)
+    const dispatch = useAppDispatch()
 
     const resizeInput = (): void => {
         if (inputRef.current) {
@@ -18,12 +22,14 @@ function ExchangeClientBalance(): React.ReactNode {
         const newValue = e.target.value.replace(',', '.'); // заменяем запятую на точку
         if (newValue === '') {
             setValue('');
+            dispatch(clearPrice())
             return;
         }
 
         // Оставляем только цифры
         if (/^\d*\.?\d{0,2}$/.test(newValue) && Number(newValue) < 100000) {
             setValue(newValue);
+            dispatch(setPriceBuyTipe(+newValue))
         }
     };
 
@@ -46,7 +52,7 @@ function ExchangeClientBalance(): React.ReactNode {
                 />
             </div>
             <div className={style.clientBalance}>
-                {`${"/720"} Dc`}
+                {`/${money_amont} Dc`}
             </div>
         </div>
     )

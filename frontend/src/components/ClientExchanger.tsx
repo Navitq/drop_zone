@@ -8,18 +8,31 @@ import ExchangerImage from '@/components/ExchangerImage'
 import ExchangeTitle from '@/components/ExchangeTitle'
 import ExchangeClientBalance from '@/components/ExchangeClientBalance'
 import ExchangeTab from '@/components/ExchangeTab'
-
+import UpgradeItemCard from '@/components/UpgradeItemCard'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { clearItemToUpgrade } from '@/redux/upgradeReducer'
 
 function ClientExchanger(): React.ReactNode {
+    const { id } = useAppSelector(state => state.upgrade.itemData)
+    const dispatch = useAppDispatch()
+
+    function closeItem() {
+        dispatch(clearItemToUpgrade())
+    }
+
     return (
-        <Tabs className={style.clientExchanger}>
-
-
+        <Tabs className={style.clientExchanger} onSelect={() => { closeItem() }}>
             <TabPanel className={style.exClientPropTab}>
                 <div className={style.exClientProp}>
-                    <ExchangerImage imgUrl={'/images/upgrade_client_ak47.svg'} imgAltKey={"client_ak"} width={239} height={130}></ExchangerImage>
+                    {
+                        id != "" ? <UpgradeItemCard close={() => { closeItem() }}></UpgradeItemCard> : (
+                            <div className={style.exStartBlockPadding}>
+                                <ExchangerImage imgUrl={'/images/upgrade_client_ak47.svg'} imgAltKey={"client_ak"} width={239} height={130}></ExchangerImage>
+                                <ExchangeTitle titleKey={"take_object"}></ExchangeTitle>
+                            </div>
+                        )
+                    }
 
-                    <ExchangeTitle titleKey={"take_object"}></ExchangeTitle>
                 </div>
             </TabPanel>
             <TabPanel>
