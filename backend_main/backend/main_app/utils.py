@@ -1,8 +1,8 @@
 
 from django.db.utils import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
-from .models import Case, Raffles, CaseItem, Advertisement, BackgroundMainPage
-from .redis_models import CaseRedisStandart, RafflesRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
+from .models import Case, Raffles, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
+from .redis_models import CaseRedisStandart, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
 from django.utils import timezone
 
 
@@ -95,6 +95,34 @@ def load_background_main():
         ).save()
 
         print("✅ Redis синхронизирован: сохранена последняя запись BackgroundMainPageRedis")
+
+    except RedisConnectionError:
+        raise
+    except OperationalError:
+        print("❌ Postgres ещё не готов — ждём…")
+
+
+def load_global_coefficient_main():
+    try:
+        # проверим доступность Redis
+        GlobalCoefficientRedis.db().ping()
+        ad = GlobalCoefficient.objects.order_by('-id').first()
+        if not ad:
+            return
+
+        # Очищаем старую запись в Redis
+        GlobalCoefficientRedis.find().delete()
+
+        # Сохраняем только последний объект
+        GlobalCoefficientRedis(
+            raffles_global=ad.raffles_global,
+            cases_global=ad.cases_global,
+            upgrades_global=ad.upgrades_global,
+            contracts_global=ad.contracts_global,
+            battles_global=ad.battles_global,
+        ).save()
+
+        print("✅ Redis синхронизирован: сохранена последняя запись GlobalCoefficientRedis")
 
     except RedisConnectionError:
         raise

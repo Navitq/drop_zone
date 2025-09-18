@@ -1,0 +1,9 @@
+Collecting asgiref
+  Using cached asgiref-3.9.1-py3-none-any.whl.metadata (9.3 kB)
+Using cached asgiref-3.9.1-py3-none-any.whl (23 kB)
+Installing collected packages: asgiref
+  Attempting uninstall: asgiref
+    Found existing installation: asgiref 3.9.1
+    Uninstalling asgiref-3.9.1:
+      Successfully uninstalled asgiref-3.9.1
+Successfully installed asgiref-3.9.1

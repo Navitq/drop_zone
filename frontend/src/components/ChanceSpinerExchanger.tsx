@@ -1,15 +1,28 @@
 'use client'
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import style from '@/styles/upgrades.module.scss'
 import CaseBtnText from '@/components/CaseBtnText'
 import { useTranslations } from "next-intl";
+import { useAppSelector, useAppDispatch } from "@/lib/hooks";
+import { showNoMoneyModal, showUnAuthModal } from '@/redux/modalReducer'
+import { AxiosError } from "axios";
+
+import api from "@/lib/api";
+import { BACKEND_PATHS } from '@/utilites/urls';
+import { clearServerItemToUpgrade, clearItemToUpgrade } from '@/redux/upgradeReducer'
 
 function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 0 }) {
     const [percent, setPercent] = useState(initialPercent);
+    const price = useAppSelector(state => state.upgrade.price)
+    const clientItemId = useAppSelector(state => state.upgrade.itemData.id)
+    const serverItemId = useAppSelector(state => state.upgrade.itemServerData.id)
+    const serverPrice = useAppSelector(state => state.upgrade.serverPrice)
     const [rotation, setRotation] = useState(0);
     const t = useTranslations('upgrades')
     const svgRef = useRef(null);
+
+    const dispatch = useAppDispatch()
 
     const padding = 30; // внутренний отступ для тени
     const svgSize = size + padding * 2;
@@ -19,32 +32,73 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percent / 100) * circumference;
 
-    const updatePercent = (clientX, clientY) => {
-        if (!svgRef.current) return;
-        const rect = svgRef.current.getBoundingClientRect();
-        const x = clientX - (rect.left + center);
-        const y = clientY - (rect.top + center);
+    useEffect(() => {
+        if (price === 0 || serverPrice === 0) {
+            setPercent(0);
+        } else {
+            const localPersentage = parseFloat((price / (serverPrice * 1.05) * 100).toFixed(2));
+            if (localPersentage > 90) {
+                setPercent(90);
+            } else if (localPersentage < 1) {
+                setPercent(1);
+            } else {
+                setPercent(localPersentage);
+            }
+        }
 
-        let angle = Math.atan2(x, -y) * (180 / Math.PI);
-        if (angle < 0) angle += 360;
+    }, [price, serverPrice])
 
-        const newPercent = Math.min(Math.max((angle / 360) * 100, 0), 100);
-        setPercent(newPercent);
-    };
+    async function upgradeItem() {
+        try {
+            const response = await api.post(BACKEND_PATHS.upgradeItem, clientItemId ? { clientItemId, serverItemId } : { price, serverItemId });
+            if (response?.status === 201) {
 
-    const handleMouseDown = (e) => {
-        e.preventDefault();
-        updatePercent(e.clientX, e.clientY);
+            } else if (response?.status === 202) {
 
-        const handleMouseMove = (ev) => updatePercent(ev.clientX, ev.clientY);
-        const handleMouseUp = () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", handleMouseUp);
-        };
+            }
+            dispatch(clearServerItemToUpgrade())
+            dispatch(clearItemToUpgrade())
+            spin({ from: rotation, to: rotation + 1080, duration: 2000 })
+        } catch (err) {
+            const error = err as AxiosError;
+            console.log(error.status)
+            if (error.response?.status === 401) {
+                dispatch(showUnAuthModal())
+            } else if (error.response?.status === 402) {
+                dispatch(showNoMoneyModal())
+            } else {
+                console.error("Неизвестная ошибка", error);
+            }
+        }
 
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-    };
+    }
+
+    // const updatePercent = (clientX, clientY) => {
+    //     if (!svgRef.current) return;
+    //     const rect = svgRef.current.getBoundingClientRect();
+    //     const x = clientX - (rect.left + center);
+    //     const y = clientY - (rect.top + center);
+
+    //     let angle = Math.atan2(x, -y) * (180 / Math.PI);
+    //     if (angle < 0) angle += 360;
+
+    //     const newPercent = Math.min(Math.max((angle / 360) * 100, 0), 100);
+    //     setPercent(newPercent);
+    // };
+
+    // const handleMouseDown = (e) => {
+    //     e.preventDefault();
+    //     updatePercent(e.clientX, e.clientY);
+
+    //     const handleMouseMove = (ev) => updatePercent(ev.clientX, ev.clientY);
+    //     const handleMouseUp = () => {
+    //         window.removeEventListener("mousemove", handleMouseMove);
+    //         window.removeEventListener("mouseup", handleMouseUp);
+    //     };
+
+    //     window.addEventListener("mousemove", handleMouseMove);
+    //     window.addEventListener("mouseup", handleMouseUp);
+    // };
 
     // функция анимации вращения
     function spin({
@@ -83,7 +137,7 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
                 width={svgSize}
                 height={svgSize}
                 style={{ cursor: "pointer", background: "transparent" }}
-                onMouseDown={handleMouseDown}
+            // onMouseDown={handleMouseDown}
             >
                 <defs>
                     <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
@@ -227,7 +281,7 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
             </svg>
 
             {/* кнопка запуска */}
-            <CaseBtnText onClick={() => spin({ from: rotation, to: rotation + 1080, duration: 2000 })} text={t('upgrade_text')}></CaseBtnText>
+            <CaseBtnText onClick={() => { upgradeItem() }} text={t('upgrade_text')}></CaseBtnText>
             {/* <button
                 className={style.spinerBtn}
                 style={{ color: "#ffffff" }}

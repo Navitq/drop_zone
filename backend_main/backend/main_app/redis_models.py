@@ -106,4 +106,12 @@ class RafflesRedis(JsonModel):
     end_date: datetime
 
 
+class GlobalCoefficientRedis(JsonModel):
+    raffles_global: float
+    cases_global: float
+    upgrades_global: float
+    contracts_global: float
+    battles_global: float
+
+
 Migrator().run()

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SocialAccount, Raffles, BackgroundMainPage, Advertisement, User, SteamItemCs, InventoryItem, ItemsOrders, Case, CaseItem
+from .models import SocialAccount, Raffles, GlobalCoefficient, BackgroundMainPage, Advertisement, User, SteamItemCs, InventoryItem, ItemsOrders, Case, CaseItem
 
 # Register your models here.
 admin.site.register(SocialAccount)
@@ -10,6 +10,7 @@ admin.site.register(ItemsOrders)
 admin.site.register(CaseItem)
 admin.site.register(Advertisement)
 admin.site.register(BackgroundMainPage)
+admin.site.register(GlobalCoefficient)
 
 
 @admin.register(Raffles)

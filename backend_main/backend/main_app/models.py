@@ -37,6 +37,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30, blank=True)
     avatar_url = models.URLField(blank=True, null=True)
     roulet_chance = models.FloatField(default=1, null=False, blank=False)
+    upgrade_chance = models.FloatField(default=1, null=False, blank=False)
+    case_chance = models.FloatField(default=1, null=False, blank=False)
+    contracts_chance = models.FloatField(default=1, null=False, blank=False)
+    battles_chance = models.FloatField(default=1, null=False, blank=False)
     item_state_chance = models.FloatField(default=1, null=False, blank=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -412,3 +416,35 @@ class Raffles(models.Model):
 
     def get_name(self, lang=None):
         return self.name
+
+
+class GlobalCoefficient(models.Model):
+    raffles_global = models.FloatField(
+        default=1.0, verbose_name="Коэф. розыгрышей")
+    cases_global = models.FloatField(default=1.0, verbose_name="Коэф. кейсов")
+    upgrades_global = models.FloatField(
+        default=1.0, verbose_name="Коэф. апгрейдов")
+    contracts_global = models.FloatField(
+        default=1.0, verbose_name="Коэф. контрактов")
+    battles_global = models.FloatField(
+        default=1.0, verbose_name="Коэф. баттлов")
+
+    def save(self, *args, **kwargs):
+        self.pk = 1  # всегда одна запись с id=1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # запрещаем удаление
+        pass
+
+    @classmethod
+    def get_instance(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    class Meta:
+        verbose_name = "Глобальные коэффициенты"
+        verbose_name_plural = "Глобальные коэффициенты"
+
+    def __str__(self):
+        return f"Коэф: raffles={self.raffles_global}, cases={self.cases_global}, upgrades={self.upgrades_global}"

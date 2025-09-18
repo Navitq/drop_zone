@@ -16,7 +16,7 @@ from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart, AdvertisementRedis, RafflesRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
+from .redis_models import CaseRedisStandart, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
 from django.db import DatabaseError
 from django.views.decorators.csrf import ensure_csrf_cookie
 from datetime import datetime, timezone
@@ -185,6 +185,17 @@ async def deduct_user_money_raffels(user, raffels):
         return False
 
 
+async def deduct_user_money_upgrade(user, price):
+    """Списываем стоимость кейса с пользователя и сохраняем в БД."""
+    try:
+        user.money_amount -= Decimal(str(price))
+        await sync_to_async(user.save)()
+        return True
+    except Exception as err:
+        print(err)
+        return False
+
+
 async def deduct_user_money(user, case):
     """Списываем стоимость кейса с пользователя и сохраняем в БД."""
     try:
@@ -325,6 +336,34 @@ async def check_user_money_raffels(request, raffles_id):
         return JsonResponse({"detail": "Insufficient funds"}, status=503)
 
 
+async def check_user_money_upgrades(request, server_item_id, client_item_id, price):
+    """Проверяем money_amount пользователя из токена."""
+    try:
+        user_id = request.token_data.get("id")
+        user = await sync_to_async(User.objects.get)(id=user_id)
+        server_item = await sync_to_async(lambda: SteamItemCs.objects.get(id=server_item_id))()
+        if client_item_id:
+            client_item = await sync_to_async(
+                lambda: InventoryItem.objects.select_related(
+                    'steam_item').get(owner_id=user.id, id=client_item_id)
+            )()
+            if not client_item or not server_item:
+                return JsonResponse({"detail": "Item not found"}, status=404)
+
+            if user.money_amount < server_item.price:
+                return JsonResponse({"detail": "Insufficient funds"}, status=402)
+            return {"user": user, "client_item": client_item, "server_item": server_item}
+        elif price is not None or not server_item:
+            price = float(price)
+            if user.money_amount < price:
+                return JsonResponse({"detail": "Insufficient funds"}, status=402)
+            return {"user": user, "price": price, "server_item": server_item}
+        else:
+            return JsonResponse({"detail": "Either client_item_id or price must be provided"}, status=400)
+    except NotFoundError:
+        return JsonResponse({"detail": "Insufficient funds"}, status=503)
+
+
 async def get_case(case_id):
     """Возвращает кейс по ID или бросает исключение."""
     case = await sync_to_async(lambda: list(
@@ -356,6 +395,57 @@ async def get_case_items(case_id):
         }
         for item in items
     ]
+
+
+async def spin_upgrade(user, server_item, price):
+    print(555555555555)
+    ad = await sync_to_async(lambda: GlobalCoefficientRedis.find().first())()
+    pgrades_global = ad.upgrades_global
+    print(0000000000000, 4442)
+
+    honest_chance = (
+        (Decimal("0.9") if Decimal(str(price)) /
+         server_item >= 1 else Decimal(str(price)) / server_item)
+        * Decimal("0.9")
+        * Decimal(pgrades_global)
+        * Decimal(str(user.upgrade_chance))  # конвертируем float → Decimal
+    )
+    print(0000000000000, 4442)
+    print(honest_chance)
+    rand_num = random.uniform(0, 100)
+    print(honest_chance, rand_num)
+    rand_num_valuable = Decimal(str(rand_num)) * honest_chance
+    print(0000000000000, 4442)
+    if rand_num_valuable < 50:
+        return False
+    else:
+        return True
+
+
+async def remover_order(user, client_item):
+    # удаляем объект из БД
+    await sync_to_async(client_item.delete)()
+    return client_item
+
+
+async def play_upgrade_game(user, server_item, client_item=None, price=None):
+    """Игра на апгрейд предмета. Может использовать client_item или деньги (price)."""
+    print(7777777777777)
+    # определяем цену апгрейда
+    upgrade_price = client_item.steam_item.price if client_item else price
+
+    # запускаем апгрейд
+    spin_state = await spin_upgrade(
+        user=user,
+        server_item=server_item.price,
+        price=upgrade_price
+    )
+
+    if spin_state is True:
+        item_state = await spin_state_wheel(user)
+        await create_order(item_state, server_item, user)
+        return JsonResponse({"status": "client win"}, status=201)
+    return JsonResponse({"status": "client lose"}, status=202)
 
 
 @async_require_methods(["GET"])
@@ -763,6 +853,34 @@ async def get_inventory_server_items_view(request):
             "success": False,
             "error": str(e),
         }, status=500)
+
+
+@async_require_methods(["POST"])
+async def upgrade_item_view(request):
+    try:
+        data = json.loads(request.body)
+
+        client_item_id = data.get("clientItemId")
+        server_item_id = data.get("serverItemId")
+        price = data.get("price")
+
+        # Проверяем обязательные поля
+        if not server_item_id or (not price and not client_item_id):
+            return JsonResponse({"success": False, "error": "serverItemId и хотя бы одно из полей clientItemId или price обязательны"}, status=400)
+        money_check = await check_user_money_upgrades(request, server_item_id=server_item_id, client_item_id=client_item_id, price=price)
+        if isinstance(money_check, JsonResponse):
+            return money_check  # 402
+        if isinstance(money_check, dict) and "user" in money_check and ("price" in money_check or "client_item" in money_check):
+            if "client_item" in money_check:
+                answer = await play_upgrade_game(user=money_check["user"], client_item=money_check["client_item"], server_item=money_check["server_item"])
+                await remover_order(money_check["user"], money_check["client_item"])
+                return answer
+            else:
+                await deduct_user_money_upgrade(money_check["user"], money_check["price"])
+                return await play_upgrade_game(user=money_check["user"], price=money_check["price"], server_item=money_check["server_item"])
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @async_require_methods(["GET"])
