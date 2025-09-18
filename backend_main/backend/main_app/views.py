@@ -725,6 +725,46 @@ async def get_inventory_items_view(request):
     # raffle_id = body.get("id")  # или
 
 
+@async_require_methods(["POST"])
+async def get_inventory_server_items_view(request):
+    try:
+        data = json.loads(request.body)
+        page = int(data.get("page", 1))
+        body = data.get("body", {})
+        limit = int(body.get("limit", 25))
+        offset = (page - 1) * limit
+
+        # Достаём данные из БД асинхронно
+        qs = await sync_to_async(
+            lambda: list(
+                SteamItemCs.objects.all()[
+                    offset:offset+limit]
+            )
+        )()
+
+        result = [
+            {
+                "id": str(item.id),
+                "gunModel": item.item_model,
+                "gunStyle": item.item_style,
+                "gunPrice": float(item.price),
+                "type": item.rarity,
+                "imgPath": item.icon_url,
+            }
+            for item in qs
+        ]
+
+        return JsonResponse({
+            "items": result,
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "error": str(e),
+        }, status=500)
+
+
 @async_require_methods(["GET"])
 async def google_callback_view(request):
     state = request.GET.get("state")
