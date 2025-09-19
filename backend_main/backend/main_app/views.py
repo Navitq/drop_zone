@@ -273,7 +273,7 @@ async def create_order(item_state: str, item, user):
     try:
         steam_item = await sync_to_async(SteamItemCs.objects.get)(id=item.id)
 
-        await sync_to_async(InventoryItem.objects.create)(
+        return await sync_to_async(InventoryItem.objects.create)(
             steam_item=steam_item,
             owner=user,
             exterior_wear=item_state,
@@ -443,8 +443,18 @@ async def play_upgrade_game(user, server_item, client_item=None, price=None):
 
     if spin_state is True:
         item_state = await spin_state_wheel(user)
-        await create_order(item_state, server_item, user)
-        return JsonResponse({"status": "client win"}, status=201)
+        item = await create_order(item_state, server_item, user)
+        order_to_send = {
+            "id": str(item.id),
+            "gunModel": item.steam_item.item_model,
+            "gunStyle": item.steam_item.item_style,
+            "gunPrice": item.steam_item.price,
+            "imgPath": item.steam_item.icon_url,
+            "type": item.steam_item.rarity,
+            "price": item.steam_item.price,
+            "state": item_state
+        }
+        return JsonResponse({"status": "client win", 'items': order_to_send}, status=201)
     return JsonResponse({"status": "client lose"}, status=202)
 
 

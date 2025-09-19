@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import style from '@/styles/upgrades.module.scss';
@@ -15,13 +15,24 @@ import { clearItemToUpgrade } from '@/redux/upgradeReducer'
 function ClientExchanger(): React.ReactNode {
     const { id } = useAppSelector(state => state.upgrade.itemData)
     const dispatch = useAppDispatch()
+    const [tabIndex, setTabIndex] = useState<number>(0);
 
     function closeItem() {
         dispatch(clearItemToUpgrade())
     }
 
+    useEffect(() => {
+        if (id !== undefined && id != "") {
+            setTabIndex(0);
+        }
+    }, [id])
+
     return (
-        <Tabs className={style.clientExchanger} onSelect={() => { closeItem() }}>
+        <Tabs className={style.clientExchanger} selectedIndex={tabIndex} onSelect={(index) => {
+            closeItem()
+            setTabIndex(index); // обновляем вкладку
+            return index; // react-tabs требует вернуть индекс
+        }}>
             <TabPanel className={style.exClientPropTab}>
                 <div className={style.exClientProp}>
                     {

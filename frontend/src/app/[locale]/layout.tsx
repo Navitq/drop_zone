@@ -9,6 +9,7 @@ import BackGround from '@/components/BackGround';
 import { cookies } from 'next/headers'
 import StoreProvider from '@/app/StoreProvider'
 import { getUser } from '@/lib/getUser';
+import RafflesModal from '@/components/RafflesModal';
 
 export default async function LocaleLayout({
   children,
@@ -52,6 +53,7 @@ export default async function LocaleLayout({
                 {children}
               </main>
               <Footer></Footer>
+              <RafflesModal ></RafflesModal>
             </NextIntlClientProvider>
           </div>
         </StoreProvider>

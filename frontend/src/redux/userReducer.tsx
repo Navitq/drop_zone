@@ -1,4 +1,4 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserData {
     id: string;
@@ -50,13 +50,16 @@ export const userSlice = createSlice({
         },
         setError: (state, action) => {
             state.error = action.payload;
-        }
+        },
+        deductMoney: (state, actions: PayloadAction<number>) => {
+            state.userData.money_amount -= actions.payload;
+        },
     }
 });
 
 
 
 // Action creators are generated for each case reducer function
-// export const {  } = userSlice.actions;
+export const { deductMoney } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -6,8 +6,14 @@ import ItemSm from '@/components/ItemSm'
 import { AxiosError } from "axios";
 
 import api from "@/lib/api";
+import { useAppDispatch } from '@/lib/hooks';
+import { removeFinishedItem } from '@/redux/upgradeReducer'
 
 
+interface upgradeFinished {
+    newItem: gunItemModel,
+    itemToDelete: string,
+}
 
 interface ExClientStuffsInt {
     targetUrl: string,
@@ -16,6 +22,7 @@ interface ExClientStuffsInt {
         limit: number
     }
     activateBtn: (value: gunItemModel) => void,
+    addPrize?: upgradeFinished,
 }
 
 interface gunItemModel {
@@ -37,6 +44,34 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const [hasMore, setHasMore] = useState(true);
     const loadingRef = useRef(loading);
     const hasMoreRef = useRef(hasMore);
+    const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        if (!props.addPrize) return;
+
+        setItems((state) => {
+            let newState = [...state];
+
+            // сначала удаляем
+            if (props?.addPrize?.itemToDelete) {
+                newState = newState.filter(item => item.id !== props.addPrize!.itemToDelete);
+            }
+
+            // потом добавляем
+            if (props?.addPrize?.newItem?.id) {
+                newState = [...newState, props.addPrize.newItem];
+            }
+
+            return newState;
+        });
+
+        // диспатч отдельно, после setItems
+        if (props.addPrize?.newItem?.id) {
+            setTimeout(() => {
+                dispatch(removeFinishedItem());
+            }, 0);
+        }
+    }, [props.addPrize]);
 
     useEffect(() => {
         getInventory()

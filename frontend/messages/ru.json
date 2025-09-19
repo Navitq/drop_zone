@@ -142,7 +142,11 @@
     "your_skins":"Твои скины",
     "get_our_skins": "Скины, что хочешь получить",
     "search_by_data": "поиск",
-    "search_by_price": "цена"
+    "search_by_price": "цена",
+    "attention": "Внимание!",
+    "attention_sub_title": "Выбери скины прежде чем начать апгрейд!",
+    "result_win": "Вы выиграли!",
+    "result_lose": "Вы проиграли"
   },
   "raffles": {
     "man_alt": "man picture",

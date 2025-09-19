@@ -144,7 +144,11 @@
     "your_skins": "Your skins",
     "get_our_skins": "Skins you can get",
     "search_by_data": "search",
-    "search_by_price": "price"
+    "search_by_price": "price",
+    "attention": "Attention!",
+    "attention_sub_title": "Choose skins before you start upgrading!",
+    "result_win": "You win!",
+    "result_lose": "You lose"
   },
   "raffles": {
     "man_alt": "man picture",

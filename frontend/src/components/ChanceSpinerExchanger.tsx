@@ -10,7 +10,9 @@ import { AxiosError } from "axios";
 
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
-import { clearServerItemToUpgrade, clearItemToUpgrade } from '@/redux/upgradeReducer'
+import { clearServerItemToUpgrade, clearItemToUpgrade, addOneItemsFrom, clearGameState, setGameState } from '@/redux/upgradeReducer'
+import { showRafflesStateModal } from '@/redux/modalReducer'
+import { deductMoney } from '@/redux/userReducer'
 
 function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 0 }) {
     const [percent, setPercent] = useState(initialPercent);
@@ -18,6 +20,8 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
     const clientItemId = useAppSelector(state => state.upgrade.itemData.id)
     const serverItemId = useAppSelector(state => state.upgrade.itemServerData.id)
     const serverPrice = useAppSelector(state => state.upgrade.serverPrice)
+    const gameState = useAppSelector(state => state.upgrade.gameState)
+    const itemToDelete = useAppSelector(state => state.upgrade.upgradeFinished.itemToDelete)
     const [rotation, setRotation] = useState(0);
     const t = useTranslations('upgrades')
     const svgRef = useRef(null);
@@ -31,6 +35,10 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percent / 100) * circumference;
+
+    useEffect(() => {
+        dispatch(clearGameState())
+    }, [dispatch, clientItemId, serverItemId])
 
     useEffect(() => {
         if (price === 0 || serverPrice === 0) {
@@ -50,14 +58,27 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
 
     async function upgradeItem() {
         try {
-            const response = await api.post(BACKEND_PATHS.upgradeItem, clientItemId ? { clientItemId, serverItemId } : { price, serverItemId });
-            if (response?.status === 201) {
-
-            } else if (response?.status === 202) {
-
+            if (!serverItemId || (itemToDelete === clientItemId && clientItemId !== "") || price === 0) {
+                dispatch(clearServerItemToUpgrade())
+                dispatch(clearItemToUpgrade())
+                dispatch(showRafflesStateModal({ title: t('attention'), sub_title: t('attention_sub_title') }))
+                return;
             }
-            dispatch(clearServerItemToUpgrade())
-            dispatch(clearItemToUpgrade())
+            const response = await api.post(BACKEND_PATHS.upgradeItem, clientItemId ? { clientItemId, serverItemId } : { price, serverItemId });
+            if (clientItemId === "" && price != 0) {
+                dispatch(deductMoney(price))
+            }
+            if (response?.status === 201) {
+                if (response.data.items) {
+                    dispatch(addOneItemsFrom({ newItem: response.data.items, itemToDelete: clientItemId }))
+                } else {
+                    dispatch(addOneItemsFrom({ itemToDelete: clientItemId }))
+                }
+                dispatch(setGameState({ text: t('result_win'), result: "win" }))
+            } else if (response?.status === 202) {
+                dispatch(setGameState({ text: t('result_lose'), result: "lose" }))
+                dispatch(addOneItemsFrom({ itemToDelete: clientItemId }))
+            }
             spin({ from: rotation, to: rotation + 1080, duration: 2000 })
         } catch (err) {
             const error = err as AxiosError;
@@ -192,7 +213,18 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
                     dominantBaseline="middle"
                     fill="white"
                 >
-                    <tspan fontSize="32px" fontFamily="var(--font-headBold)">
+                    {gameState.visible && (
+                        <tspan
+                            x={center}
+                            dy="-25"        // поднимаем вверх только если видим
+                            fontSize="26px"
+                            fontFamily="var(--font-headBold)"
+                            fill={gameState.result === "win" ? "green" : gameState.result === "lose" ? "red" : "white"}
+                        >
+                            {gameState.text}
+                        </tspan>
+                    )}
+                    <tspan x={center} dy={gameState.visible ? "40" : "0"} fontSize="32px" fontFamily="var(--font-headBold)">
                         {percent.toFixed(2)}%
                     </tspan>
                     <tspan

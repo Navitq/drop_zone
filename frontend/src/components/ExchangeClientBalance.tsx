@@ -10,6 +10,7 @@ function ExchangeClientBalance(): React.ReactNode {
     const [value, setValue] = useState<string>('');
     const inputRef = useRef(null);
     const money_amont = useAppSelector(state => state.user.userData.money_amount)
+    const price = useAppSelector(state => state.upgrade.price)
     const dispatch = useAppDispatch()
 
     const resizeInput = (): void => {
@@ -36,6 +37,13 @@ function ExchangeClientBalance(): React.ReactNode {
     useEffect(() => {
         resizeInput();
     }, [value]);
+
+    useEffect(() => {
+        if (price != Number(value)) {
+            console.log(123)
+            setValue(price.toString())
+        }
+    }, [price])
 
 
 
