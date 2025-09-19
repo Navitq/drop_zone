@@ -406,17 +406,15 @@ async def spin_upgrade(user, server_item, price):
     honest_chance = (
         (Decimal("0.9") if Decimal(str(price)) /
          server_item >= 1 else Decimal(str(price)) / server_item)
-        * Decimal("0.9")
         * Decimal(pgrades_global)
         * Decimal(str(user.upgrade_chance))  # конвертируем float → Decimal
     )
     print(0000000000000, 4442)
     print(honest_chance)
-    rand_num = random.uniform(0, 100)
+    rand_num = secrets.randbelow(101)
     print(honest_chance, rand_num)
-    rand_num_valuable = Decimal(str(rand_num)) * honest_chance
     print(0000000000000, 4442)
-    if rand_num_valuable < 50:
+    if rand_num > honest_chance * 100:
         return False
     else:
         return True

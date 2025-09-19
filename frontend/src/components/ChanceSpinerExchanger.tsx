@@ -15,7 +15,7 @@ import { showRafflesStateModal } from '@/redux/modalReducer'
 import { deductMoney } from '@/redux/userReducer'
 
 function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 0 }) {
-    const [percent, setPercent] = useState(initialPercent);
+    const [percent, setPercent] = useState<number>(initialPercent);
     const price = useAppSelector(state => state.upgrade.price)
     const clientItemId = useAppSelector(state => state.upgrade.itemData.id)
     const serverItemId = useAppSelector(state => state.upgrade.itemServerData.id)
@@ -69,17 +69,19 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
                 dispatch(deductMoney(price))
             }
             if (response?.status === 201) {
+
                 if (response.data.items) {
                     dispatch(addOneItemsFrom({ newItem: response.data.items, itemToDelete: clientItemId }))
                 } else {
                     dispatch(addOneItemsFrom({ itemToDelete: clientItemId }))
                 }
                 dispatch(setGameState({ text: t('result_win'), result: "win" }))
+                spin({ from: rotation % 360, to: rotation % 360 + 1080, duration: 2000, result: "win" })
             } else if (response?.status === 202) {
+                spin({ from: rotation % 360, to: rotation % 360 + 1080, duration: 2000, result: "lose" })
                 dispatch(setGameState({ text: t('result_lose'), result: "lose" }))
                 dispatch(addOneItemsFrom({ itemToDelete: clientItemId }))
             }
-            spin({ from: rotation, to: rotation + 1080, duration: 2000 })
         } catch (err) {
             const error = err as AxiosError;
             console.log(error.status)
@@ -126,8 +128,17 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
         from = 0,
         to = 360,
         duration = 1000,
+        result = "",
         easing = easeOutCubic
     } = {}) {
+
+        if (result == "win") {
+            to = Math.random() * (percent / 100) * 360 + 720;
+            console.log(1111, to, from, rotation)
+        } else {
+            to = ((Math.random() * (100 - percent) + percent) / 100) * 360 + 720;
+            console.log(2222, to, from, rotation)
+        }
         const start = performance.now();
         const delta = to - from;
 
@@ -135,14 +146,11 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
             const elapsed = timestamp - start;
             const progress = Math.min(elapsed / duration, 1);
             const eased = easing(progress);
-
             setRotation(from + delta * eased);
-
             if (progress < 1) {
                 requestAnimationFrame(step);
             }
         }
-
         requestAnimationFrame(step);
     }
 
