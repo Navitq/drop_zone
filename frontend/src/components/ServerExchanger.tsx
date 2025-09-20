@@ -9,10 +9,10 @@ import ExchangeTabServer from "@/components/ExchangeTabServer";
 
 import UpgradeItemCardServet from '@/components/UpgradeItemCardServet'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { clearServerItemToUpgrade } from '@/redux/upgradeReducer'
+import { clearServerItemToUpgrade, setPriceСoefficient } from '@/redux/upgradeReducer'
 
 const ServerExchanger: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number>(1); // 1 — скины, 2 — баланс
+  const [activeTab, setActiveTab] = useState<number>(0); // 1 — скины, 2 — баланс
 
   const { id } = useAppSelector(state => state.upgrade.itemServerData)
   const dispatch = useAppDispatch()
@@ -23,15 +23,16 @@ const ServerExchanger: React.FC = () => {
 
   const addActiveClass = (tabNumber: number) => {
     setActiveTab(tabNumber);
+    dispatch(setPriceСoefficient(tabNumber))
   };
 
   return (
     <div className={`${style.clientExchanger} ${style.serverExchangerTop}`}>
       <div className={`${style.exTabs} ${style.serverExchanger}`}>
         <div
-          className={`${style.exTabCnt} ${activeTab === 1 ? "react-tabs__tab--selected" : ""
+          className={`${style.exTabCnt} ${activeTab === 0 ? "react-tabs__tab--selected" : ""
             }`}
-          onClick={() => addActiveClass(1)}
+          onClick={() => addActiveClass(0)}
         >
           <ExchangeTabServer multiply={"..."} />
         </div>

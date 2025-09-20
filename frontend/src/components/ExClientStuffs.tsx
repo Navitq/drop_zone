@@ -8,6 +8,7 @@ import { AxiosError } from "axios";
 import api from "@/lib/api";
 import { useAppDispatch } from '@/lib/hooks';
 import { removeFinishedItem } from '@/redux/upgradeReducer'
+import { tree } from 'next/dist/build/templates/app-page';
 
 
 interface upgradeFinished {
@@ -19,7 +20,8 @@ interface ExClientStuffsInt {
     targetUrl: string,
     body: {
         client_id?: string,
-        limit: number
+        limit: number,
+        startPrice?: number
     }
     activateBtn: (value: gunItemModel) => void,
     addPrize?: upgradeFinished,
@@ -44,6 +46,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const [hasMore, setHasMore] = useState(true);
     const loadingRef = useRef(loading);
     const hasMoreRef = useRef(hasMore);
+    const multiplyRef = useRef<boolean>(true)
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -74,8 +77,27 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     }, [props.addPrize]);
 
     useEffect(() => {
-        getInventory()
+        if (!multiplyRef.current) {
+            multiplyRef.current = true;
+            return
+        }
+        getInventory(page)
     }, [page]);
+
+    useEffect(() => {
+        console.log(props.body.startPrice, 4444444555555)
+        if (!props.body.startPrice) {
+            return
+        }
+        setHasMore(true);
+        hasMoreRef.current = true;
+        loadingRef.current = true;
+        setItems([]);
+
+        // говорим эффекту [page] пропустить первый вызов
+
+        getInventory(1); // вызываем один раз сразу
+    }, [props.body.startPrice]);
 
 
     useEffect(() => {
@@ -84,9 +106,12 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     }, [loading, hasMore]);
 
     useEffect(() => {
+
         const observer = new IntersectionObserver(
             (entries) => {
+
                 if (entries[0].isIntersecting && !loadingRef.current && hasMoreRef.current) {
+                    console.log("cision")
                     setPage(prev => prev + 1);
                 }
             },
@@ -103,13 +128,14 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
 
 
-    async function getInventory() {
+    async function getInventory(page: number = 1) {
         try {
+            console.log(hasMoreRef.current, page,)
             if (!props.targetUrl || !hasMoreRef.current) {
                 return
             }
             setLoading(true);
-
+            console.log(props.body.startPrice)
             const response = await api.post(props.targetUrl, {
                 page,
                 body: props.body

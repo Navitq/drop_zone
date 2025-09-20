@@ -29,7 +29,8 @@ interface initialStateInt {
         result: "win" | "lose" | "",
         visible: boolean,
         text: string,
-    }
+    },
+    priceСoefficient: number,
 }
 
 
@@ -70,7 +71,8 @@ const initialState: initialStateInt = {
         visible: false,
         text: "",
         result: ""
-    }
+    },
+    priceСoefficient: 0
 };
 
 export const upgradeSlice = createSlice({
@@ -156,11 +158,17 @@ export const upgradeSlice = createSlice({
             state.gameState.text = actions.payload.text;
             state.gameState.result = actions.payload.result;
         },
+        setPriceСoefficient: (state, actions: PayloadAction<number>) => {
+            state.priceСoefficient = actions.payload;
+        },
+        clearPriceСoefficient: (state) => {
+            state.priceСoefficient = 0;
+        },
     }
 });
 
 
 
-export const { setGameState, clearGameState, removeFinishedItem, addOneItemsFrom, setServerItemToUpgrade, clearServerItemToUpgrade, setItemToUpgrade, clearItemToUpgrade, setPriceBuyTipe, clearPrice } = upgradeSlice.actions;
+export const { setPriceСoefficient, clearPriceСoefficient, setGameState, clearGameState, removeFinishedItem, addOneItemsFrom, setServerItemToUpgrade, clearServerItemToUpgrade, setItemToUpgrade, clearItemToUpgrade, setPriceBuyTipe, clearPrice } = upgradeSlice.actions;
 
 export default upgradeSlice.reducer;

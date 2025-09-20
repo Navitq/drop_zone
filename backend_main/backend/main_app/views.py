@@ -826,20 +826,41 @@ async def get_inventory_items_view(request):
 @async_require_methods(["POST"])
 async def get_inventory_server_items_view(request):
     try:
+        print(1)
         data = json.loads(request.body)
         page = int(data.get("page", 1))
         body = data.get("body", {})
         limit = int(body.get("limit", 25))
         offset = (page - 1) * limit
+        start_price = body.get("startPrice", None)
+        if start_price:
+            start_price = float(body.get("startPrice", None))
 
         # Достаём данные из БД асинхронно
-        qs = await sync_to_async(
-            lambda: list(
-                SteamItemCs.objects.all()[
-                    offset:offset+limit]
-            )
-        )()
 
+        # qs = await sync_to_async(
+        #     lambda: list(
+        #         SteamItemCs.objects.all()[
+        #             offset:offset+limit]
+        #     )
+        # )()
+
+        # def fetch():
+        #     qs = SteamItemCs.objects.all()
+        #     if start_price is not None and float(start_price) != 0:
+        #         qs = qs.filter(price__gte=float(start_price))
+        #     qs = qs.order_by("price")[offset:offset + limit]
+        #     return list(qs)
+
+        def fetch():
+            qs = SteamItemCs.objects
+            if start_price is not None:
+                qs = qs.filter(price__gte=float(start_price))
+            qs = qs.order_by("price")
+            qs_page = qs[offset:offset + limit]
+            return list(qs_page)
+
+        qs = await sync_to_async(fetch)()
         result = [
             {
                 "id": str(item.id),
