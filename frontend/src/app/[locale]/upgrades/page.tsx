@@ -16,6 +16,13 @@ export default function UpgradesPage(): React.ReactNode {
                 <div style={{ width: '100px', height: '100px', backgroundImage: 'url(/images/red_upgrade_background.png)' }} />
                 <div style={{ width: '100px', height: '100px', backgroundImage: 'url(/images/yellow_upgrade_background.png)' }} />
             </div>
+            <div style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden' }}>
+                <div style={{ width: '100px', height: '100px', backgroundImage: 'url(/images/mobile_blue_upgrade_background.png)' }} />
+                <div style={{ width: '100px', height: '100px', backgroundImage: 'url(/images/mobile_violet_upgrade_background.png)' }} />
+                <div style={{ width: '100px', height: '100px', backgroundImage: 'url(/images/mobile_pink_upgrade_background.png)' }} />
+                <div style={{ width: '100px', height: '100px', backgroundImage: 'url(/images/mobile_red_upgrade_background.png)' }} />
+                <div style={{ width: '100px', height: '100px', backgroundImage: 'url(/images/mobile_yellow_upgrade_background.png)' }} />
+            </div>
             <div className={style.ugdTitleBlock}>
                 <TitleHomePage textKey={"t_upgrades"}></TitleHomePage>
             </div>

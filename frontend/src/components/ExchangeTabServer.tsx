@@ -10,7 +10,7 @@ function ExchangeTabServer(props: ExchangeTabInt): React.ReactNode {
     return (
         <div className={`${style.exchangeTab} ${style.serverExchangeTab}`}>
             <div className={style.exchangeTabCnt}>
-                <div className={`${style.exchangeTabServerText}`}>{props.multiply}</div>
+                <div className={`${style.exchangeTabServerText}`}>{props.multiply != "..." ? "x" + props.multiply : props.multiply}</div>
             </div>
         </div>
     )

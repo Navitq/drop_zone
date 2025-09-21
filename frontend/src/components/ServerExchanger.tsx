@@ -87,12 +87,22 @@ const ServerExchanger: React.FC = () => {
           {
             id != "" ? <UpgradeItemCardServet close={() => { closeItem() }}></UpgradeItemCardServet> : (
               <div className={style.exStartBlockPadding}>
-                <ExchangerImage
-                  imgUrl="/images/server_ak_47.svg"
-                  imgAltKey="server_ak"
-                  width={205}
-                  height={115}
-                />
+                <div className={style.pcImgBlock}>
+                  <ExchangerImage
+                    imgUrl="/images/server_ak_47.svg"
+                    imgAltKey="server_ak"
+                    width={205}
+                    height={115}
+                  />
+                </div>
+                <div className={style.mobileImgBlock}>
+                  <ExchangerImage
+                    imgUrl="/images/server_ak_47.svg"
+                    imgAltKey="server_ak"
+                    width={140}
+                    height={78}
+                  />
+                </div>
                 <ExchangeTitle titleKey="get_object" />
               </div>
             )

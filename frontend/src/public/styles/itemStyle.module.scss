@@ -485,6 +485,43 @@
 }
 
 @media (max-width: 768px) {
+    .uicCnt {
+        &.usuallUicCnt {
+            background-image: url(/images/mobile_blue_upgrade_background.png);
+        }
+
+        &.rareUicCnt {
+            background-image: url(/images/mobile_violet_upgrade_background.png);
+        }
+
+        &.classifiedUicCnt {
+            background-image: url(/images/mobile_pink_upgrade_background.png);
+        }
+
+        &.eliteUicCnt {
+            background-image: url(/images/mobile_red_upgrade_background.png);
+        }
+
+        &.epicUicCnt {
+            background-image: url(/images/mobile_yellow_upgrade_background.png);
+        }
+        padding: 25px 46px 25px 46px;
+        .uicPriceInfo {
+            font-size: 16px;
+        }
+        .uicGunModel, .uicGunStyle {
+            font-size: 14px;
+        }
+        .uicImgCnt {
+            margin-bottom: 9px;
+        }
+        .hoverUicCntClose {
+            width: 15px;
+            height: 15px;
+            top: 15px;
+            right: 15px;
+        }
+    }
     :global(.bcmwCnt) :global(.wonGunInfo) .scmCaseGunStyle {
         height: 20px !important;
     }

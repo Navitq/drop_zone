@@ -294,6 +294,8 @@
 
 
 .serverExchangeTab::before {
+    padding-bottom: 2px;
+    padding-left: 3px;
     border-top-right-radius: 0px;
     background: linear-gradient(270deg, rgba(255, 143, 45, 0.3) 0%, #FF8F2D 100%);
 }
@@ -301,6 +303,8 @@
 .exTabCnt:first-child {
     & .serverExchangeTab::before  {
         border-top-left-radius: 20px;
+        padding-top: 3px;
+
     }
     & .serverExchangeTab  {
         border-top-left-radius: 20px;
@@ -310,6 +314,7 @@
 .exTabCnt:last-child {
     & .serverExchangeTab::before  {
         border-bottom-left-radius: 20px;
+        padding-bottom: 3px;
     }
     & .serverExchangeTab  {
         border-bottom-left-radius: 20px;
@@ -465,17 +470,213 @@
     margin-right: 10px
 }
 
+.clientExchangerStyled {
+    .exchangeTab::before {
+        padding-right: 3px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        border-collapse: collapse;
+    }
+    .exTabCnt .exchangeTab::before {
+        padding-bottom: 0px;
+    }
+}
 
+.mobileImgBlock {
+    display: none;
+}
 
 
 @media (max-width: 1439px) {
+    .exchangerBlock {
+        flex-direction: column;
+        row-gap: 20px;
+    }
+    .exchangerSpiner {
+        order: 3;
+    }
+    .clientExchanger {
+        flex-direction: column;
+        display: flex;
+        justify-content: center;
+    }
+    .serverExchanger {
+        order: 2;
+    }
+    .exTabs {
+       flex-direction: row;
+       padding-top: 0px;
+       width: auto;
+       justify-content: center;
+    }
+    .exchangeTab {
 
+        padding: 0px;
+        padding-left: 20px;
+        padding-right: 20px;
+        height: 42px;
+    }
+    .exchangeTab::before {
+        padding: 3px;
+        padding-top: 2px !important;
+    }
+    .exTabCnt:first-child .exchangeTab {
+        border-top-right-radius: 0px;
+        border-bottom-left-radius: 20px;
+
+    }
+    .exTabCnt:first-child .exchangeTab::before{
+        border-top-right-radius: 0px;
+        border-bottom-left-radius: 20px;
+        padding-right: 0px;
+        padding-bottom: 3px;
+    }
+
+    .exchangeTabCnt {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+
+        img {
+            transform: rotate(90deg);
+        }
+    }
+    .exchangeTabImgCnt {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .exchangeTabText {
+        writing-mode: horizontal-tb;
+        transform: none;
+        margin: 0px;
+        margin-right: 10px;
+        padding-bottom: 4px;
+    }
+    .exClientProp {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .ugdTitleBlock {
+        margin-bottom: 50px;
+    }
+
+    .serverExchangerTop {
+        .serverExchangeTab::before{
+            background: linear-gradient(#ff8f2d 0%, rgba(255, 143, 45, .3) 100%);
+        }
+        .exTabCnt {
+            & .serverExchangeTab::before  {
+                padding-right: 0px;
+                padding-top: 0px;
+
+            }
+            & .serverExchangeTab  {
+                border-top-left-radius: 0px;
+            }
+        }
+
+
+        .exTabCnt:first-child {
+            & .serverExchangeTab::before  {
+                border-top-left-radius: 0px;
+                padding-top: 0px;
+
+            }
+            & .serverExchangeTab  {
+                border-top-left-radius: 0px;
+            }
+        }
+
+        .exTabCnt:last-child {
+            & .serverExchangeTab::before  {
+                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 20px;
+                padding-top: 0px;
+                padding-right: 3px;
+            }
+            & .serverExchangeTab  {
+                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 20px;
+            }
+        }
+        .exTabCnt:first-child {
+            border-top-left-radius: 0px;
+        }
+        .exTabCnt:first-child .exchangeTab {
+            border-top-right-radius: 0px;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 20px;
+            border-top-left-radius: 0px;
+        }
+        .exTabCnt:first-child .exchangeTab::before{
+            border-top-right-radius: 0px;
+            border-bottom-left-radius: 20px;
+            padding-right: 0px;
+            padding-bottom: 3px;
+        }
+    }
+    .serverExchanger, .exTabsClient {
+        margin-top: -2px;
+    }
 }
+
+
 
 @media (max-width: 1024px) {
 
 }
 
 @media (max-width: 768px) {
+    .mobileImgBlock {
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+    }
+    .pcImgBlock {
+        display: none;
+    }
+    .exClientProp {
+        max-width: 343px;
+        height: 186px;
+    }
+    .exStartBlockPadding, .exClientMoney {
+        padding: 30px 44px;
+    }
+    .exchangeTitle {
+        margin-top: 15px;
+        font-size: 16px;
+        line-height: 100%;
+    }
+    .exchangeTab {
+        padding-left: 35px;
+        padding-right: 35px;
+        height: 35px;
+    }
+    .exchangeTabText {
+        font-size: 13px;
+        padding-bottom: 3px;
+    }
+    .clientBalance {
+        font-size: 16px;
+    }
+    .paymentSize {
+        font-size: 13px;
+    }
+    .paymentSizeCnt {
+        height: 28px;
+        padding: 0px 10px;
+        min-width: 0px;
+    }
+    .serverExchangerTop {
+        .exchangeTabServerText{
+            font-size: 13px;
+        }
+        .serverExchangeTab {
+            padding: 0px 11px !important;
+        }
+    }
 
 }

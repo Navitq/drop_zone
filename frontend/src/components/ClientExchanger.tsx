@@ -28,7 +28,7 @@ function ClientExchanger(): React.ReactNode {
     }, [id])
 
     return (
-        <Tabs className={style.clientExchanger} selectedIndex={tabIndex} onSelect={(index) => {
+        <Tabs className={`${style.clientExchanger} ${style.clientExchangerStyled}`} selectedIndex={tabIndex} onSelect={(index) => {
             closeItem()
             setTabIndex(index); // обновляем вкладку
             return index; // react-tabs требует вернуть индекс
@@ -38,7 +38,12 @@ function ClientExchanger(): React.ReactNode {
                     {
                         id != "" ? <UpgradeItemCard close={() => { closeItem() }}></UpgradeItemCard> : (
                             <div className={style.exStartBlockPadding}>
-                                <ExchangerImage imgUrl={'/images/upgrade_client_ak47.svg'} imgAltKey={"client_ak"} width={239} height={130}></ExchangerImage>
+                                <div className={style.pcImgBlock}>
+                                    <ExchangerImage imgUrl={'/images/upgrade_client_ak47.svg'} imgAltKey={"client_ak"} width={239} height={130}></ExchangerImage>
+                                </div>
+                                <div className={style.mobileImgBlock}>
+                                    <ExchangerImage imgUrl={'/images/upgrade_client_ak47.svg'} imgAltKey={"client_ak"} width={150} height={81}></ExchangerImage>
+                                </div>
                                 <ExchangeTitle titleKey={"take_object"}></ExchangeTitle>
                             </div>
                         )
@@ -49,19 +54,34 @@ function ClientExchanger(): React.ReactNode {
             <TabPanel>
                 <div className={`${style.exClientProp} ${style.exClientMoney}`}>
                     <div className={style.exClientSenceBlck}>
-                        <ExchangerImage imgUrl={'/images/upgrade_client_money.svg'} imgAltKey={"client_money"} width={150} height={150}></ExchangerImage>
+                        <div className={style.pcImgBlock}>
+                            <ExchangerImage imgUrl={'/images/upgrade_client_money.svg'} imgAltKey={"client_money"} width={150} height={150}></ExchangerImage>
+                        </div>
+                        <div className={style.mobileImgBlock}>
+                            <ExchangerImage imgUrl={'/images/upgrade_client_money.svg'} imgAltKey={"client_money"} width={60} height={60}></ExchangerImage>
+                        </div>
                         <ExchangeTitle titleKey={"take_balance"}></ExchangeTitle>
                     </div>
                     <ExchangeClientBalance></ExchangeClientBalance>
                 </div>
             </TabPanel>
 
-            <TabList className={style.exTabs}>
+            <TabList className={`${style.exTabs} ${style.exTabsClient}`}>
                 <Tab className={style.exTabCnt}>
-                    <ExchangeTab textKey={"skins_client_tab"} altKey={"pistol_client_tab"} width={20} height={20} imageUrl={'/images/upgrade_gun.svg'}></ExchangeTab>
+                    <div className={style.pcImgBlock}>
+                        <ExchangeTab textKey={"skins_client_tab"} altKey={"pistol_client_tab"} width={20} height={20} imageUrl={'/images/upgrade_gun.svg'}></ExchangeTab>
+                    </div>
+                    <div className={style.mobileImgBlock}>
+                        <ExchangeTab textKey={"skins_client_tab"} altKey={"pistol_client_tab"} width={10} height={10} imageUrl={'/images/upgrade_gun.svg'}></ExchangeTab>
+                    </div>
                 </Tab>
                 <Tab>
-                    <ExchangeTab radiusClass={"radiusClassTab"} textKey={"balance_client_tab"} altKey={"money_client_tab"} width={20} height={20} imageUrl={'/images/upgrade_money.svg'}></ExchangeTab>
+                    <div className={style.pcImgBlock}>
+                        <ExchangeTab radiusClass={"radiusClassTab"} textKey={"balance_client_tab"} altKey={"money_client_tab"} width={20} height={20} imageUrl={'/images/upgrade_money.svg'}></ExchangeTab>
+                    </div>
+                    <div className={style.mobileImgBlock}>
+                        <ExchangeTab radiusClass={"radiusClassTab"} textKey={"balance_client_tab"} altKey={"money_client_tab"} width={10} height={10} imageUrl={'/images/upgrade_money.svg'}></ExchangeTab>
+                    </div>
                 </Tab>
             </TabList>
         </Tabs>
