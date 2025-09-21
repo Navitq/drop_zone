@@ -8,7 +8,6 @@ import { AxiosError } from "axios";
 import api from "@/lib/api";
 import { useAppDispatch } from '@/lib/hooks';
 import { removeFinishedItem } from '@/redux/upgradeReducer'
-import { tree } from 'next/dist/build/templates/app-page';
 
 
 interface upgradeFinished {
@@ -41,16 +40,25 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
     const [items, setItems] = useState<gunItemModel[]>([])
     const loaderRef = useRef<HTMLDivElement | null>(null);
-    const [page, setPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
-    const loadingRef = useRef(loading);
-    const hasMoreRef = useRef(hasMore);
+    const [page, setPage] = useState<number>(1);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const loadingRef = useRef<boolean>(loading);
+    const hasMoreRef = useRef<boolean>(hasMore);
     const multiplyRef = useRef<boolean>(true)
+    const addedItemsListRef = useRef<string[]>([])
+
     const dispatch = useAppDispatch()
 
     useEffect(() => {
         if (!props.addPrize) return;
+
+        addedItemsListRef.current = addedItemsListRef.current.filter(
+            (item) => item !== props?.addPrize?.itemToDelete
+        );
+
+
+        console.log(addedItemsListRef.current)
 
         setItems((state) => {
             let newState = [...state];
@@ -62,7 +70,8 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
             // потом добавляем
             if (props?.addPrize?.newItem?.id) {
-                newState = [...newState, props.addPrize.newItem];
+                newState = [props.addPrize.newItem, ...newState,];
+                addedItemsListRef.current.push(props?.addPrize?.newItem?.id)
             }
 
             return newState;
@@ -148,7 +157,10 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                 setHasMore(false)
             }
             setItems((state) => {
-                return [...state, ...response.data.items];
+                const filteredItems = response.data.items.filter(
+                    (item: gunItemModel) => !addedItemsListRef.current.includes(item.id)
+                );
+                return [...state, ...filteredItems];
             });
         } catch (err) {
             const error = err as AxiosError;

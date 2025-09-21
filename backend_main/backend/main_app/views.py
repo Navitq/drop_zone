@@ -411,10 +411,10 @@ async def spin_upgrade(user, server_item, price):
     )
     print(0000000000000, 4442)
     print(honest_chance)
-    rand_num = secrets.randbelow(101)
+    rand_num = Decimal(secrets.randbelow(101))
     print(honest_chance, rand_num)
     print(0000000000000, 4442)
-    if rand_num > honest_chance * 100:
+    if rand_num > honest_chance * Decimal(100):
         return False
     else:
         return True

@@ -16,6 +16,9 @@ interface gunItemModel {
 }
 
 
+
+
+
 interface initialStateInt {
     itemData: gunItemModel,
     upgradeFinished: {
@@ -72,7 +75,7 @@ const initialState: initialStateInt = {
         text: "",
         result: ""
     },
-    priceСoefficient: 0
+    priceСoefficient: 0,
 };
 
 export const upgradeSlice = createSlice({

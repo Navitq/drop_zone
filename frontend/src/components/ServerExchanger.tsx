@@ -30,9 +30,9 @@ const ServerExchanger: React.FC = () => {
     <div className={`${style.clientExchanger} ${style.serverExchangerTop}`}>
       <div className={`${style.exTabs} ${style.serverExchanger}`}>
         <div
-          className={`${style.exTabCnt} ${activeTab === 0 ? "react-tabs__tab--selected" : ""
+          className={`${style.exTabCnt} ${activeTab === -1 ? "react-tabs__tab--selected" : ""
             }`}
-          onClick={() => addActiveClass(0)}
+          onClick={() => addActiveClass(-1)}
         >
           <ExchangeTabServer multiply={"..."} />
         </div>

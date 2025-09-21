@@ -43,7 +43,7 @@ function ExchangeServerPropierty(): React.ReactNode {
                     <SearchByPrice placeHolderText={t('search_by_price')}></SearchByPrice>
                 </div>
             </div>
-            <ExClientStuffs body={{ limit: 5, startPrice: price * priceСoefficient }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs>
+            <ExClientStuffs body={{ limit: 25, startPrice: price * priceСoefficient }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs>
         </div>
     )
 }
