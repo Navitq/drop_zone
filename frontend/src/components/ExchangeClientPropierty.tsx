@@ -22,6 +22,8 @@ interface gunItemModel {
 function ExchangeClientPropierty(): React.ReactNode {
     const client_id = useAppSelector(state => state.user.userData.id)
     const upgradeFinished = useAppSelector(state => state.upgrade.upgradeFinished)
+    const client_item = useAppSelector(state => state.upgrade.itemData.id)
+
     const dispatch = useAppDispatch()
 
 
@@ -32,7 +34,7 @@ function ExchangeClientPropierty(): React.ReactNode {
     return (
         <div className={style.clientBlock}>
             <ExClientPropierty></ExClientPropierty>
-            <ExClientStuffs  addPrize={upgradeFinished} activateBtn={(value) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id, limit: 25 }}></ExClientStuffs>
+            <ExClientStuffs client_id={client_item} addPrize={upgradeFinished} activateBtn={(value) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id, limit: 25 }}></ExClientStuffs>
         </div>
     )
 }

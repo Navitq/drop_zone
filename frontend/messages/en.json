@@ -148,7 +148,9 @@
     "attention": "Attention!",
     "attention_sub_title": "Choose skins before you start upgrading!",
     "result_win": "You win!",
-    "result_lose": "You lose"
+    "result_lose": "You lose",
+    "client_items": "your skins",
+    "server_items": "desired skins"
   },
   "raffles": {
     "man_alt": "man picture",

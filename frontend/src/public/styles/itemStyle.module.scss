@@ -485,6 +485,19 @@
 }
 
 @media (max-width: 768px) {
+    .smItemCnt {
+        width: 100px;
+        height: 100px;
+        padding: 8px 4px 4px 4px;
+        .smItemGunModel, .smItemGunStyle, .smItemGunPrice   {
+            font-size: 8px;
+            line-height: 8px;
+        }
+        .smItemGunPrice {
+            margin-top: 4px;
+            margin-bottom: 5px;
+        }
+    }
     .uicCnt {
         &.usuallUicCnt {
             background-image: url(/images/mobile_blue_upgrade_background.png);

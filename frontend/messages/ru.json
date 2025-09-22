@@ -146,7 +146,9 @@
     "attention": "Внимание!",
     "attention_sub_title": "Выбери скины прежде чем начать апгрейд!",
     "result_win": "Вы выиграли!",
-    "result_lose": "Вы проиграли"
+    "result_lose": "Вы проиграли",
+    "client_items": "твои скины",
+    "server_items": "желаемые скины"
   },
   "raffles": {
     "man_alt": "man picture",

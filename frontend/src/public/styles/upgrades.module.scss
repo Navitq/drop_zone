@@ -362,21 +362,36 @@
     margin-bottom: 25px;
 }
 
+
 .ExClientStuffs {
-    display: flex;           // заменяем @extend %flexCenter
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(191px, 1fr)); /* колонки растягиваются по ширине контейнера */
+    grid-auto-rows: min-content; /* высота строк под контент */
     width: 100%;
+    height: auto; /* или 100% родителя */
     overflow: auto;
     row-gap: 15px;
     padding-right: 10px;
     /* Firefox */
     scrollbar-width: thin;
     scrollbar-color: rgba(75, 75, 75, 1) transparent;
-    column-gap: 3px;
 }
+
+// .ExClientStuffs {
+//     display: flex;           // заменяем @extend %flexCenter
+//     justify-content: space-between;
+//     align-items: flex-start;
+//     flex-wrap: wrap;
+//     flex: 1;
+//     width: 100%;
+//     overflow: auto;
+//     row-gap: 15px;
+//     padding-right: 10px;
+//     /* Firefox */
+//     scrollbar-width: thin;
+//     scrollbar-color: rgba(75, 75, 75, 1) transparent;
+//     column-gap: 3px;
+// }
 
 // Chrome, Safari, Edge
 .ExClientStuffs::-webkit-scrollbar {
@@ -486,11 +501,49 @@
     display: none;
 }
 
+.epTabList {
+    @extend %flexCenter;
+    margin-bottom: 20px
+}
+.epTab:focus-visible {
+    outline: none
+}
+.epTab {
+    @extend %flexCenter;
+    font-family: var(--font-headBold);
+    font-size: 22px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 0.4);
+    border-collapse: collapse;
+    border-width: 1px;
+    border-color: rgba(229, 133, 0, 1);
+    border-style: solid;
+    height: 45px;
+    min-width: 260px;
+    padding-bottom: 4px;
+}
+
+.epTabList :global(.react-tabs__tab--selected) {
+    background-color: rgba(229, 133, 0, 1);
+    color: rgba(0, 0, 0, 1);
+}
+
+.epTab:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.epTab:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
 
 @media (max-width: 1439px) {
     .exchangerBlock {
         flex-direction: column;
         row-gap: 20px;
+        margin-bottom: 50px;
     }
     .exchangerSpiner {
         order: 3;
@@ -621,15 +674,75 @@
     .serverExchanger, .exTabsClient {
         margin-top: -2px;
     }
+    :global(.epTab) {
+        display: none !important;
+    }
+
+  /* показываем только выбранную панель с epTab */
+    :global(.epTab.react-tabs__tab-panel--selected) {
+        display: flex !important;
+    }
+    .upgrades .clientBlock {
+        margin-right: 0px ;
+    }
 }
 
 
 
 @media (max-width: 1024px) {
+  /* скрываем все панели с epTab */
 
 }
-
 @media (max-width: 768px) {
+    .exSearchBlock {
+        max-width: 76px;
+        height: 30px;
+        padding: 0px 25px 0px 10px;
+        border-radius: 5px;
+    }
+    .exSearchInput {
+        font-size: 9px;
+
+    }
+    .serverExTitle {
+        margin-bottom: 0px;
+    }
+    .serverInfoBlock {
+        display: flex;
+    }
+    .upgrades {
+        padding: 0 15px;
+    }
+    .ExClientStuffs {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* колонки растягиваются по ширине контейнера */
+        gap: 3px;
+        padding-right: 3px;
+    }
+    .exClSort {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    .exClientBlock {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    .clientBlock {
+        padding: 10px;
+        max-width: 343px;
+        height: 385px;
+    }
+    .exBlockTitle {
+        font-size: 13px
+    }
+    .epTab {
+        @extend %flexCenter;
+        font-size: 14px;
+        height: 29px;
+        min-width: 171px;
+        padding-bottom: 2px;
+    }
     .mobileImgBlock {
         margin-left: auto;
         margin-right: auto;
@@ -678,5 +791,7 @@
             padding: 0px 11px !important;
         }
     }
+
+
 
 }

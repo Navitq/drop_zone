@@ -29,7 +29,7 @@ function ExClientPropierty(): React.ReactNode {
     const tx = useTranslations("upgrades")
     return (
         <div className={style.exClientCnt}>
-            <div>
+            <div className={style.exClientBlock}>
                 <ExBlockTitle title={tx('your_skins')}></ExBlockTitle>
                 {options ? <div className={style.exClSort}><SortMenuAct options={options}></SortMenuAct></div> : null}
             </div>

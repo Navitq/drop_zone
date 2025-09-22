@@ -151,6 +151,11 @@
     }
 }
 
+.stItemBtnCntActive {
+    background: rgba(174, 174, 174, 1);
+    color: rgba(255, 255, 255, 0.5);
+}
+
 
 @media (max-width: 1439px) {
 
@@ -188,6 +193,11 @@
 }
 
 @media (max-width: 768px) {
+    .stItemBtnCnt {
+        height: 15px;
+        font-size: 8px;
+        border-radius: 4px;
+    }
     .stCaseCnt:hover .caseInfoBlock {
         transform: translateY(10px);
     }

@@ -25,6 +25,7 @@ interface gunItemModel {
 function ExchangeServerPropierty(): React.ReactNode {
     const t = useTranslations('upgrades')
     const dispatch = useAppDispatch()
+    const server_item = useAppSelector(state => state.upgrade.itemServerData.id)
 
     const price = useAppSelector(state => state.upgrade.price)
     const priceСoefficient = useAppSelector(state => state.upgrade.priceСoefficient)
@@ -43,7 +44,7 @@ function ExchangeServerPropierty(): React.ReactNode {
                     <SearchByPrice placeHolderText={t('search_by_price')}></SearchByPrice>
                 </div>
             </div>
-            <ExClientStuffs body={{ limit: 25, startPrice: price * priceСoefficient }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs>
+            <ExClientStuffs server_id={server_item} body={{ limit: 25, startPrice: price * priceСoefficient }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs>
         </div>
     )
 }

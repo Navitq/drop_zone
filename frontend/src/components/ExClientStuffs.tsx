@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import style from '@/styles/upgrades.module.scss'
 import ItemSm from '@/components/ItemSm'
 
@@ -24,6 +24,8 @@ interface ExClientStuffsInt {
     }
     activateBtn: (value: gunItemModel) => void,
     addPrize?: upgradeFinished,
+    client_id?: string,
+    server_id?: string,
 }
 
 interface gunItemModel {
@@ -177,12 +179,19 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
         }
     }
 
+    const handleActivate = useCallback(
+        (item: gunItemModel) => () => {
+            props.activateBtn(item)
+        },
+        [props.activateBtn]
+    );
+
     return (
         <div className={style.ExClientStuffs}>
             {
                 items.map((value) => {
                     return (
-                        <ItemSm state={value.state} activateBtn={() => { props.activateBtn(value) }} key={value.id} id={value.id} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice}></ItemSm>
+                        <ItemSm activateBtnColor={props.client_id ? props.client_id === value.id : props.server_id ? props.server_id === value.id : false} state={value.state} activateBtn={handleActivate(value)} key={value.id} id={value.id} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} ></ItemSm>
                     )
                 })
             }
