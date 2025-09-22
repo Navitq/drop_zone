@@ -204,7 +204,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                 <div ref={loaderRef} style={{ height: 1, visibility: 'hidden' }} />
             </div >
             ) : (
-                < ShouldAuthStaff btnText={props.btnText} subTitleText={props.subTitleText ? props.subTitleText : ""} titleText={props.titleText} linkTo={props.linkTo ? props.linkTo : ""} ></ShouldAuthStaff >
+                <ShouldAuthStaff btnText={props.btnText} subTitleText={props.subTitleText ? props.subTitleText : ""} titleText={props.titleText} linkTo={props.linkTo ? props.linkTo : ""} ></ShouldAuthStaff >
             )
         )
     )

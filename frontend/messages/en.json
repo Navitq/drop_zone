@@ -152,7 +152,7 @@
     "client_items": "your skins",
     "server_items": "desired skins",
     "unauth_upgrade": "You are not authorized",
-    "unauth_upgrade_sub_title": "Please log in to access the upgrade.",
+    "unauth_upgrade_sub_title": "Please log in to access the upgrade",
     "auth_upgrade": "log in",
     "open_return": "You don't have any skins, open the case and come back",
     "go_to_case": "go to case",
@@ -178,7 +178,11 @@
     "rule_point_two": "Click the button - launch the contract",
     "rule_point_tree": "Get a new skin",
     "slot_alt": "Slot case:",
-    "accessible_objects": "Items available for contract"
+    "accessible_objects": "Items available for contract",
+    "unauth_upgrade_sub_title": "Please log in to access to the contracts",
+    "auth_upgrade": "log in",
+    "open_return": "You don't have any skins, open the case and come back",
+    "go_to_case": "go to case"
   },
   "items": {
     "add_good": "add"

@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 import style from '@/styles/contracts.module.scss'
@@ -5,9 +7,30 @@ import { useTranslations } from 'next-intl'
 
 import CtStaffSort from '@/components/CtStaffSort'
 import ExClientStuffs from '@/components/ExClientStuffs'
+import ShouldAuthStaff from '@/components/ShouldAuthStaff'
+import { BACKEND_PATHS, FRONTEND_PATHS } from '@/utilites/urls'
+import { useAppSelector, useAppDispatch } from '@/lib/hooks'
+
+interface gunItemModel {
+    id: string,
+    imgPath: string,
+    gunModel: string,
+    gunStyle: string,
+    gunPrice: number,
+    state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred',
+    type: "usuall" | "rare" | "elite" | "epic" | "classified",
+}
 
 function CtStaff(): React.ReactNode {
     const t = useTranslations("contracts")
+    const isAuth = useAppSelector(state => state.user.isAuth)
+
+    const dispatch = useAppDispatch()
+
+    function activateBtn(value: gunItemModel) {
+
+    }
+
     return (
         <div className={style.ctStaffCnt}>
             <div className={style.ctStaffTxtCnt}>
@@ -16,7 +39,11 @@ function CtStaff(): React.ReactNode {
                     <CtStaffSort></CtStaffSort>
                 </div>
             </div>
-            <ExClientStuffs ></ExClientStuffs>
+
+            {isAuth ? (
+                <ExClientStuffs activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25 }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
+                <div className={style.sasContracts}><ShouldAuthStaff btnText={t('auth_upgrade')} titleText={t('unauth_upgrade_sub_title')}></ShouldAuthStaff></div>
+            )}
         </div>
     )
 }

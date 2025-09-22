@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { setItemToUpgrade } from '@/redux/upgradeReducer'
 import ShouldAuthStaff from '@/components/ShouldAuthStaff'
 import { useTranslations } from 'next-intl'
+
 interface gunItemModel {
     id: string,
     imgPath: string,

@@ -165,3 +165,10 @@
 .ctStaffSortCnt {
     max-width: 220px;
 }
+
+.sasContracts {
+    flex: 1;
+    @extend %flexCenter;
+    height: 100%;
+    width: 100%;
+}
