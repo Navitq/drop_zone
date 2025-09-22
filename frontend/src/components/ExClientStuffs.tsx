@@ -8,7 +8,7 @@ import { AxiosError } from "axios";
 import api from "@/lib/api";
 import { useAppDispatch } from '@/lib/hooks';
 import { removeFinishedItem } from '@/redux/upgradeReducer'
-
+import ShouldAuthStaff from '@/components/ShouldAuthStaff'
 
 interface upgradeFinished {
     newItem: gunItemModel,
@@ -26,7 +26,13 @@ interface ExClientStuffsInt {
     addPrize?: upgradeFinished,
     client_id?: string,
     server_id?: string,
+    btnText: string,
+    subTitleText?: string,
+    titleText: string,
+    linkTo?: string,
+
 }
+
 
 interface gunItemModel {
     id: string,
@@ -39,7 +45,6 @@ interface gunItemModel {
 }
 
 function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
-
     const [items, setItems] = useState<gunItemModel[]>([])
     const loaderRef = useRef<HTMLDivElement | null>(null);
     const [page, setPage] = useState<number>(1);
@@ -187,16 +192,21 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     );
 
     return (
-        <div className={style.ExClientStuffs}>
-            {
-                items.map((value) => {
-                    return (
-                        <ItemSm activateBtnColor={props.client_id ? props.client_id === value.id : props.server_id ? props.server_id === value.id : false} state={value.state} activateBtn={handleActivate(value)} key={value.id} id={value.id} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} ></ItemSm>
-                    )
-                })
-            }
-            <div ref={loaderRef} style={{ height: 1, visibility: 'hidden' }} />
-        </div >
+        (
+            items.length > 0 ? (<div className={style.ExClientStuffs}>
+                {
+                    items.map((value) => {
+                        return (
+                            <ItemSm activateBtnColor={props.client_id ? props.client_id === value.id : props.server_id ? props.server_id === value.id : false} state={value.state} activateBtn={handleActivate(value)} key={value.id} id={value.id} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} ></ItemSm>
+                        )
+                    })
+                }
+                <div ref={loaderRef} style={{ height: 1, visibility: 'hidden' }} />
+            </div >
+            ) : (
+                < ShouldAuthStaff btnText={props.btnText} subTitleText={props.subTitleText ? props.subTitleText : ""} titleText={props.titleText} linkTo={props.linkTo ? props.linkTo : ""} ></ShouldAuthStaff >
+            )
+        )
     )
 }
 

@@ -24,7 +24,7 @@ function LogInBlock(): React.ReactNode {
 
     return (
         <>
-            <div className={style.logInBlock}>
+            <div className={style.logInBlock} id="header">
                 <div className={style.userLogBlock}>
                     {t("logIn")}
                 </div>

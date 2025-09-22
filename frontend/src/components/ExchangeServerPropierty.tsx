@@ -11,6 +11,7 @@ import ExClientStuffs from '@/components/ExClientStuffs'
 import { BACKEND_PATHS } from '@/utilites/urls'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { setServerItemToUpgrade } from '@/redux/upgradeReducer'
+import ShouldAuthStaff from '@/components/ShouldAuthStaff'
 
 interface gunItemModel {
     id: string,
@@ -26,7 +27,7 @@ function ExchangeServerPropierty(): React.ReactNode {
     const t = useTranslations('upgrades')
     const dispatch = useAppDispatch()
     const server_item = useAppSelector(state => state.upgrade.itemServerData.id)
-
+    const isAuth = useAppSelector(state => state.user.isAuth)
     const price = useAppSelector(state => state.upgrade.price)
     const priceСoefficient = useAppSelector(state => state.upgrade.priceСoefficient)
     function activateBtn(value: gunItemModel) {
@@ -44,7 +45,9 @@ function ExchangeServerPropierty(): React.ReactNode {
                     <SearchByPrice placeHolderText={t('search_by_price')}></SearchByPrice>
                 </div>
             </div>
-            <ExClientStuffs server_id={server_item} body={{ limit: 25, startPrice: price * priceСoefficient }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs>
+            {isAuth ? <ExClientStuffs titleText={t('wait_for_items')} btnText={t('go_to_case')} server_id={server_item} body={{ limit: 25, startPrice: price * priceСoefficient }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs> : (
+                <ShouldAuthStaff btnText={t('auth_upgrade')} subTitleText={t('unauth_upgrade_sub_title')} titleText={t('unauth_upgrade')}></ShouldAuthStaff>
+            )}
         </div>
     )
 }

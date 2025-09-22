@@ -17,7 +17,7 @@ function HeaderUserInfo() {
     }, [])
     return (
         <div className={style.headerUserInfo}>
-            <div className={style.headerPromoCnt}>
+            <div className={style.headerPromoCnt} >
                 <input className={style.headerPromo} placeholder={t("promo_code_placeholder")}></input>
             </div>
             {hydrated && (isAuth ? <AuthHeader /> : <LogInBlock />)}

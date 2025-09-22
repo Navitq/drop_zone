@@ -538,6 +538,37 @@
     border-bottom-right-radius: 5px;
 }
 
+.sasCnt {
+    @extend %flexCenter;
+    width: 100%;
+    height: 100%;
+}
+.sasBlock {
+    @extend %flexCenter;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0px 27px 0px 10px;
+}
+.sasTitle {
+    @extend %flexCenter;
+    font-family: var(--font-headRegular);
+    font-size: 36px;
+    line-height: 100%;
+    color: rgba(223, 223, 223, 1);
+    text-align: center;
+}
+
+.sasTextBlock {
+    margin-bottom: 50px;
+}
+
+.clientBlockMain {
+    @extend %flexCenter;
+    height: auto;
+    width: auto;
+}
+
 
 @media (max-width: 1439px) {
     .exchangerBlock {
@@ -694,6 +725,9 @@
 
 }
 @media (max-width: 768px) {
+    .exSearchBlock:first-child {
+        margin-right: 10px;
+    }
     .exSearchBlock {
         max-width: 76px;
         height: 30px;
@@ -702,7 +736,6 @@
     }
     .exSearchInput {
         font-size: 9px;
-
     }
     .serverExTitle {
         margin-bottom: 0px;
@@ -791,7 +824,25 @@
             padding: 0px 11px !important;
         }
     }
-
-
+    .exSearchBlock::after, .exServerSearch .exSearchPrice::after {
+        width: 10px;
+        height: 10px;
+        right: 10px;
+        background-size: contain;
+    }
+    .exSearchInput::placeholder{
+        font-size: 9px;
+    }
+    .sasBlock {
+        max-width: 276px;
+        padding: 0px 22px 0px 5px;
+    }
+    .sasTitle {
+        @extend %flexCenter;
+        font-size: 13px;
+    }
+    .sasTextBlock {
+        margin-bottom: 15px;
+    }
 
 }

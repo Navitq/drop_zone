@@ -148,7 +148,13 @@
     "result_win": "Вы выиграли!",
     "result_lose": "Вы проиграли",
     "client_items": "твои скины",
-    "server_items": "желаемые скины"
+    "server_items": "желаемые скины",
+    "unauth_upgrade": "Ты не авторизован",
+    "unauth_upgrade_sub_title": "Авторизируйся, чтобы был доступен апгрейд",
+    "auth_upgrade": "авторизироваться",
+    "open_return": "У тебя нет скинов, открой кейс и возвращайся",
+    "go_to_case": "к кейсам",
+    "wait_for_items": "Подожди немного. Мы уже пошли на склад за скинами"
   },
   "raffles": {
     "man_alt": "man picture",

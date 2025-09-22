@@ -150,7 +150,13 @@
     "result_win": "You win!",
     "result_lose": "You lose",
     "client_items": "your skins",
-    "server_items": "desired skins"
+    "server_items": "desired skins",
+    "unauth_upgrade": "You are not authorized",
+    "unauth_upgrade_sub_title": "Please log in to access the upgrade.",
+    "auth_upgrade": "log in",
+    "open_return": "You don't have any skins, open the case and come back",
+    "go_to_case": "go to case",
+    "wait_for_items": "Wait a bit. We're already heading to the warehouse for skins"
   },
   "raffles": {
     "man_alt": "man picture",
