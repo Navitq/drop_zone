@@ -5,6 +5,7 @@ import battlesCreateReducer from '@/redux/battlesCreateReducer'
 import activeBattleReducer from '@/redux/activeBattleReducer'
 import advertisementReducer from '@/redux/advertisementReducer'
 import upgradeReducer from '@/redux/upgradeReducer'
+import contractsReducer from '@/redux/contractsReducer'
 
 import { merge } from 'lodash'
 
@@ -45,6 +46,7 @@ export const makeStore = (preloadedState: Partial<AuthState> = {} ) => configure
     activeBattle: activeBattleReducer,
     advertisement: advertisementReducer,
     upgrade: upgradeReducer,
+    contracts: contractsReducer,
   },
   preloadedState:  {
     user: merge({}, userInitialState, preloadedState),

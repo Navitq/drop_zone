@@ -54,7 +54,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const hasMoreRef = useRef<boolean>(hasMore);
     const multiplyRef = useRef<boolean>(true)
     const addedItemsListRef = useRef<string[]>([])
-
+    const [couldObserve, setCouldObserve] = useState<boolean>(false)
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -122,6 +122,9 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     }, [loading, hasMore]);
 
     useEffect(() => {
+        if (!couldObserve) {
+            return
+        }
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -139,9 +142,12 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
         return () => {
             if (loaderRef.current) observer.unobserve(loaderRef.current);
         };
-    }, []);
+    }, [couldObserve]);
 
-
+    useEffect(() => {
+        // включаем observer, только если есть items
+        setCouldObserve(items.length > 0);
+    }, [items.length]);
 
 
     async function getInventory(page: number = 1) {
@@ -201,10 +207,13 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                         )
                     })
                 }
-                <div ref={loaderRef} style={{ height: 1, visibility: 'hidden' }} />
+                <div ref={loaderRef} style={{ height: 5, visibility: 'hidden' }} />
             </div >
             ) : (
-                <ShouldAuthStaff btnText={props.btnText} subTitleText={props.subTitleText ? props.subTitleText : ""} titleText={props.titleText} linkTo={props.linkTo ? props.linkTo : ""} ></ShouldAuthStaff >
+
+                <>
+                    <ShouldAuthStaff btnText={props.btnText} subTitleText={props.subTitleText ? props.subTitleText : ""} titleText={props.titleText} linkTo={props.linkTo ? props.linkTo : ""} ></ShouldAuthStaff >
+                </>
             )
         )
     )

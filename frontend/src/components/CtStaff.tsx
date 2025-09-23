@@ -10,7 +10,7 @@ import ExClientStuffs from '@/components/ExClientStuffs'
 import ShouldAuthStaff from '@/components/ShouldAuthStaff'
 import { BACKEND_PATHS, FRONTEND_PATHS } from '@/utilites/urls'
 import { useAppSelector, useAppDispatch } from '@/lib/hooks'
-
+import { setClientItemData } from '@/redux/contractsReducer'
 interface gunItemModel {
     id: string,
     imgPath: string,
@@ -24,11 +24,13 @@ interface gunItemModel {
 function CtStaff(): React.ReactNode {
     const t = useTranslations("contracts")
     const isAuth = useAppSelector(state => state.user.isAuth)
+    const client_id = useAppSelector(state => state.user.userData.id)
 
     const dispatch = useAppDispatch()
 
     function activateBtn(value: gunItemModel) {
-
+        console.log(1111111)
+        dispatch(setClientItemData(value))
     }
 
     return (
@@ -39,11 +41,12 @@ function CtStaff(): React.ReactNode {
                     <CtStaffSort></CtStaffSort>
                 </div>
             </div>
-
-            {isAuth ? (
-                <ExClientStuffs activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25 }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
-                <div className={style.sasContracts}><ShouldAuthStaff btnText={t('auth_upgrade')} titleText={t('unauth_upgrade_sub_title')}></ShouldAuthStaff></div>
-            )}
+            <div className={style.sasContracts}>
+                {isAuth ? (
+                    <ExClientStuffs activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25, client_id }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
+                    <ShouldAuthStaff btnText={t('auth_upgrade')} titleText={t('unauth_upgrade_sub_title')}></ShouldAuthStaff>
+                )}
+            </div>
         </div>
     )
 }

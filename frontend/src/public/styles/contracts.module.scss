@@ -171,4 +171,43 @@
     @extend %flexCenter;
     height: 100%;
     width: 100%;
+    overflow: auto;
+}
+
+
+@media (max-width: 1439px) {
+
+}
+
+@media (max-width: 1024px) {
+    .ctStaffTxtCnt {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .ctStaffTitle {
+        font-size: 24px;
+        line-height: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .sasContracts {
+        height: 100%;
+    }
+    .contracts {
+        padding: 0 15px;
+    }
+    .ctStaffCnt {
+        min-height: 0px;
+        max-height: 343px;
+        padding: 15px 10px 15px 10px;
+    }
+    .sasContracts div:first-child {
+        display: grid;
+    }
+    .ctStaffTitle {
+        font-size: 13px;
+        margin-right: 20px;
+    }
 }
