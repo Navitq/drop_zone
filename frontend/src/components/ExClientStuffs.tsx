@@ -24,7 +24,7 @@ interface ExClientStuffsInt {
     }
     activateBtn: (value: gunItemModel) => void,
     addPrize?: upgradeFinished,
-    client_id?: string,
+    client_id?: string | string[],
     server_id?: string,
     btnText: string,
     subTitleText?: string,
@@ -202,9 +202,28 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
             items.length > 0 ? (<div className={style.ExClientStuffs}>
                 {
                     items.map((value) => {
+                        const isActive = props.client_id
+                            ? Array.isArray(props.client_id)
+                                ? props.client_id.includes(value.id)
+                                : props.client_id === value.id
+                            : props.server_id
+                                ? props.server_id === value.id
+                                : false;
+
                         return (
-                            <ItemSm activateBtnColor={props.client_id ? props.client_id === value.id : props.server_id ? props.server_id === value.id : false} state={value.state} activateBtn={handleActivate(value)} key={value.id} id={value.id} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} ></ItemSm>
-                        )
+                            <ItemSm
+                                key={value.id}
+                                id={value.id}
+                                imgPath={value.imgPath}
+                                gunModel={value.gunModel}
+                                gunStyle={value.gunStyle}
+                                gunPrice={value.gunPrice}
+                                type={value.type}
+                                state={value.state}
+                                activateBtnColor={isActive}
+                                activateBtn={handleActivate(value)}
+                            />
+                        );
                     })
                 }
                 <div ref={loaderRef} style={{ height: 5, visibility: 'hidden' }} />

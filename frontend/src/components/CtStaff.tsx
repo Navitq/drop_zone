@@ -25,7 +25,8 @@ function CtStaff(): React.ReactNode {
     const t = useTranslations("contracts")
     const isAuth = useAppSelector(state => state.user.isAuth)
     const client_id = useAppSelector(state => state.user.userData.id)
-
+    const client_items_id = useAppSelector(state => state.contracts.itemClientData)
+    const clientItemIds: string[] = client_items_id.map(item => item.id);
     const dispatch = useAppDispatch()
 
     function activateBtn(value: gunItemModel) {
@@ -42,7 +43,7 @@ function CtStaff(): React.ReactNode {
             </div>
             <div className={style.sasContracts}>
                 {isAuth ? (
-                    <ExClientStuffs activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25, client_id }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
+                    <ExClientStuffs client_id={clientItemIds} activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25, client_id }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
                     <ShouldAuthStaff btnText={t('auth_upgrade')} titleText={t('unauth_upgrade_sub_title')}></ShouldAuthStaff>
                 )}
             </div>
