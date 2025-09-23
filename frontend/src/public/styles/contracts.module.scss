@@ -141,7 +141,7 @@
     @extend %flexStart;
     flex-direction: column;
     width: 100%;
-    min-height: 421px;
+    min-height: 0px;
     max-height: 956px;
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.05);
@@ -167,11 +167,35 @@
 }
 
 .sasContracts {
-    flex: 1;
-    @extend %flexCenter;
     height: 100%;
     width: 100%;
     overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(75, 75, 75, 1) transparent;
+}
+
+.sasContracts::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sasContracts::-webkit-scrollbar-track {
+  background: transparent;
+
+}
+
+.sasContracts::-webkit-scrollbar-thumb {
+  background: rgba(75, 75, 75, 1);
+  border-radius: 10px;
+}
+
+.sasContracts::-webkit-scrollbar-button {
+  display: none;  // стрелки убираем
+  width: 0;
+  height: 0;
+}
+
+.sasContracts > div:first-child {
+
 }
 
 
@@ -192,9 +216,7 @@
 }
 
 @media (max-width: 768px) {
-    .sasContracts {
-        height: 100%;
-    }
+
     .contracts {
         padding: 0 15px;
     }
@@ -203,9 +225,7 @@
         max-height: 343px;
         padding: 15px 10px 15px 10px;
     }
-    .sasContracts div:first-child {
-        display: grid;
-    }
+
     .ctStaffTitle {
         font-size: 13px;
         margin-right: 20px;

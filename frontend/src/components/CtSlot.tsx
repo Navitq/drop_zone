@@ -9,11 +9,12 @@ import CtSlotData from '@/components/CtSlotData'
 
 
 interface GunData {
-    gunModel: string
-    gunStyle: string
-    gunPrice: number
-    imgPath: string
-    type: "usuall" | "rare" | "elite" | "epic" | "classified"
+    state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred',
+    gunModel: string,
+    gunStyle: string,
+    gunPrice: number,
+    imgPath: string,
+    type: "usuall" | "rare" | "elite" | "epic" | "classified",
 }
 
 function CtSlot(props: { data?: GunData, index: number }): React.ReactNode {

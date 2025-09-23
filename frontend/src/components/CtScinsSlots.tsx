@@ -1,8 +1,11 @@
+'use client'
 import React, { useMemo } from 'react'
 
 import style from '@/styles/contracts.module.scss'
 
 import CtSlot from '@/components/CtSlot'
+import { useAppSelector } from '@/lib/hooks'
+
 
 
 // Главный компонент
@@ -11,19 +14,21 @@ function CtScinsSlots() {
     // const items = useSelector(function (state: any) {
     //     return state.slotsArray;
     // });
-    const items: (object | undefined)[] = [];
+    const itemClientData = useAppSelector(state => state.contracts.itemClientData)
+    const slots = Array.from({ length: 10 }, (_, i) => itemClientData[i] || null);
 
     // Массив длиной 10, создаём только при изменении items
-    const slots = useMemo(function () {
-        return Array.from({ length: 10 }, function (_, i) {
-            return items[i];
-        });
-    }, [items]);
+
 
     return (
         <div className={style.ctObjectCnt}>
             {slots.map(function (item, index) {
-                return <CtSlot key={index} data={{ imgPath: '/images/example_gun_blue.png', gunModel: "AK-47", type: "usuall", gunStyle: 'LIZARD PIZARD', gunPrice: 58.48 }} index={index} />;
+                if (item) {
+                    return <CtSlot key={item?.id || index} data={{ imgPath: item.imgPath, gunModel: item.gunModel, type: item.type, gunStyle: item.gunStyle, gunPrice: item.gunPrice, state: item.state }} index={index} />;
+                } else {
+                    return <CtSlot key={item?.id || index} index={index} />;
+                }
+
             })}
         </div>
     );

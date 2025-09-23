@@ -497,6 +497,21 @@
             margin-top: 4px;
             margin-bottom: 5px;
         }
+        &.usuallItemSmType {
+            background-image: url(/images/mobile_blue_item_background.png);
+        }
+        &.rareItemSmType {
+            background-image: url(/images/mobile_violet_item_background.png);
+        }
+        &.classifiedItemSmType {
+            background-image: url(/images/mobile_pink_item_background.png);
+        }
+        &.eliteItemSmType {
+            background-image: url(/images/mobile_red_item_background.png);
+        }
+        &.epicItemSmType {
+            background-image: url(/images/mobile_gold_item_background.png);
+        }
     }
     .uicCnt {
         &.usuallUicCnt {

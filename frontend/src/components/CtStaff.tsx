@@ -29,7 +29,6 @@ function CtStaff(): React.ReactNode {
     const dispatch = useAppDispatch()
 
     function activateBtn(value: gunItemModel) {
-        console.log(1111111)
         dispatch(setClientItemData(value))
     }
 
