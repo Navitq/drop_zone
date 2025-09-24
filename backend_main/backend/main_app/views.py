@@ -272,7 +272,6 @@ async def create_order(item_state: str, item, user):
     """
     try:
         steam_item = await sync_to_async(SteamItemCs.objects.get)(id=item.id)
-
         return await sync_to_async(InventoryItem.objects.create)(
             steam_item=steam_item,
             owner=user,
@@ -426,16 +425,39 @@ async def remover_order(user, client_item):
     return client_item
 
 
+# async def get_user_inventory_items(user, ids: list[str]):
+#     """
+#     Асинхронно возвращает список предметов из инвентаря пользователя по id.
+#     """
+#     arrayItems = []
+
+#     for item_id in ids:
+#         client_item = await sync_to_async(
+#             lambda: InventoryItem.objects.select_related('steam_item')
+#             .get(owner=user, id=item_id)
+#         )()
+#         arrayItems.append(client_item)
+
+#     # возвращаем список и длину
+#     return arrayItems
+
+
 async def get_user_inventory_items(user, ids: list[str]):
     """
     Асинхронно возвращает список предметов из инвентаря пользователя по id.
+    Работает в один запрос к БД.
     """
-    return await sync_to_async(
-        lambda: list(
-            InventoryItem.objects.select_related("steam_item")
-            .filter(id__in=ids, owner=user)
+    if not ids:
+        return []
+
+    def fetch_items():
+        return list(
+            InventoryItem.objects.select_related('steam_item')
+            .filter(owner=user, id__in=ids)
         )
-    )()
+
+    items = await sync_to_async(fetch_items)()
+    return items
 
 
 async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
@@ -444,15 +466,18 @@ async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
     Если предметов нет, возвращает JsonResponse с 410.
     """
     # Функция поиска предмета в диапазоне
-    async def find_item_in_range(min_val, max_val):
-        return await sync_to_async(
-            lambda: SteamItemCs.objects.filter(
-                price__gte=min_val, price__lte=max_val
-            ).order_by('price')
-        )()
 
-    # Сначала ищем предметы от min_value до prize_value
+    async def find_item_in_range(min_val, max_val):
+        def fetch_items():
+            return list(
+                SteamItemCs.objects.filter(
+                    price__gte=min_val, price__lte=max_val)
+                .order_by('price')
+            )
+        return await sync_to_async(fetch_items)()
+
     items = await find_item_in_range(min_value, prize_value)
+
     if items:
         # Находим предмет с ценой максимально близкой к prize_value
         closest_item = min(items, key=lambda x: abs(x.price - prize_value))
@@ -488,13 +513,16 @@ async def play_contracts_game(user, items: list):
     Игра "контракты": на вход список InventoryItem, на выход приз.
     """
     # 1. Считаем общую стоимость предметов
+    print("sssssssssssssssssssssssss")
     total_price = sum(
         # допустим, у steam_item есть поле price
         Decimal(item.steam_item.price) for item in items
     )
 
     # 2. Получаем глобальный коэффициент из Redis
+    print("--------------------")
     ad = await sync_to_async(lambda: GlobalCoefficientRedis.find().first())()
+    print("++++++++++++++++++++")
     pgrades_global = ad.contracts_global
 
     # 3. Берём персональный коэффициент
@@ -1013,15 +1041,26 @@ async def make_contract_view(request):
         # проверяем количество
         if not (3 < len(unique_items) < 10):
             return JsonResponse({"error": "Number of unique items must be >3 and <10"}, status=403)
+        print(100000000000000000000)
         user_item = await get_user_by_id(request.token_data.get("id"))
-        inventoryItems = await get_user_inventory_items(ids=unique_items, user=user_item)
-        won_item = await play_contracts_game(inventoryItems)
-        await remove_inventory_objects(items=inventoryItems)
+
+        item_ids = [str(item["id"]) for item in unique_items if "id" in item]
+        print(111111111111111111111111111, user_item.id, item_ids[0])
+
+        inventoryItems = await get_user_inventory_items(ids=item_ids, user=user_item)
+        print(2222222222222222222222222,
+              inventoryItems[0].steam_item.id)
+        won_item = await play_contracts_game(user=user_item, items=inventoryItems)
+        print(333333333333333333333333333333)
         if isinstance(won_item, JsonResponse):
             return won_item
+        await remove_inventory_objects(items=inventoryItems)
+        print(44444444444444444444444444444444444)
+        print(5555555555555555555555555555555555555)
         state = await spin_state_wheel(user_item)
-        order = create_order(state, won_item, user_item)
-
+        print(6666666666666666666666666666666666666666666)
+        order = await create_order(item_state=state, item=won_item, user=user_item)
+        print(77777777777777777777777777777777777777)
         order_to_send = {
             "id": str(order.id),
             "gunModel": order.steam_item.item_model,
@@ -1032,6 +1071,7 @@ async def make_contract_view(request):
             "price": order.steam_item.price,
             "state": state
         }
+        print(order_to_send)
         return JsonResponse({"status": "client win", 'items': order_to_send}, status=200)
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
