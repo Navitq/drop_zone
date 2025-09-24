@@ -885,6 +885,41 @@ async def get_inventory_server_items_view(request):
 
 
 @async_require_methods(["POST"])
+async def make_contract_view(request):
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        items = body.get("itemClientData", [])
+
+        if not isinstance(items, list):
+            return JsonResponse({"error": "itemClientData must be a list"}, status=403)
+
+        # оставляем только уникальные по id
+        seen_ids = set()
+        unique_items = []
+        for item in items:
+            item_id = item.get("id")
+            if item_id and item_id not in seen_ids:
+                seen_ids.add(item_id)
+                unique_items.append(item)
+
+        # проверяем количество
+        if not (3 < len(unique_items) < 10):
+            return JsonResponse({"error": "Number of unique items must be >3 and <10"}, status=403)
+
+        
+        return JsonResponse({
+            "status": "success",
+            "unique_items": unique_items,
+            "count": len(unique_items)
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+@async_require_methods(["POST"])
 async def upgrade_item_view(request):
     try:
         data = json.loads(request.body)

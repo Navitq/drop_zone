@@ -40,4 +40,6 @@ urlpatterns = [
          views.get_inventory_server_items_view, name='get_inventory_server_items_view'),
     path('upgrade-item/',
          views.upgrade_item_view, name='upgrade_item_view'),
+    path('make-contract/',
+         views.make_contract_view, name='make_contract_view'),
 ]

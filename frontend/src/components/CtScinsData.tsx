@@ -3,13 +3,19 @@
 import React from 'react'
 import style from '@/styles/contracts.module.scss'
 import { useTranslations } from 'next-intl'
+import { AxiosError } from "axios";
 
 import CtSkinPriceBlock from '@/components/CtSkinPriceBlock'
-import { useAppSelector } from '@/lib/hooks'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import CaseBtnText from '@/components/CaseBtnText'
+import { showNoMoneyModal, showUnAuthModal } from '@/redux/modalReducer'
+
+import api from "@/lib/api";
+import { BACKEND_PATHS } from '@/utilites/urls';
 
 function CtScinsData(props: { scinPrice?: number }): React.ReactNode {
     const t = useTranslations("contracts")
+    const dispatch = useAppDispatch()
     const items = useAppSelector(state => state.contracts.itemClientData)
     const totalItemsPrice = items.reduce((sum, item) => sum + item.gunPrice, 0)
     const totalAmount = useAppSelector(state => state.contracts.itemClientData.length)
@@ -18,8 +24,22 @@ function CtScinsData(props: { scinPrice?: number }): React.ReactNode {
         return Math.round(num * 10 ** powerOfTen) / 10 ** powerOfTen;
     }
 
-    function makeContract() {
-        return;
+    async function makeContract() {
+        try {
+
+            const response = await api.post(BACKEND_PATHS.makeContract, { itemClientData: items });
+            console.log(response.data)
+        } catch (err) {
+            const error = err as AxiosError;
+            console.log(error.status)
+            if (error.response?.status === 401) {
+                dispatch(showUnAuthModal())
+            } else if (error.response?.status === 402) {
+                dispatch(showNoMoneyModal())
+            } else {
+                console.error("Неизвестная ошибка", error);
+            }
+        }
     }
 
     return (
