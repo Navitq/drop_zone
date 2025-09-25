@@ -24,6 +24,7 @@ from .custom_decorators import async_require_methods
 from datetime import datetime, timezone
 from .custom_decorators import async_require_methods
 from django.utils import timezone as timezone_utils
+from django.core.exceptions import ObjectDoesNotExist
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -448,16 +449,30 @@ async def get_user_inventory_items(user, ids: list[str]):
     Работает в один запрос к БД.
     """
     if not ids:
-        return []
+        return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
 
-    def fetch_items():
-        return list(
-            InventoryItem.objects.select_related('steam_item')
-            .filter(owner=user, id__in=ids)
-        )
+    try:
+        # Синхронная функция для materialization QuerySet
+        def fetch_items():
+            return list(
+                InventoryItem.objects.select_related('steam_item')
+                .filter(owner=user, id__in=ids)
+            )
 
-    items = await sync_to_async(fetch_items)()
-    return items
+        # Асинхронный вызов
+        print(222222222)
+        items = await sync_to_async(fetch_items)()
+        if not items or len(items) != len(ids):
+            return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
+        return items
+
+    except ObjectDoesNotExist:
+        # Если нет ни одного объекта
+        return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
+
+    except Exception:
+        # Логируем и пробрасываем исключение дальше
+        return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
 
 
 async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
@@ -466,6 +481,7 @@ async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
     Если предметов нет, возвращает JsonResponse с 410.
     """
     # Функция поиска предмета в диапазоне
+    print("7777777777777777",  min_value, prize_value)
 
     async def find_item_in_range(min_val, max_val):
         def fetch_items():
@@ -475,19 +491,21 @@ async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
                 .order_by('price')
             )
         return await sync_to_async(fetch_items)()
-
+    print("4451231241231",  min_value, prize_value)
     items = await find_item_in_range(min_value, prize_value)
-
+    print("123123",  min_value, prize_value)
     if items:
         # Находим предмет с ценой максимально близкой к prize_value
         closest_item = min(items, key=lambda x: abs(x.price - prize_value))
         return closest_item
+    print("ccccccc")
 
     # Если не найдено, расширяем поиск до min_value*4
     items = await find_item_in_range(prize_value, min_value * 4)
     if items:
         closest_item = min(items, key=lambda x: abs(x.price - prize_value))
         return closest_item
+    print("123123")
 
     # Если предметов нет вообще
     return JsonResponse({"detail": "No items found"}, status=410)
@@ -532,8 +550,8 @@ async def play_contracts_game(user, items: list):
     final_coeff = Decimal(pgrades_global) * Decimal(personal_coeff)
 
     # 5. Определяем исход
-    min_value = total_price / Decimal(4)
-    max_value = total_price * Decimal(4)
+    min_value = Decimal(total_price) / Decimal(4)
+    max_value = Decimal(total_price) * Decimal(4)
 
     # итоговый коэффициент
     a = Decimal(secrets.randbelow(101)) * final_coeff
@@ -543,10 +561,12 @@ async def play_contracts_game(user, items: list):
     if b == 0:
         b = 0.1
 
-    cof = min(a / b, 1.0)  # гарантированно в [0, 1]
-
+    cof = min(a / b, Decimal('1.0'))  # гарантированно в [0, 1]
+    print("ddddddddasdaw", min_value, cof, max_value,
+          total_price)
     # линейная интерполяция
-    prize_value = min_value + (max_value - min_value) * cof
+    prize_value = Decimal(min_value) + (Decimal(max_value) - Decimal(min_value)) * Decimal(cof)
+    print("7777777777777777")
     prize_item = await get_random_item_contracts(prize_value=prize_value, min_value=min_value)
     return prize_item
 
@@ -1039,7 +1059,7 @@ async def make_contract_view(request):
                 unique_items.append(item)
 
         # проверяем количество
-        if not (3 < len(unique_items) < 10):
+        if not (2 < len(unique_items) < 11):
             return JsonResponse({"error": "Number of unique items must be >3 and <10"}, status=403)
         print(100000000000000000000)
         user_item = await get_user_by_id(request.token_data.get("id"))
@@ -1048,6 +1068,8 @@ async def make_contract_view(request):
         print(111111111111111111111111111, user_item.id, item_ids[0])
 
         inventoryItems = await get_user_inventory_items(ids=item_ids, user=user_item)
+        if isinstance(inventoryItems, JsonResponse):
+            return inventoryItems
         print(2222222222222222222222222,
               inventoryItems[0].steam_item.id)
         won_item = await play_contracts_game(user=user_item, items=inventoryItems)
