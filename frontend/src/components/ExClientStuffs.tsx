@@ -30,7 +30,8 @@ interface ExClientStuffsInt {
     subTitleText?: string,
     titleText: string,
     linkTo?: string,
-
+    removeItem?: (value: gunItemModel) => void,
+    deleteTxt?: string
 }
 
 
@@ -197,6 +198,16 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
         [props.activateBtn]
     );
 
+    const handleRemove = useCallback(
+        (item: gunItemModel) => () => {
+            if (props.removeItem) {
+                props.removeItem(item);
+            }
+            // Если props.removeItem нет — функция просто ничего не делает
+        },
+        [props.removeItem]
+    );
+
     return (
         (
             items.length > 0 ? (<div className={style.ExClientStuffs}>
@@ -222,6 +233,8 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                                 state={value.state}
                                 activateBtnColor={isActive}
                                 activateBtn={handleActivate(value)}
+                                deleteBtn={handleRemove(value)}
+                                deleteTxt={props.deleteTxt ? props.deleteTxt : ""}
                             />
                         );
                     })

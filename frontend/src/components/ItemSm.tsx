@@ -3,6 +3,7 @@ import style from '@/styles/itemStyle.module.scss'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import ItemBtn from '@/components/ItemBtn'
+import ContractsModalBtn from '@/components/ContractsModalBtn'
 
 interface ItemSmInt {
     activateBtnColor?: boolean
@@ -13,7 +14,9 @@ interface ItemSmInt {
     imgPath: string
     type: 'usuall' | 'rare' | 'elite' | 'epic' | 'classified'
     state: string
-    activateBtn: () => void
+    activateBtn: () => void,
+    deleteBtn?: () => void,
+    deleteTxt?: string
 }
 
 function ItemSm(props: ItemSmInt): React.ReactNode {
@@ -24,8 +27,18 @@ function ItemSm(props: ItemSmInt): React.ReactNode {
         props.activateBtn()
     }, [props.activateBtn])
 
+    const handleRemove = useCallback(
+        () => {
+            if (props.deleteBtn) {
+                props.deleteBtn();
+            }
+            // Если props.removeItem нет — функция просто ничего не делает
+        },
+        [props.deleteBtn]
+    );
+
     return (
-        <div className={`${style.smItemCnt} ${style[props.type + 'ItemSmType']}`}>
+        <div className={`${style.smItemCnt} ${style[props.type + 'ItemSmType']} ${props.activateBtnColor && props.deleteTxt ? style.smItemCntWithDelete : ""}`}>
             <div className={style.smItemImgCnt}>
                 <Image
                     fill
@@ -41,10 +54,19 @@ function ItemSm(props: ItemSmInt): React.ReactNode {
                 </div>
                 <div className={style.smItemGunPrice}>{`${props.gunPrice} Dc`}</div>
                 <ItemBtn
-                    isActive={!!props.activateBtnColor} // чётко булево
+                    isActive={props.activateBtnColor} // чётко булево
                     activateBtn={handleActivate}
                     price={t('add_good')}
                 />
+                {props.deleteTxt && props.activateBtnColor ? (
+                    <div className={style.smRemoveBtn}>
+                        <ContractsModalBtn
+                            text={props.deleteTxt}
+                            click={handleRemove}
+                        />
+                    </div>) : (
+                    ""
+                )}
             </div>
         </div>
     )

@@ -10,7 +10,7 @@ import ExClientStuffs from '@/components/ExClientStuffs'
 import ShouldAuthStaff from '@/components/ShouldAuthStaff'
 import { BACKEND_PATHS, FRONTEND_PATHS } from '@/utilites/urls'
 import { useAppSelector, useAppDispatch } from '@/lib/hooks'
-import { setClientItemData } from '@/redux/contractsReducer'
+import { setClientItemData, removeClientItemData } from '@/redux/contractsReducer'
 interface gunItemModel {
     id: string,
     imgPath: string,
@@ -33,6 +33,11 @@ function CtStaff(): React.ReactNode {
         dispatch(setClientItemData(value))
     }
 
+    function removeItem(value: gunItemModel) {
+        console.log(value.id)
+        dispatch(removeClientItemData(value.id))
+    }
+
     return (
         <div className={style.ctStaffCnt}>
             <div className={style.ctStaffTxtCnt}>
@@ -43,7 +48,7 @@ function CtStaff(): React.ReactNode {
             </div>
             <div className={style.sasContracts}>
                 {isAuth ? (
-                    <ExClientStuffs client_id={clientItemIds} activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25, client_id }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
+                    <ExClientStuffs removeItem={(value) => { removeItem(value) }} deleteTxt={t('remove_item')} client_id={clientItemIds} activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25, client_id }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
                     <ShouldAuthStaff btnText={t('auth_upgrade')} titleText={t('unauth_upgrade_sub_title')}></ShouldAuthStaff>
                 )}
             </div>
