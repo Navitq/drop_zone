@@ -6,6 +6,7 @@ import style from '@/styles/contracts.module.scss'
 import TitleHomePage from '@/components/TitleHomePage';
 import CtScinsData from '@/components/CtScinsData';
 import CtScinsSlots from '@/components/CtScinsSlots';
+import MakeContractsMobile from '@/components/MakeContractsMobile'
 import CtStaff from '@/components/CtStaff'
 
 export default function ContractPage(): React.ReactNode {
@@ -15,8 +16,9 @@ export default function ContractPage(): React.ReactNode {
         <TitleHomePage textKey={"t_contracts"}></TitleHomePage>
       </div>
       <div className={style.gameFieldCnt}>
-        <CtScinsData scinPrice={190.97}></CtScinsData>
+        <CtScinsData></CtScinsData>
         <CtScinsSlots></CtScinsSlots>
+        <MakeContractsMobile></MakeContractsMobile>
       </div>
 
       <CtStaff></CtStaff>

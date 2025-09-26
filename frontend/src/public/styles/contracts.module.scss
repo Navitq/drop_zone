@@ -127,6 +127,178 @@
     justify-content: center
 }
 
+.ctObjectPrizeCnt {
+    &.usuallCtObjectPrizeCnt{
+        background-image: url(/images/blue_contract_prize_bg.png);
+        .cssGunModel {
+            color: rgba(0, 140, 255, 1);
+        }
+        .cssItemPrice {
+            color: rgba(184, 208, 255, 1);
+        }
+        .cssTakeBtn {
+            background-color: rgba(0, 140, 255, 1);
+        }
+        .cssSellBtn {
+            border-color: rgba(0, 140, 255, 1);
+        }
+    }
+    &.rareCtObjectPrizeCnt{
+        background-image: url(/images/violet_contract_prize_bg.png);
+        .cssGunModel {
+            color: rgba(193, 135, 255, 1);
+        }
+        .cssItemPrice {
+            color: rgba(228, 203, 255, 1);
+        }
+        .cssTakeBtn {
+            background-color: rgba(193, 135, 255, 1);
+        }
+        .cssSellBtn {
+            border-color: rgba(193, 135, 255, 1);
+        }
+    }
+    &.classifiedCtObjectPrizeCnt{
+        background-image: url(/images/pink_contract_prize_bg.png);
+        .cssGunModel {
+            color: rgba(255, 56, 229, 1);
+        }
+        .cssItemPrice {
+            color: rgba(255, 217, 248, 1);
+        }
+        .cssTakeBtn {
+            background-color: rgba(255, 56, 229, 1);
+        }
+        .cssSellBtn,.cssTakeBtn {
+            border-color: rgba(255, 56, 229, 1);
+        }
+    }
+    &.eliteCtObjectPrizeCnt{
+        background-image: url(/images/red_contract_prize_bg.png);
+        .cssGunModel {
+            color: rgba(255, 80, 80, 1);
+        }
+        .cssItemPrice {
+            color: rgba(255, 217, 217, 1);
+        }
+        .cssTakeBtn {
+            background-color: rgba(255, 80, 80, 1);
+        }
+        .cssSellBtn {
+            border-color: rgba(255, 80, 80, 1);
+        }
+    }
+    &.epicCtObjectPrizeCnt{
+        background-image: url(/images/yellow_contract_prize_bg.png);
+        .cssGunModel {
+            color: rgba(255, 195, 0, 1);
+        }
+        .cssItemPrice {
+            color: rgba(254, 245, 163, 1);
+        }
+        .cssTakeBtn {
+            background-color: rgba(255, 195, 0, 1);
+        }
+        .cssSellBtn {
+            border-color: rgba(255, 195, 0, 1);
+        }
+    }
+}
+
+
+.ctObjectPrizeCnt {
+    max-width: 1036px;
+    height: 402px;
+    padding: 50px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.cssGunInfoCnt {
+    @extend %flexStart;
+}
+
+.cssGunModel, .cssGunStyle {
+    font-family: var(--font-headRegular);
+    font-size: 36px;
+    line-height: 100%;
+    text-align: center;
+}
+
+.cssGunStyle {
+    color:  rgba(125, 128, 145, 1);
+}
+
+.cssPriseImgInfoCnt {
+    @extend %flexStart;
+
+}
+
+.cssItemPrice {
+    font-family: var(--font-textRegular);
+    font-size: 48px;
+    line-height: 100%;
+    width: fit-content;
+    margin-top: 40px;
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.cssItemImgCnt {
+    @extend %flexCenter;
+    margin-top: 10px;
+    max-width: 612px;
+    height: 212px;
+    width: 100%;
+    margin-bottom: 10px;
+    position: relative;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+    img {
+        object-fit: contain;
+    }
+}
+
+.cssItemImgCnt:hover {
+    transform: rotate(8deg);
+}
+
+.cssTakeBtn {
+    @extend %flexCenter;
+    font-family: var(--font-headBold);
+    font-size: 24px;
+    height: 46px;
+    text-align: center;
+    vertical-align: middle;
+    color: rgba(0, 0, 0, 1);
+    border-radius: 7px;
+    padding: 0px 20px;
+    margin-right: 25px;
+    cursor: pointer;
+}
+
+.cssSellBtn {
+    @extend %flexCenter;
+    font-family: var(--font-headBold);
+    font-size: 24px;
+    height: 46px;
+    text-align: center;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 1);
+    border-radius: 7px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0px 20px;
+    cursor: pointer;
+}
+
+.cssBtnCollection {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .ctSlotCnt {
     @extend %flexCenter;
     max-width: 191px;
@@ -149,6 +321,7 @@
     top: 0;
     left: 0;
     z-index: 111;
+    border-radius: 10px;
 }
 
 .ctSlotCntHoverCross {
@@ -222,11 +395,34 @@
   height: 0;
 }
 
+.mobileCtSlotImage {
+    display: none;
+}
+
+.pcMobilePage {
+    display: none;
+}
+
+.mcmMobileCnt {
+    width: 100%;
+}
+
+.mcmMobilePriceBlock {
+    @extend %flexStart;
+    width: 100%;
+    justify-content: space-around;
+}
 
 
 
 @media (max-width: 1439px) {
-
+    .ctScinsData {
+        margin-right: 0px;
+    }
+    .gameFieldCnt {
+        flex-direction: column;
+        row-gap: 30px;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -242,7 +438,114 @@
 }
 
 @media (max-width: 768px) {
+    .ctObjectPrizeCnt {
+        max-width: 343px;
+        height: 133px;
+        padding: 15px;
+        .cssGunModel, .cssGunStyle {
+            font-size: 12px;
+        }
+        .cssItemPrice {
+            margin-top: 13px;
+            font-size: 16px;
+        }
+        .cssItemImgCnt {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            max-width: 203px;
+            height: 65px;
+        }
+        .cssTakeBtn {
+            margin-right: 9px;
+            font-size: 8px;
+            padding: 0px 7px;
+            height: 15px;
+            border-radius: 2px;
+        }
+        .cssSellBtn {
+            font-size: 8px;
+            padding: 0px 7px;
+            height: 15px;
+            border-radius: 2px;
+        }
 
+        &.usuallCtObjectPrizeCnt{
+            background-image: url(/images/mobile_blue_contract_prize_bg.png);
+        }
+        &.rareCtObjectPrizeCnt{
+            background-image: url(/images/mobile_violet_contract_prize_bg.png);
+        }
+        &.classifiedCtObjectPrizeCnt{
+            background-image: url(/images/mobile_pink_contract_prize_bg.png);
+        }
+        &.eliteCtObjectPrizeCnt{
+            background-image: url(/images/mobile_red_contract_prize_bg.png);
+        }
+        &.epicCtObjectPrizeCnt{
+            background-image: url(/images/mobile_yellow_contract_prize_bg.png);
+        }
+    }
+    .objectAmountCnt {
+        height: 29px;
+        font-size: 14px;
+    }
+    .objectAmountCntBtn button {
+        width: 100%;
+    }
+    .yourSkinPriceCnt {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+    }
+    .yourSkinPrice {
+        max-width: 121px;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    .yourSkinPriceAmount {
+        font-size: 15px;
+        text-align: center;
+    }
+    .ctScinsData {
+        padding: 12px 10px;
+        border-radius: 5px;
+    }
+    .ctRulesTitle {
+        margin-top: 0px;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+    .RulesList li {
+        font-size: 10px;
+        margin-bottom: 3px;
+    }
+    .RulesList {
+        padding-left: 12px;
+    }
+    .pcRulesPage {
+        display: none;
+    }
+    .pcMobilePage {
+        display: block;
+    }
+    .gameFieldCnt {
+        row-gap: 15px;
+    }
+    .ctObjectCnt {
+        gap: 5px;
+    }
+    .ctSlotCnt {
+        max-width: 82px;
+        height: 82px;
+    }
+    .mobileCtSlotImage {
+        display: flex;
+    }
+    .pcCtSlotImage {
+        display: none;
+    }
     .contracts {
         padding: 0 15px;
     }
@@ -250,10 +553,17 @@
         min-height: 0px;
         max-height: 343px;
         padding: 15px 10px 15px 10px;
+        margin-top: 20px;
     }
 
     .ctStaffTitle {
         font-size: 13px;
         margin-right: 20px;
+    }
+    .ctSlotCntHoverCross {
+        width: 9px;
+        height: 9px;
+        top: 5px;
+        right: 5px;
     }
 }

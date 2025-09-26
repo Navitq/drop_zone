@@ -556,16 +556,18 @@ async def play_contracts_game(user, items: list):
     # итоговый коэффициент
     a = Decimal(secrets.randbelow(101)) * final_coeff
     b = Decimal(secrets.randbelow(101))
-
+    print(a, b)
     # защищаем от деления на ноль
-    if b == 0:
-        b = 0.1
+    if b == Decimal(0):
+        b = Decimal(0.1)
 
-    cof = min(a / b, Decimal('1.0'))  # гарантированно в [0, 1]
+    cof = min(Decimal(a / b), Decimal('1.0'))  # гарантированно в [0, 1]
+    print(cof)
     print("ddddddddasdaw", min_value, cof, max_value,
           total_price)
     # линейная интерполяция
-    prize_value = Decimal(min_value) + (Decimal(max_value) - Decimal(min_value)) * Decimal(cof)
+    prize_value = Decimal(min_value) + (Decimal(max_value) -
+                                        Decimal(min_value)) * Decimal(cof)
     print("7777777777777777")
     prize_item = await get_random_item_contracts(prize_value=prize_value, min_value=min_value)
     return prize_item
@@ -932,6 +934,7 @@ async def get_inventory_items_view(request):
 
         page = int(data.get("page", 1))
         body = data.get("body", {})
+        deleted_length = data.get("filteredDeletedLength", 0)
         client_id = body.get("client_id")
         limit = int(body.get("limit", 25))
 
@@ -943,11 +946,14 @@ async def get_inventory_items_view(request):
         # считаем общее количество у клиента
 
         # достаём нужный кусок данных
+        start_index = max(offset - deleted_length, 0)
+        end_index = offset + limit
+
         items_qs = (
             InventoryItem.objects
             .filter(owner_id=client_id)
             .select_related("steam_item")
-            .order_by("created_at")[offset: offset + limit]
+            .order_by("created_at")[start_index:end_index]
         )
 
         items = await sync_to_async(list)(items_qs)

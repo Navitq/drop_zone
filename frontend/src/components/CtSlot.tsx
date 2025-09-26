@@ -23,7 +23,7 @@ function CtSlot(props: { data?: GunData, index: number, click?: () => void, }): 
     const t = useTranslations('contracts');
 
     return (
-        <div className={`${style.ctSlotCnt}`} onClick={() => { props.click?.() }}>
+        <div className={`${style.ctSlotCnt} ${'contractsSlotGlobal'}`} onClick={() => { props.click?.() }}>
             {
                 props.data && props.click ? (
                     <>
@@ -32,7 +32,7 @@ function CtSlot(props: { data?: GunData, index: number, click?: () => void, }): 
                         </div>
                         <CtSlotData data={props.data}></CtSlotData>
                     </>
-                ) : (<Image height={133} width={146} alt={`${t('slot_alt')} ${props.index}`} src={`/images/slot_image_${props.index}.png`}></Image>)
+                ) : (<><Image className={style.mobileCtSlotImage} height={58} width={63} alt={`${t('slot_alt')} ${props.index}`} src={`/images/slot_image_${props.index}.png`}></Image><Image className={style.pcCtSlotImage} height={133} width={146} alt={`${t('slot_alt')} ${props.index}`} src={`/images/slot_image_${props.index}.png`}></Image></>)
             }
         </div>
     )

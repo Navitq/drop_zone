@@ -655,7 +655,23 @@
             }
         }
     }
-    .smItemCntWithDelete {
+    :global(.contractsSlotGlobal) .smItemCnt {
+        width: 82px;
+        height: 82px;
+        padding: 10px 4px;
+    }
+    :global(.contractsSlotGlobal) .smItemCnt  .smItemGunPriceMode {
+        font-size: 10px;
+        line-height: 100%;
+        height: fit-content;
+        margin-bottom: 0px;
+        margin-top: 5px;
+    }
+
+    :global(.contractsSlotGlobal) .smItemCnt .smItemGunStyle, :global(.contractsSlotGlobal) .smItemCnt .smItemGunModel {
+        font-size: 7px;
+    }
+    :global(.ExClientStuffs) .smItemCntWithDelete {
         height: 118px;           /* высота блока */
         background-size: auto 100%; /* ширина авто, высота 100% */
         background-repeat: no-repeat; /* чтобы не повторялось */

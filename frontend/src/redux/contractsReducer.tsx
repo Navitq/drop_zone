@@ -18,22 +18,28 @@ interface gunItemModel {
 interface initialStateInt {
     itemClientData: gunItemModel[],
     addedItems: string[],
-    wonItem: gunItemModel,
+    contractsFinished: {
+        newItem: gunItemModel,
+        itemToDelete: string[],
+    }
 }
 
 
 const initialState: initialStateInt = {
     itemClientData: [],
     addedItems: [],
-    wonItem: {
-        id: "",
-        imgPath: "",
-        gunModel: "",
-        gunStyle: "",
-        gunPrice: 0,
-        state: "battle_scarred",
-        type: "usuall",
-    },
+    contractsFinished: {
+        newItem: {
+            id: "",
+            imgPath: "",
+            gunModel: "",
+            gunStyle: "",
+            gunPrice: 0,
+            state: "battle_scarred",
+            type: "usuall",
+        },
+        itemToDelete: [],
+    }
 };
 
 export const contractsSlice = createSlice({
@@ -62,14 +68,33 @@ export const contractsSlice = createSlice({
         },
 
         setWonItem: (state, actions: PayloadAction<gunItemModel>) => {
-            state.wonItem = actions.payload;
+            state.contractsFinished.newItem.id = actions.payload.id;
+            state.contractsFinished.newItem.imgPath = actions.payload.imgPath;
+            state.contractsFinished.newItem.gunModel = actions.payload.gunModel;
+            state.contractsFinished.newItem.gunStyle = actions.payload.gunStyle;
+            state.contractsFinished.newItem.gunPrice = actions.payload.gunPrice;
+            state.contractsFinished.newItem.state = actions.payload.state;
+            state.contractsFinished.newItem.type = actions.payload.type;
+            state.contractsFinished.itemToDelete = state.itemClientData.map(item => item.id);
+        },
+        removeWonItem: (state) => {
+            state.contractsFinished.newItem.id = "";
+            state.contractsFinished.newItem.imgPath = "";
+            state.contractsFinished.newItem.gunModel = "";
+            state.contractsFinished.newItem.gunStyle = "";
+            state.contractsFinished.newItem.gunPrice = 0;
+            state.contractsFinished.newItem.state = "battle_scarred";
+            state.contractsFinished.newItem.type = "usuall";
+            state.contractsFinished.itemToDelete = [];
+            state.itemClientData = []
+        },
+        removeDeletedItems: (state) => {
+            state.itemClientData = []
         },
 
     }
 });
 
-
-
-export const { removeClientItemData, setClientItemData, clearAllClientItemData, setWonItem } = contractsSlice.actions;
+export const { removeClientItemData, removeDeletedItems, setClientItemData, clearAllClientItemData, setWonItem, removeWonItem } = contractsSlice.actions;
 
 export default contractsSlice.reducer;

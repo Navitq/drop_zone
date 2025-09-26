@@ -9,10 +9,11 @@ import api from "@/lib/api";
 import { useAppDispatch } from '@/lib/hooks';
 import { removeFinishedItem } from '@/redux/upgradeReducer'
 import ShouldAuthStaff from '@/components/ShouldAuthStaff'
+import { removeDeletedItems } from '@/redux/contractsReducer'
 
 interface upgradeFinished {
     newItem: gunItemModel,
-    itemToDelete: string,
+    itemToDelete: string | string[],
 }
 
 interface ExClientStuffsInt {
@@ -31,7 +32,8 @@ interface ExClientStuffsInt {
     titleText: string,
     linkTo?: string,
     removeItem?: (value: gunItemModel) => void,
-    deleteTxt?: string
+    deleteTxt?: string,
+    isContracts?: boolean,
 }
 
 
@@ -52,6 +54,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const [loading, setLoading] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const loadingRef = useRef<boolean>(loading);
+    const totalDeletedRef = useRef<string[]>([]);
     const hasMoreRef = useRef<boolean>(hasMore);
     const multiplyRef = useRef<boolean>(true)
     const addedItemsListRef = useRef<string[]>([])
@@ -61,9 +64,15 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     useEffect(() => {
         if (!props.addPrize) return;
 
-        addedItemsListRef.current = addedItemsListRef.current.filter(
-            (item) => item !== props?.addPrize?.itemToDelete
-        );
+        addedItemsListRef.current = addedItemsListRef.current.filter((item) => {
+            const toDelete = props?.addPrize?.itemToDelete;
+
+            if (Array.isArray(toDelete)) {
+                return !toDelete.includes(item); // если массив — проверяем через includes
+            }
+
+            return item !== toDelete; // если строка
+        });
 
 
         console.log(addedItemsListRef.current)
@@ -73,8 +82,29 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
             // сначала удаляем
             if (props?.addPrize?.itemToDelete) {
-                newState = newState.filter(item => item.id !== props.addPrize!.itemToDelete);
+                const toDelete = props.addPrize.itemToDelete;
+
+                if (Array.isArray(toDelete)) {
+                    // фильтруем и добавляем все удалённые id
+                    newState = newState.filter(item => {
+                        const shouldDelete = toDelete.includes(item.id);
+                        if (shouldDelete) {
+                            totalDeletedRef.current.push(item.id);
+                        }
+                        return !shouldDelete;
+                    });
+                } else {
+                    // фильтруем и добавляем один id
+                    newState = newState.filter(item => {
+                        const shouldDelete = item.id === toDelete;
+                        if (shouldDelete) {
+                            totalDeletedRef.current.push(item.id);
+                        }
+                        return !shouldDelete;
+                    });
+                }
             }
+
 
             // потом добавляем
             if (props?.addPrize?.newItem?.id) {
@@ -84,11 +114,14 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
             return newState;
         });
-
         // диспатч отдельно, после setItems
-        if (props.addPrize?.newItem?.id) {
+        if (props.addPrize?.newItem?.id && !props.isContracts) {
             setTimeout(() => {
                 dispatch(removeFinishedItem());
+            }, 0);
+        } else if (props.addPrize?.newItem?.id && props.isContracts) {
+            setTimeout(() => {
+                dispatch(removeDeletedItems());
             }, 0);
         }
     }, [props.addPrize]);
@@ -159,9 +192,20 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
             }
             setLoading(true);
             console.log(props.body.startPrice)
+            let filteredDeletedLength = 0;
+            if (totalDeletedRef.current.length > 0) {
+                const filteredDeletedIds = totalDeletedRef.current.filter(
+                    id => !addedItemsListRef.current.includes(id)
+                );
+                if (filteredDeletedIds.length > 0) {
+                    filteredDeletedLength = filteredDeletedIds.length;
+                }
+                totalDeletedRef.current = []
+            }
             const response = await api.post(props.targetUrl, {
                 page,
-                body: props.body
+                body: props.body,
+                filteredDeletedLength
             });
             console.log(111111, response.data.items.length)
             if (response?.status == 204) {
@@ -170,6 +214,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
             } else if (response.data.items.length < props.body.limit) {
                 setHasMore(false)
             }
+            console.log(response.data.items.length)
             setItems((state) => {
                 const filteredItems = response.data.items.filter(
                     (item: gunItemModel) => !addedItemsListRef.current.includes(item.id)
@@ -210,7 +255,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
     return (
         (
-            items.length > 0 ? (<div className={style.ExClientStuffs}>
+            items.length > 0 ? (<div className={`${style.ExClientStuffs} ${'ExClientStuffs'}`}>
                 {
                     items.map((value) => {
                         const isActive = props.client_id

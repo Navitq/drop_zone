@@ -184,7 +184,9 @@
     "open_return": "You don't have any skins, open the case and come back",
     "go_to_case": "go to case",
     "open": "open",
-    "remove_item": "delete"
+    "remove_item": "delete",
+    "take_item": "take",
+    "sell_item": "sell"
   },
   "items": {
     "add_good": "add"
