@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import style from '@/styles/battles.module.scss'
 import { useTranslations } from 'next-intl';
 import { useAppSelector } from '@/lib/hooks';
@@ -10,15 +10,66 @@ import CtStaffSort from '@/components/CtStaffSort'
 import SearchCaseBtl from '@/components/SearchCaseBtl'
 import CaseBtnText from '@/components/CaseBtnText'
 import CbBattleCase from '@/components/CbBattleCase'
-
+import api from "@/lib/api";
+import { BACKEND_PATHS } from '@/utilites/urls';
+import { useLocale } from 'next-intl';
 
 interface CrBattleModalInt {
     onClose: () => void;
 }
 
+interface caseInt {
+    caseName: string,
+    imgUrl: string,
+    caseId: string,
+    price: number
+}
+
+interface caseMainDataIncome {
+    id: string,
+    name: string,
+    imgUrl: string,
+    price: number
+}
+
+interface caseMainDataServer {
+    id: string,
+    name: { en: string, ru: string },
+    icon_url: string,
+    price: number
+}
+
+
 function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
     const t = useTranslations('battles')
-    const { totalPrice, totalCaseAmount } = useAppSelector(state => state.battlesCreate)
+    const [cases, setCases] = useState<caseMainDataIncome[]>([])
+    const locale = useLocale(); // например 'en' или 'ru'
+
+
+    useEffect(() => {
+        fetchAllCases();
+    }, [])
+
+    async function fetchAllCases() {
+        try {
+            const response = await api.get(BACKEND_PATHS.getCase("all"));
+            setCases(() => {
+                return response.data.map((value: caseMainDataServer) => {
+                    return {
+                        name: value.name[locale as 'en' | 'ru'],
+                        imgUrl: value.icon_url,
+                        id: value.id,
+                        price: value.price
+                    }
+                })
+            })
+        } catch (error) {
+            console.error("Ошибка при запросе блогерских кейсов:", error);
+        }
+    }
+
+
+    const { totalPrice, totalCaseAmount, createBtlData } = useAppSelector(state => state.battlesCreate)
     return (
         <div className={style.crModalCnt} onClick={(e) => e.stopPropagation()}>
             <div className={style.crModalHeadCnt}>
@@ -36,57 +87,23 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
                 </div>
             </div>
             <div className={style.crModalCaseStore}>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={214 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={4114 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={1244 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={1554 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={1654 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={45614 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={1754 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={33214 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={1415 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={15554 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={13334 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={12224 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={11114 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={15224 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={1222224 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={13456764 + ""}></CbBattleCase>
-                </div>
-                <div className={style.crModalCard}>
-                    <CbBattleCase unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={1675314 + ""}></CbBattleCase>
-                </div>
+                {cases.map((value) => {
+                    // ищем, есть ли этот кейс в createBtlData
+                    const existingCase = createBtlData.find((c) => c.casesId === value.id);
+
+                    return (
+                        <div key={value.id} className={style.crModalCard}>
+                            <CbBattleCase
+                                unitPrice={value.price}
+                                caseAmount={existingCase ? existingCase.caseAmount : 0} // если есть — берём его caseAmount
+                                caseImgPath={value.imgUrl}
+                                caseName={value.name}
+                                casesId={value.id}
+                            />
+                        </div>
+                    );
+                })}
+
 
             </div>
             <div className={style.crModalAdditionalData}>
@@ -95,7 +112,7 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
                     <div className={style.crModalPriceAmount}>{`${totalPrice} Dc`}</div>
                 </div>
                 <div className={style.crModalConfirmCnt}>
-                    <CaseBtnText text={t('confirm')} />
+                    <CaseBtnText text={t('confirm')} onClick={() => { props.onClose() }} />
                 </div>
                 <div className={style.crModalTotalPrice}>
                     <div className={style.crModalPriceTxtDescr}>{t('rounds_amount')}</div>

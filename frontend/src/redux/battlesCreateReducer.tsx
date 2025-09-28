@@ -54,14 +54,16 @@ export const battlesCreateSlice = createSlice({
 
             if (existingCase) {
                 ++existingCase.caseAmount;
-                state.totalPrice = state.totalPrice + existingCase.unitPrice;
+                state.totalPrice = Number(
+                    (state.totalPrice + existingCase.unitPrice).toFixed(2)
+                );
             } else {
                 const newCase = {
                     ...action.payload,
                     caseAmount: action.payload.caseAmount + 1
                 };
                 state.createBtlData.push(newCase);
-                state.totalPrice += newCase.unitPrice;
+                state.totalPrice = Number((state.totalPrice + newCase.unitPrice).toFixed(2));
             }
             ++state.totalCaseAmount;
         },
@@ -81,7 +83,7 @@ export const battlesCreateSlice = createSlice({
                 return;
             }
 
-            state.totalPrice = state.totalPrice - existingCase.unitPrice;
+            state.totalPrice = Number((state.totalPrice - existingCase.unitPrice).toFixed(2));
 
             if (existingCase.caseAmount == 1) {
                 state.createBtlData = state.createBtlData.filter(

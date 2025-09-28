@@ -448,3 +448,58 @@ class GlobalCoefficient(models.Model):
 
     def __str__(self):
         return f"Коэф: raffles={self.raffles_global}, cases={self.cases_global}, upgrades={self.upgrades_global}"
+
+
+class Battle(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    creator = models.ForeignKey(
+        User, related_name='created_battles', on_delete=models.SET_NULL, null=True, blank=False)
+    players = models.ManyToManyField(
+        User, related_name='battles',  blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    players_amount = models.PositiveSmallIntegerField(default=2)
+    winner = models.ForeignKey(
+        User, related_name='won_battles', null=True, blank=True, on_delete=models.SET_NULL)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Battle {self.id} by {self.creator}"
+
+
+class BattleCase(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    battle = models.ForeignKey(
+        Battle, related_name='battle_battles', on_delete=models.CASCADE)
+    case = models.ForeignKey(
+        Case, related_name="battle_cases", on_delete=models.SET_NULL, null=True, blank=False)
+    case_amount = models.PositiveSmallIntegerField()
+
+    class Meta:
+        # раньше было 'case_id', нужно имя поля ForeignKey
+        unique_together = ('battle', 'case')
+
+    def __str__(self):
+        return f"{self.case_amount} x Case {self.case.get_name('en')} in Battle {self.battle.id}"
+
+
+class BattleDrop(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    battle = models.ForeignKey(
+        Battle, related_name='drops', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name='battle_drops', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Drops for {self.user} in Battle {self.battle.id}"
+
+
+class BattleDropItem(models.Model):
+    battle_drop = models.ForeignKey(
+        BattleDrop, related_name='items', on_delete=models.CASCADE)
+    item = models.ForeignKey(InventoryItem, on_delete=models.CASCADE)
+    quantity = models.PositiveSmallIntegerField(default=1)
+    round = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return f"{self.quantity} x {self.item.name} (Round {self.round}) for {self.battle_drop.user}"

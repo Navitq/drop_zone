@@ -18,7 +18,7 @@ function CtScinsData(): React.ReactNode {
     const t = useTranslations("contracts")
     const dispatch = useAppDispatch()
     const items = useAppSelector(state => state.contracts.itemClientData)
-    const totalItemsPrice = items.reduce((sum, item) => sum + item.gunPrice, 0)
+    const totalItemsPrice = items.reduce((sum, item) => Number(sum) + Number(item.gunPrice), 0)
     const totalAmount = useAppSelector(state => state.contracts.itemClientData.length)
 
     function roundToPowerOfTen(num: number, powerOfTen: number): number {

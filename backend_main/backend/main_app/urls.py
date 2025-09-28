@@ -42,4 +42,6 @@ urlpatterns = [
          views.upgrade_item_view, name='upgrade_item_view'),
     path('make-contract/',
          views.make_contract_view, name='make_contract_view'),
+    path('create-battles/',
+         views.create_battles_view, name='create_battles_view'),
 ]

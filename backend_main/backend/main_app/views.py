@@ -6,12 +6,13 @@ import hashlib
 import base64
 import aiohttp
 import secrets
+import asyncio
 from decimal import Decimal
 from redis_om.model.model import NotFoundError
 from rest_framework_simplejwt.tokens import RefreshToken
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
-from .models import SocialAccount, User, Advertisement, InventoryItem, SteamItemCs, Raffles
+from .models import SocialAccount, User, Battle, Advertisement, BattleCase, Case, InventoryItem, SteamItemCs, Raffles
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -19,7 +20,7 @@ from .serializers import MyRefreshToken
 from .redis_models import CaseRedisStandart, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
 from django.db import DatabaseError
 from django.views.decorators.csrf import ensure_csrf_cookie
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from .custom_decorators import async_require_methods
 from datetime import datetime, timezone
 from .custom_decorators import async_require_methods
@@ -614,6 +615,91 @@ async def play_upgrade_game(user, server_item, client_item=None, price=None):
     return JsonResponse({"status": "client lose"}, status=202)
 
 
+async def check_user_money_battles(user, cases):
+    balance = user.money_amount
+
+    total_price = 0
+    valid_cases = []
+
+    for item in cases:
+        # получаем кейс из базы или Redis (асинхронно)
+        case_obj = await sync_to_async(lambda: Case.objects.get(id=item["case"].id))()
+        case_amount = item["case_amount"]
+        price = case_obj.price * case_amount
+
+        total_price += price
+
+        # добавляем проверенный кейс с количеством
+        valid_cases.append({
+            "case": case_obj,
+            "case_amount": case_amount,
+        })
+
+    if balance >= total_price:
+        return valid_cases
+    else:
+        return JsonResponse("You don't have enough founds!", status=402)
+
+
+async def create_battle_with_cases(creator, valid_cases, players_amount=2, ended_at=timezone_utils.now() + timedelta(hours=2)):
+    # Создаём Battle
+    created_at = timezone_utils.now()
+    ended_at = created_at + timedelta(hours=2)
+    battle = await sync_to_async(Battle.objects.create)(
+        creator=creator,
+        created_at=created_at,
+        ended_at=ended_at,
+        players_amount=players_amount,
+        is_active=True
+    )
+
+    async def add_case(item):
+        case = item["case"]
+        case_amount = item["case_amount"]
+        if case is None:
+            return
+        await sync_to_async(BattleCase.objects.create)(
+            battle=battle,
+            case=case,
+            case_amount=case_amount
+        )
+
+    # Параллельное добавление кейсов
+    await asyncio.gather(*(add_case(item) for item in valid_cases))
+
+    return battle.id
+
+
+# async def create_battle_with_cases(creator, valid_cases, players_amount=2):
+
+#     # 1️⃣ Создаём Battle (синхронно через sync_to_async)
+#     battle = await sync_to_async(Battle.objects.create)(
+#         creator=creator,
+#         created_at=timezone.now(),
+#         players_amount=players_amount,
+#         is_active=True
+#     )
+
+#     # 2️⃣ Добавляем кейсы к батлу
+#     for item in valid_cases:
+#         case = item["case"]
+#         case_amount = item["case_amount"]
+
+#         # достаём кейс из Redis (асинхронно)
+
+#         if case is None:
+#             continue  # пропускаем недоступные кейсы
+
+#         # создаём BattleCase
+#         await sync_to_async(BattleCase.objects.create)(
+#             battle=battle,
+#             case=case,  # ForeignKey
+#             case_amount=case_amount
+#         )
+
+#     return battle
+
+
 @async_require_methods(["GET"])
 @ensure_csrf_cookie
 async def get_csrf_view(request):
@@ -771,9 +857,13 @@ async def get_cases_by_type_view(request, case_type: str):
     try:
         print(case_type)
         all_cases = await sync_to_async(lambda: list(CaseRedisStandart.find()))()
-        filtered_cases = [
-            case.model_dump() for case in all_cases if case.type == case_type
-        ]
+
+        if case_type == "all":
+            filtered_cases = [case.model_dump() for case in all_cases]
+        else:
+            filtered_cases = [
+                case.model_dump() for case in all_cases if case.type == case_type
+            ]
         return JsonResponse(filtered_cases, safe=False)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -1105,6 +1195,64 @@ async def make_contract_view(request):
         return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+@async_require_methods(["POST"])
+async def create_battles_view(request):
+    try:
+        print("start")
+        data_full = json.loads(request.body)
+        print("data_full")
+        data = data_full.get("data")
+        print("data: ", data)
+        player_total_amount = data_full.get("players_amount")
+        print("player_total_amount: ", player_total_amount)
+        # проверяем, что пришёл массив
+        if not isinstance(data, list):
+            return JsonResponse({"error": "Payload must be a list"}, status=400)
+
+        # 1. фильтруем элементы с некорректным caseAmount
+        filtered = [item for item in data if 0 < item.get("caseAmount", 0) < 4]
+        print("filtered: ", filtered)
+
+        # 2. проверяем длину массива
+        if not (0 < len(filtered) < 4):
+            return JsonResponse({"error": "Количество кейсов должно быть от 1 до 3"}, status=404)
+
+        total_amount = sum(item["caseAmount"] for item in filtered)
+        print("filtered: ", total_amount)
+        if not (0 < total_amount < 4):
+            return JsonResponse({"error": "Сумма всех caseAmount должна быть >0 и <4"}, status=400)
+
+        valid_cases = []
+
+        for item in filtered:
+            print("sonic")
+            case_obj = (await sync_to_async(lambda: list(CaseRedisStandart.find(CaseRedisStandart.id == str(item["id"]))))())
+            case_obj = case_obj[0] if case_obj else None
+            if case_obj is None:
+                return JsonResponse({"error": f"Case with id {item['id']} not found in Redis"}, status=400)
+
+            valid_cases.append({
+                "case": case_obj,            # объект кейса
+                "case_amount": item["caseAmount"]
+            })
+        user_id = request.token_data.get("id")
+        print("user_id: ", user_id)
+        user = await sync_to_async(User.objects.get)(id=user_id)
+        print("user: ", user)
+        cases = await check_user_money_battles(user, valid_cases)
+        print("cases: ", cases)
+        if isinstance(cases, JsonResponse):
+            return cases
+        battle_id = await create_battle_with_cases(creator=user, valid_cases=cases, players_amount=player_total_amount)
+        print("battle_id: ", battle_id)
+        return JsonResponse({"battle_id": battle_id})
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": e}, status=500)
 
 
 @async_require_methods(["POST"])

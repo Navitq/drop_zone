@@ -52,4 +52,4 @@ function CbBattleCase(props: CbBattleCaseInt): React.ReactNode {
     )
 }
 
-export default CbBattleCase
+export default React.memo(CbBattleCase)
