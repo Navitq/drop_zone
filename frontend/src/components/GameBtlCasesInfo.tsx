@@ -7,13 +7,54 @@ import { useAppSelector, useAppDispatch } from '@/lib/hooks'
 import Image from 'next/image'
 import CbBattleCase from '@/components/CbBattleCase'
 import { showBattleCreateModal } from '@/redux/modalReducer'
+import api from "@/lib/api";
+import { BACKEND_PATHS, FRONTEND_PATHS } from '@/utilites/urls';
+import { AxiosError } from "axios";
+import { showNoMoneyModal, showUnAuthModal } from '@/redux/modalReducer'
+
+import CleanGameSettings from '@/components/CleanGameSettings'
+import CaseBtnText from '@/components/CaseBtnText'
 
 function GameBtlCasesInfo(): React.ReactNode {
     const t = useTranslations("battles")
-    const dispatch = useAppDispatch()
+
     const { totalCaseAmount, totalPrice, createBtlData } = useAppSelector(
         (state) => state.battlesCreate
     )
+    const isAuth = useAppSelector(state => state.user.isAuth)
+    const playersAmount = useAppSelector(state => state.battlesCreate.playersAmount)
+    const dispatch = useAppDispatch()
+
+    async function createBattle() {
+        if (!isAuth) {
+            dispatch(showUnAuthModal())
+        }
+        if (createBtlData.length < 1 && createBtlData.length < 4) {
+            return;
+        }
+        try {
+            const payload = createBtlData.map(item => ({
+                id: item.casesId,
+                caseAmount: item.caseAmount
+            }));
+            const response = await api.post(BACKEND_PATHS.createBattle, { players_amount: playersAmount, data: payload });
+            const battleId = response.data.battle_id;
+
+            if (battleId) {
+                window.location.href = `${FRONTEND_PATHS.battlesConnect(battleId)}`;
+            }
+        } catch (err) {
+            const error = err as AxiosError;
+            console.log(error.status)
+            if (error.response?.status === 401) {
+                dispatch(showUnAuthModal())
+            } else if (error.response?.status === 402) {
+                dispatch(showNoMoneyModal())
+            } else {
+                console.error("Неизвестная ошибка", error);
+            }
+        }
+    }
     return (
         <div className={style.gbciCnt}>
             <div className={`${style.gbciAddCaseBlockCnt} ${style.gbciAddCaseBlockCnt_around}`}>
@@ -41,8 +82,8 @@ function GameBtlCasesInfo(): React.ReactNode {
                             </defs>
                         </svg>
                         <div className={style.gbciAddBtn}>
-                            <div>
-                                <Image src={"/images/cr_battle_add_case.svg"} alt={t('add_case')} width={80} height={80}></Image>
+                            <div className={style.gbciAddBtnCrossCnt}>
+                                <Image fill src={"/images/cr_battle_add_case.svg"} alt={t('add_case')}></Image>
                             </div>
                             <div>{t('add_case')}</div>
                         </div>
@@ -58,6 +99,11 @@ function GameBtlCasesInfo(): React.ReactNode {
                     <div>{t('rounds_amount')}</div>
                     <div>{t('battles_price')}</div>
                 </div>
+            </div>
+            <div className={style.gbcipBtnMobileGroup}>
+                <CleanGameSettings text={t('clean')}></CleanGameSettings>
+
+                <CaseBtnText text={t('create')} onClick={() => { createBattle() }} />
             </div>
         </ div >
     )

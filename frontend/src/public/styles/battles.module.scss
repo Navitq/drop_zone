@@ -161,7 +161,7 @@
 }
 
 
-.mnStuffCnt, .crModalCaseStore {
+.mnStuffCnt {
     @extend %flexStart;
     flex-direction: column;
     // flex: 1;
@@ -170,6 +170,20 @@
     row-gap: 40px;
     padding-right: 10px;
     /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(75, 75, 75, 1) transparent;
+}
+
+.crModalCaseStore {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(287px, 1fr)); /* колонки растягиваются по ширине контейнера */
+    grid-auto-rows: min-content; /* высота строк под контент */
+    gap: 25px; /* row-gap и column-gap */
+    width: 100%;
+    height: 100vh; /* или 100% родителя */
+    overflow: auto;
+    row-gap: 40px;
+    padding-right: 10px;
     scrollbar-width: thin;
     scrollbar-color: rgba(75, 75, 75, 1) transparent;
 }
@@ -348,10 +362,29 @@
     height: 100%;
 }
 
+.gspPlayerImgCntMobile {
+    display: none;
+    @extend %flexCenter;
+    height: 100%;
+    margin-right: 10px;
+    height: 15px;
+    width: 15px;
+    position: relative;
+    img {
+        object-fit: contain;
+    }
+}
+
 .gspPlayerImgCnt {
     @extend %flexCenter;
     height: 100%;
     margin-right: 25px;
+    height: 45px;
+    width: 45px;
+    position: relative;
+    img {
+        object-fit: contain;
+    }
 }
 
 .gspPlayerAmountCnt {
@@ -547,6 +580,7 @@
     font-size: 20px;
     line-height: 20px;
     color: rgba(255, 255, 255, 1);
+    text-align: center;
 }
 
 .cbCasePrice {
@@ -579,6 +613,7 @@
     line-height: 18px;
     font-size: 18px;
     margin: 0px 15px;
+    font-family: var(--font-textRegular);
 }
 
 .mnHeadBtnCaseCnt {
@@ -700,6 +735,44 @@
 .crModalAdditionalData {
     @extend %flexCenter;
     height: 46px;
+}
+.crModalAdditionalDataMobile{
+    @extend %flexStart;
+    justify-content: space-between;
+    align-items: center;
+    display: none;
+    height: 27px;
+    margin-top: 20px;
+    width: 100%;
+    .gspPlayerPriceModalBlockMobile, .crModalConfirmCntMobile, .gbcipCaseDefenitionsBlock, .gbcipCaseAmountBlock{
+        height: 30px;
+    }
+    .gbcipCaseAmountBlock {
+        color: rgba(255, 195, 0, 1);
+    }
+    .crModalConfirmCntMobile {
+        @extend %flexCenter;
+        font-family: var(--font-headBold);
+        font-size: 11px;
+        line-height: 100%;
+        color: rgba(255, 255, 255, 1);
+        border: 1px solid rgba(255, 148, 0, 1);
+        border-radius: 7px;
+        cursor: pointer;
+        padding: 0 15px;
+        &:hover {
+        background-color: rgba(255, 169, 49, 0.3);
+        }
+
+        &:active {
+            background-color: rgba(255, 150, 53, 1);
+        }
+
+        &:disabled {
+            color: rgba(255, 255, 255, 0.5);
+            background-color: rgba(174, 174, 174, 1);
+        }
+    }
 }
 .crModalTotalPrice {
     @extend %flexCenter;
@@ -1015,12 +1088,61 @@
     margin-right: 0px;
 }
 
+.gspPlayerPriceBlockMobile {
+    display: none;
+}
+
+.gbcipBtnMobileGroup div {
+    flex: 1;
+}
+.gbcipBtnMobileGroup .mnHeadBtnRulesCntClean:first-child {
+    margin-right: 11px !important;
+}
+.gbcipBtnMobileGroup button {
+    width: 100%;
+}
+.gbcipBtnMobileGroup {
+    margin-top: 20px;
+}
+
+.gbcipBtnMobileGroup {
+    display: none;
+}
+.gbciAddBtnCrossCnt {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    img {
+        object-fit: contain;
+    }
+}
+.crModalSeparatorMobile {
+    display: none;
+}
 @media (max-width: 1439px) {
+    .gbciCaseBlockCnt:last-child {
+        margin-right: 0px;
+    }
+    .gbciAddCaseBlockCnt {
+        margin-right: 0px;
+    }
+    .gbcipCaseInfoBlock {
+        margin-top: 20px;
+    }
+    .gbciCnt {
+        flex-direction: column;
+        height: auto;
+        justify-content: center;
+        align-items: center;
+    }
 
 }
 
 @media (max-width: 1024px) {
-
+    .mnHeadBtnRulesCntClean button {
+        font-size: 19px;
+        line-height: 19px;
+    }
     :global(.bcmwCnt)  .mnHeadBtnRulesCnt, .mnHeadBtnRules {
         height: 38px;
     }
@@ -1028,9 +1150,232 @@
         font-size: 19px;
         line-height: 19px;
     }
+    .gspPlayerBtn {
+        font-size: 16px;
+        padding: 0 13px;
+        height: 35px;
+        margin-right: 15px;
+    }
+    .gspPlayerImgCnt {
+        height: 40px;
+        width: 40px;
+        margin-right: 20px;
+    }
+    .gameSetupPanel {
+        height: 95px;
+    }
+    .gspPlayerAmountCnt {
+        height: 60px;
+    }
 }
 
 @media (max-width: 768px) {
+    .crModalAdditionalData {
+        display: none;
+    }
+    .crModalAdditionalDataMobile {
+        display: flex;
+    }
+    .crModalCaseStore{
+        grid-template-columns: repeat(auto-fill, minmax(102px, 1fr)); /* колонки растягиваются по ширине контейнера */
+        gap: 10px; /* row-gap и column-gap */
+        row-gap: 15px;
+    }
+    .btlSearchBlock {
+        width: 97px;
+        height: 33px;
+        order: 2;
+        border-radius: 5px;
+        padding: 0px 27px 0px 15px;
+    }
+    .btlSearchInput {
+        font-size: 14px;
+    }
+    .btlSearchInput::placeholder {
+        font-size: 14px;
+    }
+    .btlSearchBlock::after{
+        width: 10px;
+        height: 10px;
+        right: 15px;
+        background-size: contain;
+    }
+    .crModalSort{
+        margin-left: 0px;
+        margin-right: 5px;
+    }
+    .crModalSeparatorMobile {
+        display: block;
+        width: 155px;
+        height: 1px;
+        position: relative;
+        margin-bottom: 15px;
+        img {
+            object-fit: contain;
+        }
+    }
+    .crModalCnt {
+        padding: 40px 25px 30px 20px;
+        height: 100vh;
+    }
+    .crModalTitle {
+        font-size: 16px;
+        padding-bottom: 4px;
+    }
+    .crModalSeparator {
+        display: none;
+    }
+    .crModalFilter {
+        align-items: center;
+    }
+    .crModalHead {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        height: fit-content;
+        margin-bottom: 20px;
+    }
+    .cbCaseAmount {
+        font-size: 15px;
+        line-height: 100%;
+        margin: 0px 9px;
+    }
+    .cbCaseName {
+        margin-top: 4px;
+        font-size: 10px;
+        line-height: 100%;
+    }
+    .cbCasePrice {
+        font-size: 10px;
+        line-height: 100%;
+        margin-top: 5px;
+    }
+    .cbCaseAmountCalc {
+        margin-top: 6px;
+    }
+    .cbCaseAddition, .cbCaseSubtraction {
+        font-size: 15px;
+        line-height: 100%;
+        padding: 0 4px;
+        height: 15px;
+        border-radius: 2px;
+        padding-top: 2px;
+    }
+    .CbBattleCase {
+        height: 146px;
+        padding: 10px;
+        max-width: 102px;
+        border-radius: 5px;
+    }
+    .crModalCard {
+        height: 146px;
+        max-width: 102px;
+        .CbBattleCase {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .mnHeadBtnCaseCnt {
+            margin-top: 6px;
+        }
+        .mnHeadBtnCase, .mnHeadBtnCaseCnt {
+            height: 15px;
+            font-size: 7px;
+            border-radius: 2px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    .gbciCaseBlockCnt {
+        max-width: 102px;
+        height: 146px;
+        margin-right: 10px;
+    }
+    .gbciAddCaseBlock {
+        height: 146px;
+    }
+    .gbciAddBtnCrossCnt {
+        height: 28px;
+        width: 28px;
+    }
+    .gbciAddBtn {
+        height: 52px;
+        font-size: 13px;
+        line-height: 100%;
+    }
+    .gbcipCaseInfoBlock {
+        display: none;
+    }
+    .gbcipBtnMobileGroup {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .battles {
+        padding: 0 15px;
+    }
+    .gbcipCaseDefenitionsBlock, .gbcipCaseAmountBlock {
+        font-size: 13px;
+        height: 33px;
+        white-space: nowrap;
+    }
+    .gbcipCaseDefenitionsBlock{
+        margin-right: 5px;
+    }
+    .gbcipCaseAmountBlock {
+        margin-right: 0px;
+    }
+    .gspPlayerPriceBlockMobile {
+        display: flex;
+        width: fit-content;
+    }
+    .gspPlayerPriceModalBlockMobile {
+        display: flex;
+        width: fit-content;
+    }
+    .gspPlayerImgCntMobile {
+        display: flex;
+    }
+    .gspPlayerAmountTxt {
+        font-size: 13px;
+    }
+    .gspPlayerAmountCnt {
+        height: 53px;
+    }
+    .gspPlayerBtn {
+        height: 28px;
+        font-size: 16px;
+        padding: 0px 9px;
+        border-radius: 5px;
+        margin-right: 5px;
+    }
+    .gspPlayerBtn:last-child {
+        margin-right: 0px;
+    }
+    .gspPlayerImgBlockMobile {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .gspPlayerBtnGroup {
+        display: none;
+    }
+    .gspPlayerImgBlockMobile {
+        display: flex;
+    }
+    .gameSetupPanel {
+        height: 80px;
+        padding: 0 15px;
+        margin-bottom: 20px;
+    }
+    .gspPlayerImgCnt {
+        display: none;
+    }
+
+    .mnHeadBtnRulesCntClean button {
+        font-size: 14px;
+        line-height: 14px;
+    }
 
     :global(.bcmwCnt)  .mnHeadBtnRulesCnt, .mnHeadBtnRules {
         height: 29px;

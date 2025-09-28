@@ -18,12 +18,6 @@ interface CrBattleModalInt {
     onClose: () => void;
 }
 
-interface caseInt {
-    caseName: string,
-    imgUrl: string,
-    caseId: string,
-    price: number
-}
 
 interface caseMainDataIncome {
     id: string,
@@ -74,7 +68,12 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
         <div className={style.crModalCnt} onClick={(e) => e.stopPropagation()}>
             <div className={style.crModalHeadCnt}>
                 <div className={style.crModalHead}>
-                    <div className={style.crModalTitle}>{t('add_case')}</div>
+                    <div className={style.crModalTitleWrapperModal}>
+                        <div className={style.crModalTitle}>{t('add_case')}</div>
+                        <div className={style.crModalSeparatorMobile}>
+                            <Image fill src={"/images/rm_divider.svg"} alt={t('rm_divider_alt')}></Image>
+                        </div>
+                    </div>
                     <div className={style.crModalFilter}>
                         <SearchCaseBtl placeHolderText={t('search')}></SearchCaseBtl>
                         <div className={style.crModalSort}>
@@ -118,6 +117,23 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
                     <div className={style.crModalPriceTxtDescr}>{t('rounds_amount')}</div>
                     <div className={style.crModalPriceAmount}>{`${totalCaseAmount}/3`}</div>
                 </div>
+            </div>
+            <div className={style.crModalAdditionalDataMobile}>
+                <div className={style.gspPlayerPriceModalBlockMobile}>
+                    <div className={style.gbcipCaseDefenitionsBlock}>
+                        <div>{t('rounds_amount')}</div>
+                        <div>{t('battles_price')}</div>
+                    </div>
+                    <div className={style.gbcipCaseAmountBlock}>
+                        <div>{`${totalCaseAmount}/3`}</div>
+                        <div>{`${totalPrice} Dc`}</div>
+                    </div>
+                </div>
+
+                <div className={style.crModalConfirmCntMobile} onClick={() => { props.onClose() }}>
+                    {t('confirm')}
+                </div>
+
             </div>
         </div >
     )

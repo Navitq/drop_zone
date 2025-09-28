@@ -8,7 +8,7 @@ import { cleanCreateField } from '@/redux/battlesCreateReducer'
 function CleanGameSettings(props: { text: string }): React.ReactNode {
     const dispatch = useAppDispatch()
     return (
-        <div className={style.mnHeadBtnRulesCnt} onClick={() => { dispatch(cleanCreateField()) }}>
+        <div className={`${style.mnHeadBtnRulesCnt} ${style.mnHeadBtnRulesCntClean}`} onClick={() => { dispatch(cleanCreateField()) }}>
             <button className={style.mnHeadBtnRules}>{props.text}</button>
         </div>
     )
