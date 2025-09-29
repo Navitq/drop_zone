@@ -17,7 +17,7 @@ from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
+from .redis_models import CaseRedisStandart, ActiveBattleRedis, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
 from django.db import DatabaseError
 from django.views.decorators.csrf import ensure_csrf_cookie
 from datetime import datetime, timezone, timedelta
@@ -653,6 +653,8 @@ async def create_battle_with_cases(creator, valid_cases, players_amount=2, ended
         is_active=True
     )
 
+    await sync_to_async(battle.players.add)(creator)
+
     async def add_case(item):
         case = item["case"]
         case_amount = item["case_amount"]
@@ -1195,6 +1197,79 @@ async def make_contract_view(request):
         return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+@async_require_methods(["GET"])
+async def global_battles_info_view(request):
+    try:
+        user_id = request.token_data.get("id") if hasattr(
+            request, "token_data") else None
+
+        # Общее количество батлов
+        total_battles = await sync_to_async(lambda: ActiveBattleRedis.find().count())()
+        # Количество активных батлов
+        battles = await sync_to_async(lambda: list(ActiveBattleRedis.find(ActiveBattleRedis.is_active == True)))()
+        active_battles = []
+        for b in battles:
+            if b.check_activity():
+                active_battles.append(b)
+            else:
+                # сохраняем изменение is_active в Redis
+                await sync_to_async(b.save)()
+
+        count_active = len(active_battles)
+
+        user_won = 0
+        user_lost = 0
+        if user_id:
+            # Баттлы, где пользователь победил
+            user_won = await sync_to_async(
+                lambda: ActiveBattleRedis.find(
+                    ActiveBattleRedis.winner_id == user_id).count()
+            )()
+
+            # Баттлы, где пользователь участвовал, но не выиграл
+            user_lost = await sync_to_async(
+                lambda: ActiveBattleRedis.find(
+                    (ActiveBattleRedis.winner_id != user_id) &
+                    # << проверяет вхождение в список
+                    (ActiveBattleRedis.players_ids << user_id)
+                ).count()
+            )()
+
+        data = {
+            "total_battles": total_battles,
+            "active_battles": count_active,
+            "user_won": user_won,
+            "user_lost": user_lost,
+        }
+        return JsonResponse(data)
+
+    except Exception as e:
+        print("Ошибка в global_battles_info_view:", e)
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
+
+
+@async_require_methods(["GET"])
+async def active_battles_info_view(request):
+    try:
+        battles = await sync_to_async(
+            lambda: list(ActiveBattleRedis.find(
+                ActiveBattleRedis.is_active == True))
+        )()
+
+        active_battles = []
+        for b in battles:
+            if b.check_activity():
+                active_battles.append(b.model_dump())
+            else:
+                await sync_to_async(b.save)()  # обновляем статус
+
+        return JsonResponse({"active_battles": active_battles})
+
+    except Exception as e:
+        print("Ошибка в active_battles_info_view:", e)
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
 
 
 @async_require_methods(["POST"])

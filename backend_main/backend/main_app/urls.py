@@ -44,4 +44,8 @@ urlpatterns = [
          views.make_contract_view, name='make_contract_view'),
     path('create-battles/',
          views.create_battles_view, name='create_battles_view'),
+    path('global-battle-info/',
+         views.global_battles_info_view, name='global_battles_info_view'),
+    path('active-battle-info/',
+         views.active_battles_info_view, name='active_battles_info_view'),
 ]

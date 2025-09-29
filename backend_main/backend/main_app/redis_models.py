@@ -1,9 +1,12 @@
-from redis_om import HashModel, JsonModel,  Field, get_redis_connection, Migrator
+from redis_om import HashModel,  JsonModel,  Field, get_redis_connection, Migrator
 # Подключение к Redis
+from django.utils import timezone
 import os
+from pydantic import BaseModel
 from dotenv import load_dotenv
 from datetime import datetime
 from typing import Optional
+import json
 load_dotenv()
 
 REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
@@ -112,6 +115,77 @@ class GlobalCoefficientRedis(JsonModel):
     upgrades_global: float
     contracts_global: float
     battles_global: float
+
+
+class PlayerInfo(BaseModel):
+    id: str
+    username: str
+    imgpath: str | None = None
+
+
+class CaseInfo(BaseModel):
+    id: str
+    # теперь поле может содержать словарь, например {"ru": "Весенняя", "en": "Spring"}
+    name: dict
+    imgpath: Optional[str] = None
+    price: float
+    case_amount: int
+
+
+class ActiveBattleRedis(JsonModel):
+    id: str = Field(index=True)  # UUID баттла
+    creator_id: str = Field(index=True)  # ID создателя
+    players: str = Field(default="[]")  # JSON-строка со списком PlayerInfo
+    cases: str = Field(default="[]")    # JSON-строка со списком CaseInfo
+    players_amount: int = Field(index=True)
+    is_active: bool = Field(default=True)
+    created_at: datetime = Field(index=True)
+    ended_at: datetime | None = Field(default=None, index=True)
+    winner: str = Field(default="[]")  # JSON-строка со списком PlayerInfo
+    players_ids: list[str] = Field(default=[], index=True)
+    winner_id: str | None = Field(default=None, index=True)
+
+    def check_activity(self) -> bool:
+        if not self.is_active:
+            return False
+        if self.ended_at and self.ended_at <= timezone.now():
+            self.is_active = False
+            return False
+        return True
+
+    def set_players(self, players: list[PlayerInfo]):
+        self.players = json.dumps([p.model_dump() for p in players])
+
+    def set_cases(self, cases: list[CaseInfo]):
+        self.cases = json.dumps([c.model_dump() for c in cases])
+
+    def set_winner(self, winners: list[PlayerInfo]):
+        self.winner = json.dumps([w.model_dump() for w in winners])
+
+    def save(self, *args, **kwargs):
+        """
+        Переопределяем save(), чтобы при каждом сохранении
+        доп. поля winner_id и players_ids актуализировались.
+        """
+        try:
+            self.is_active = self.check_activity()
+            self.players_ids = [p["id"]
+                                for p in json.loads(self.players or "[]")]
+        except Exception:
+            self.players_ids = []
+
+        try:
+            winners = json.loads(self.winner or "[]")
+            self.winner_id = winners[0]["id"] if winners else None
+        except Exception:
+            self.winner_id = None
+
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        global_key_prefix = "items"
+        model_key_prefix = "battle"
+        database = redis
 
 
 Migrator().run()

@@ -413,6 +413,11 @@
     justify-content: space-around;
 }
 
+:global(.bpMobileRulesBattles) .ctRulesTitle {
+    margin-top: 0px;
+}
+
+
 
 
 @media (max-width: 1439px) {

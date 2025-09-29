@@ -463,6 +463,19 @@ class Battle(models.Model):
         User, related_name='won_battles', null=True, blank=True, on_delete=models.SET_NULL)
     is_active = models.BooleanField(default=True)
 
+    def check_activity(self) -> bool:
+        """Проверяет, активен ли баттл."""
+        if not self.is_active:
+            return False
+        if self.ended_at and self.ended_at <= timezone.now():
+            return False
+        return True
+
+    def save(self, *args, **kwargs):
+        # При каждом сохранении обновляем is_active
+        self.is_active = self.check_activity()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Battle {self.id} by {self.creator}"
 

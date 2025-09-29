@@ -23,7 +23,8 @@ class JWTAuthenticationMiddleware:
             "/api/advertisement/",
             "/api/csrf/",
             "/api/main-page-background/",
-            "/api/raffles/"
+            "/api/raffles/",
+            "/api/global-battle-info/"
         ]
 
     def __call__(self, request):

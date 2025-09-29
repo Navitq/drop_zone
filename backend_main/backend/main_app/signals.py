@@ -4,8 +4,8 @@ from django.db.backends.signals import connection_created
 from django.dispatch import receiver
 from redis.exceptions import ConnectionError as RedisConnectionError
 from django.db.models.signals import post_save, post_delete
-from .utils import load_to_redis, load_advertisement, load_raffles, load_background_main, load_global_coefficient_main
-from .models import Case, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
+from .utils import load_to_redis, load_advertisement, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
+from .models import Case, Battle, BattleCase, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
 import os
 from django.db.models.signals import m2m_changed
 
@@ -75,6 +75,20 @@ def raffle_saved(sender, instance, created, **kwargs):
         return
     try:
         load_raffles()
+    except RedisConnectionError:
+        pass
+
+
+@receiver(post_save, sender=Battle)
+@receiver(post_save, sender=BattleCase)
+@receiver(post_save, sender=BattleDrop)
+@receiver(post_save, sender=BattleDropItem)
+def active_battles_saved(sender, instance, created, **kwargs):
+    # Если объект создан — всегда обрабатываем
+    if os.environ.get("RUN_MAIN") != "true":
+        return
+    try:
+        load_battles_active_main()
     except RedisConnectionError:
         pass
 

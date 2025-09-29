@@ -1,8 +1,8 @@
 
 from django.db.utils import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
-from .models import Case, Raffles, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
-from .redis_models import CaseRedisStandart, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
+from .models import Case, Battle, Raffles, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
+from .redis_models import CaseRedisStandart, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
 from django.utils import timezone
 
 
@@ -160,6 +160,78 @@ def load_raffles():
         print("✅ Redis синхронизирован: сохранена последняя запись RafflesRedis")
 
     except RedisConnectionError:
+        raise
+    except OperationalError:
+        print("❌ Postgres ещё не готов — ждём…")
+
+
+def load_battles_active_main():
+    """
+    Загружаем все активные баттлы из Postgres в Redis (ActiveBattleRedis).
+    """
+    try:
+        # проверим доступность Redis
+        ActiveBattleRedis.db().ping()
+
+        # очищаем старые записи активных баттлов в Redis
+        ActiveBattleRedis.find().delete()
+
+        # выбираем все баттлы (можно добавить фильтр is_active=True)
+        active_battles = Battle.objects.all()
+
+        for battle in active_battles:
+            # собираем игроков
+            players = [
+                PlayerInfo(
+                    id=str(player.id),
+                    username=player.username,
+                    imgpath=getattr(player, "avatar_url", None)
+                )
+                for player in battle.players.all()
+            ]
+
+            # собираем кейсы
+            cases = [
+                CaseInfo(
+                    id=str(bc.case.id),
+                    name=bc.case.name,
+                    imgpath=getattr(bc.case, "icon_url", None),
+                    price=bc.case.price,
+                    case_amount=bc.case_amount
+                )
+                for bc in battle.battle_battles.all()
+            ]
+
+            # победитель (если есть)
+            winner = []
+            if battle.winner:
+                winner.append(PlayerInfo(
+                    id=str(battle.winner.id),
+                    username=battle.winner.username,
+                    imgpath=getattr(battle.winner, "avatar", None)
+                ))
+
+            # создаём запись в Redis
+            redis_battle = ActiveBattleRedis(
+                id=str(battle.id),
+                creator_id=str(battle.creator.id) if battle.creator else None,
+                players_amount=battle.players_amount,
+                is_active=battle.is_active,
+                created_at=battle.created_at,
+                ended_at=battle.ended_at
+            )
+
+            # сохраняем JSON-поля
+            redis_battle.set_players(players)
+            redis_battle.set_cases(cases)
+            redis_battle.set_winner(winner)
+            redis_battle.save()
+
+        print(
+            f"✅ Redis синхронизирован: загружено {active_battles.count()} активных баттлов (ActiveBattleRedis)")
+
+    except RedisConnectionError:
+        print("❌ Redis недоступен — баттлы не загружены")
         raise
     except OperationalError:
         print("❌ Postgres ещё не готов — ждём…")

@@ -257,6 +257,14 @@
     "player_waiting": "Waiting",
     "player_waiting_alt": "Clock image",
     "player_ready": "Ready",
-    "player_ready_alt": "Check image"
+    "player_ready_alt": "Check image",
+    "how_its_work": "How to work with battles?",
+    "rule_point_one": "Click the \"create\" button or join an existing battle.",
+    "rule_point_two": "The battle will begin as soon as participants join",
+    "rule_point_tree": "The participant who receives items in total more expensive than the others takes everything",
+    "rule_point_four": "There are no losers! If you lose, you get an item cheaper than the battle cost",
+    "unauth_battle": "You are not authorized",
+    "unauth_battle_sub_title": "Log in to access battles",
+    "auth_battle": "log in"
   }
 }
