@@ -57,16 +57,37 @@ function ActiveBattleCard(props: ActiveBattleCardInt): React.ReactNode {
                         {props.playersImgPath.map((value, index) => {
                             return (
                                 <div key={index} className={style.cardPlayers}>
-                                    <Image height={46} width={54} src={value ? value : "/images/mn_battle_void_person.svg"} alt={t(`player_${index}`)}></Image>
+                                    <Image className={style.cardPlayersImgPc} fill src={value ? value : "/images/mn_battle_void_person.svg"} alt={t(`player_${index}`)}></Image>
+                                    <Image className={style.cardPlayersImgMobile} fill src={value ? value : "/images/mn_battle_void_person_mobile.svg"} alt={t(`player_${index}`)}></Image>
                                 </div>
                             )
                         })}
                     </div>
-                    <div className={style.abcCardPrice}>
+                    <div className={`${style.abcCardPrice} ${style.abcCardPriceButton}`}>
                         <Link href={FRONTEND_PATHS.battlesConnect(props.battleId)}>
                             <CaseBtnText text={t('login_verb')} />
                         </Link>
                     </div>
+                </div>
+            </div>
+            <div className={style.abcPlayerInfoMobile}>
+                <div className={`${style.abcContainersImages} ${style.abcContainersImagesMobile}`}>
+                    {props.battleCases.map((value, index) => {
+                        return (
+                            <div className={style.abcBlockCaseImg} key={index}>
+                                <Image
+                                    fill
+                                    src={value}
+                                    alt={t('case_image')}
+                                />
+                            </div>
+                        )
+                    })}
+                </div>
+                <div className={`${style.abcCardPrice} ${style.abcCardPriceButtonMobile}`}>
+                    <Link href={FRONTEND_PATHS.battlesConnect(props.battleId)}>
+                        <CaseBtnText text={t('login_verb')} />
+                    </Link>
                 </div>
             </div>
             <div className={style.abcSeparator}>

@@ -170,6 +170,7 @@
 .mnStuffCnt {
     @extend %flexStart;
     flex-direction: column;
+    height: 100%;
     // flex: 1;
     width: 100%;
     overflow: auto;
@@ -271,6 +272,8 @@
     @extend %flexCenter;
     position: relative;
     margin-right: 35px;
+    height: 83px;
+    width: 76px;
     img {
         max-height: 76px;
         object-fit: contain;
@@ -335,6 +338,7 @@
     width: auto;          // ширина будет по содержимому
     height: 54px;         // максимальная высота блока
     flex-shrink: 0;
+    width: 46px;
     border-radius: 7px;
     margin-right: 20px;
     img {
@@ -1148,7 +1152,25 @@
     height: 100%;
 }
 
+.abcCardPriceButtonMobile {
+    display: none;
+}
+.abcPlayerInfoMobile {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.abcContainersImagesMobile {
+    display: none;
+}
+
+.cardPlayersImgMobile{
+    display: none;
+}
+
 @media (max-width: 1439px) {
+
     .bpMobileRules {
         display: flex;
     }
@@ -1174,8 +1196,61 @@
 
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
+    .abcCardPriceButton {
+        display: none;
+    }
 
+    .abcPlayerInfoMobile {
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .abcCardPriceButtonMobile {
+        display: flex;
+        margin: 20px 0px;
+        margin-top: 15px;
+    }
+    .abcCardPriceButtonMobile   button {
+        padding: 0 50px;
+    }
+
+    .abcCardPlayerCnt {
+        margin-right: 0px;
+    }
+    .abcBattleRounds {
+        margin-right: 20px;
+    }
+    .abcCnt {
+        height: fit-content;
+    }
+}
+
+@media (max-width: 1024px) {
+    .abcPlayerInfoMobile {
+        justify-content: space-between;
+    }
+    .mnStuffTitle {
+        font-size: 24px;
+        line-height: 100%;
+    }
+    .abcCardPriceButtonMobile {
+        margin: 0px;
+    }
+
+    .abcPlayerInfoMobile {
+        margin-top: 15px;
+        margin-bottom: 20px;
+    }
+    .abcContainersImages {
+        display: none;
+    }
+    .abcContainersImagesMobile {
+        display: flex;
+    }
+    .abcMainInfo {
+        width: 35%;
+    }
     .mnBattlesPage {
         min-height: 100px;
         max-height: 190px;
@@ -1249,9 +1324,94 @@
     .gspPlayerAmountCnt {
         height: 60px;
     }
+    .mnStuffTitle {
+        margin-top: 1;
+    }
 }
 
 @media (max-width: 768px) {
+    .mnBattlesStuffCnt{
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    .abcCardPriceButtonMobile button {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        padding: 0 20px;
+        width: 100%;
+    }
+    .mnStuffCnt .abcCnt {
+        overflow: visible;
+    }
+    .abcCardPriceButtonMobile a {
+        width: 100%;
+    }
+    .abcCardPriceButtonMobile {
+        width: 100%;
+    }
+    .abcContainersImagesMobile {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+    .abcPlayerInfoMobile {
+        flex-direction: column;
+    }
+    .abcBlockCaseImg {
+        margin-right: 5px;
+        width: 100%;
+        height: 80px;
+        width: 73px;
+    }
+    .cardPlayersImgPc {
+        display: none;
+    }
+    .cardPlayersImgMobile {
+        display: block;
+    }
+    .cardPlayers {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+    }
+    .cardPlayers:last-child {
+        margin-right: 0px;
+    }
+    .abcContainersInfo, .abcMainInfo {
+        margin-right: 5px;
+    }
+    .mnStuffTitle {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+    .abcDataCnt {
+        height: 45px;
+    }
+    .abcRoundsAmount {
+        font-size: 16px;
+        line-height: 16px;
+    }
+    .abcRoundsTxt {
+        font-size: 8px;
+        line-height: 8px;
+    }
+    .abcBattleRounds {
+        height: 45px;
+        padding: 7px 10px;
+        padding-bottom: 8px;
+        margin-right: 0px;
+    }
+    .abcCardPriceBlock {
+        height: 34px;
+    }
+    .abcCardPriceTitle {
+        font-size: 13px;
+        line-height: 100%;
+    }
+    .abcCardPrice {
+        line-height: 100%;
+        font-size: 15px;
+    }
     .mnHeadBtnGroupMobile {
         margin-top: 10px;
     }
