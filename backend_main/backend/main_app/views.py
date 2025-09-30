@@ -1273,6 +1273,30 @@ async def active_battles_info_view(request):
 
 
 @async_require_methods(["POST"])
+async def get_battle_info_view(request, battle_id):
+    try:
+        body = json.loads(request.body)
+        game_id = body.get("gameId")
+        print(game_id == battle_id)
+        if game_id != battle_id:
+            return JsonResponse({"error": "Forbidden url"}, status=403)
+        try:
+            battle = await sync_to_async(
+                lambda: ActiveBattleRedis.find(
+                    ActiveBattleRedis.id == game_id).first()
+            )()
+        except NotFoundError:
+            return JsonResponse({"error": "Game not found"}, status=404)
+        print(battle)
+        if not battle.check_activity():
+            return JsonResponse({"error": "Game was finished"}, status=404)
+        return JsonResponse(battle.model_dump(), status=200)
+    except Exception as e:
+        print("Ошибка в active_battles_info_view:", e)
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
+
+
+@async_require_methods(["POST"])
 async def create_battles_view(request):
     try:
         print("start")

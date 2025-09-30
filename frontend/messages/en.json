@@ -265,6 +265,9 @@
     "rule_point_four": "There are no losers! If you lose, you get an item cheaper than the battle cost",
     "unauth_battle": "You are not authorized",
     "unauth_battle_sub_title": "Log in to access battles",
-    "auth_battle": "log in"
+    "auth_battle": "log in",
+    "players_waiting": "players waiting",
+    "battle": "battle",
+    "finished": "finished"
   }
 }

@@ -1,19 +1,29 @@
+'use client'
 import React from 'react'
 import style from '@/styles/battles.module.scss'
 
 import CbhGameActiveCases from '@/components/CbhGameActiveCases'
 import CaseBtnText from '@/components/CaseBtnText'
 
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
+import { useAppSelector } from '@/lib/hooks'
 
 function CbhGameCases(): React.ReactNode {
     const t = useTranslations("battles")
+    const cases = useAppSelector(state => state.activeBattle.cases)
+    const locale = useLocale()
+
     return (
         <div className={`${style.cbhGameCases} ${style.cbhHeadSideblock}`}>
             <div className={style.cbhGameCasesCnt}>
-                <CbhGameActiveCases unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={44211424 + ""}></CbhGameActiveCases>
-                <CbhGameActiveCases unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={442141424 + ""}></CbhGameActiveCases>
-                <CbhGameActiveCases unitPrice={578} caseAmount={0} caseImgPath={"/images/case_mock.png"} caseName={"Весенняя кура"} casesId={442114224 + ""}></CbhGameActiveCases>
+                {
+                    cases.map((value, index) => {
+                        return (
+                            <CbhGameActiveCases activeId={(index > -1 && index < 3 ? (index + 1) as 0 | 1 | 2 | 3 : 0)} key={index} caseImgPath={value.imgpath} caseName={value.name[locale as 'en' | 'ru']} casesId={value.id}></CbhGameActiveCases>
+                        )
+                    })
+                }
+
             </div>
             <div>
                 <CaseBtnText text={t('leave_battle')} />

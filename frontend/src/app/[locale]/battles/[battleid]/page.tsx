@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import CurrentBattleHead from '@/components/CurrentBattleHead'
 import BattleGameField from '@/components/BattleGameField'

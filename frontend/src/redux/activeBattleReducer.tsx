@@ -1,52 +1,115 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type playersAmountInt = 2 | 3 | 4;
+type playersAmountInt = 0 | 2 | 3 | 4;
 
-interface CaseInfo {
-    casesId: string;
-    caseName: string;
-    caseImgPath: string;
-    caseAmount: number;
-    unitPrice: number;
+type gameRoundInt = 0 | 1 | 2 | 3;
+
+interface CaseName {
+    en: string;
+    ru: string;
 }
 
+interface GameCase {
+    id: string;           // UUID
+    name: CaseName;       // Название на нескольких языках
+    imgpath: string;      // Ссылка на изображение
+    price: number;        // Цена
+    case_amount: number;  // Количество
+}
+
+interface PlayersInfo {
+    id: string;           // UUID
+    imgpath: string;      // Ссылка на изображение
+    username: string;
+    money_amount: number;
+}
+
+interface IncomeServerData {
+    cases: GameCase[],
+    created_at: string,
+    ended_at: string
+    creator_id: string,
+    id: string,
+    is_active: boolean,
+    players_amount: playersAmountInt,
+    players: PlayersInfo[],
+    players_ids: string[],
+    winner_id: string,
+    winner: PlayersInfo[]
+}
+
+
 interface ActiveBattle {
-    gameCases: CaseInfo[],
+    active_round: gameRoundInt,
+    cases: GameCase[],
+    created_at: string,
+    ended_at: string
+    creator_id: string,
+    id: string,
+    is_active: boolean,
+    players_amount: playersAmountInt,
+    players: PlayersInfo[],
+    players_ids: string[],
+    winner_id: string,
+    winner: PlayersInfo[]
+    isGameFinished: boolean,
     totalCaseAmount: number,
     totalPrice: number
-    playersAmount: playersAmountInt
 }
 
 const initialState: ActiveBattle = {
-    gameCases: [],
-    totalCaseAmount: 1,
-    totalPrice: 1,
-    playersAmount: 2
+    active_round: 0,
+    cases: [],
+    isGameFinished: false,
+    created_at: "",
+    ended_at: "",
+    creator_id: "",
+    id: "",
+    is_active: false,
+    players_amount: 0,
+    players: [],
+    players_ids: [],
+    winner_id: "",
+    winner: [],
+    totalCaseAmount: 0,
+    totalPrice: 0,
 };
 
 export const activerBattleSlice = createSlice({
     name: 'activeBattle',
     initialState,
     reducers: {
-        setPlayersAmount: (state, actions: PayloadAction<playersAmountInt>) => {
-            state.playersAmount = actions.payload;
-        },
-        setTotalPrice: (state, actions: PayloadAction<number>) => {
-            state.totalPrice = actions.payload;;
-        },
-        setCases: (state, actions: PayloadAction<CaseInfo[]>) => {
-            state.gameCases = [...actions.payload]
-            const currentSum: number = actions.payload.reduce(
-                (sum, c) => sum + c.caseAmount,
-                0
+        setBattleData: (state, action: PayloadAction<IncomeServerData>) => {
+            const { cases, players, winner, players_ids, ...rest } = action.payload;
+            Object.assign(state, rest);
+
+            // создаём копии массивов
+            state.cases = [...cases];
+            state.players = [
+                ...players, // данные из payload
+                ...Array.from({ length: state.players_amount - players.length }).map(() => ({
+                    id: "",
+                    imgpath: "",
+                    username: "",
+                    money_amount: 0,
+                }))
+            ];
+            state.players_ids = [...players_ids];
+            state.winner = [...winner];
+            state.totalCaseAmount = Number(state.cases.reduce((sum, c) => sum + c.case_amount, 0).toFixed(0));
+            state.totalPrice = Number(
+                state.cases.reduce((sum, c) => sum + c.price * c.case_amount, 0).toFixed(2)
             );
-            state.totalPrice = currentSum;
         },
+        cleanBattleData: (state) => {
+            Object.assign(state, { ...initialState, cases: [], players: [], winner: [], players_ids: [] });
+        },
+
     }
 });
 
 
 
-export const { showRulesModal, closeRulesModal, showBattleCreateModal, closeBattleCreateModal } = activerBattleSlice.actions;
+export const { setBattleData } = activerBattleSlice.actions;
 
 export default activerBattleSlice.reducer;

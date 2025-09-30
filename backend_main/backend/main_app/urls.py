@@ -48,4 +48,6 @@ urlpatterns = [
          views.global_battles_info_view, name='global_battles_info_view'),
     path('active-battle-info/',
          views.active_battles_info_view, name='active_battles_info_view'),
+    path('battles/game/<str:battle_id>/',
+         views.get_battle_info_view, name='get_battle_info_view'),
 ]

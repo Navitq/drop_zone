@@ -9,11 +9,11 @@ import CbhGameCases from '@/components/CbhGameCases'
 
 
 function CurrentBattleHead(): React.ReactNode {
-    const t = useTranslations("battles")
+
     return (
         <div className={style.cbhCnt}>
             <CbhPriceInfo></CbhPriceInfo>
-            <CbhGameState firstLine={t('expectation')} secondLine={t('participants')}></CbhGameState>
+            <CbhGameState></CbhGameState>
             <CbhGameCases></CbhGameCases>
         </div>
     )

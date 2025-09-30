@@ -185,7 +185,8 @@ def load_battles_active_main():
                 PlayerInfo(
                     id=str(player.id),
                     username=player.username,
-                    imgpath=getattr(player, "avatar_url", None)
+                    imgpath=getattr(player, "avatar_url", None),
+                    money_amount=float(player.money_amount),
                 )
                 for player in battle.players.all()
             ]
@@ -208,7 +209,8 @@ def load_battles_active_main():
                 winner.append(PlayerInfo(
                     id=str(battle.winner.id),
                     username=battle.winner.username,
-                    imgpath=getattr(battle.winner, "avatar", None)
+                    imgpath=getattr(battle.winner, "avatar", None),
+                    money_amount=0,
                 ))
 
             # создаём запись в Redis

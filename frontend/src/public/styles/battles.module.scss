@@ -945,12 +945,13 @@
     @extend %flexCenter;
     height: 45px;
     width: 52px;
-    border: 2px solid rgba(255, 148, 0, 1);
-    border-radius: 7px;
     margin-right: 22px;
     position: relative;
     img {
         object-fit: contain;
+        border: 2px solid rgba(255, 148, 0, 1);
+        border-radius: 7px;
+        width: fit-content !important;
     }
 }
 
@@ -1167,6 +1168,14 @@
 
 .cardPlayersImgMobile{
     display: none;
+}
+.bpbPlayerProfileInfoWaiting {
+    @extend %flexCenter;
+    height: 100%;
+    width: 100%;
+    font-size: 24px;
+    font-family: var(--font-headBold);
+    color: rgba(255, 255, 255, 1);
 }
 
 @media (max-width: 1439px) {
