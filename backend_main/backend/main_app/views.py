@@ -26,6 +26,7 @@ from datetime import datetime, timezone
 from .custom_decorators import async_require_methods
 from django.utils import timezone as timezone_utils
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.http import require_http_methods
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -1287,7 +1288,6 @@ async def get_battle_info_view(request, battle_id):
             )()
         except NotFoundError:
             return JsonResponse({"error": "Game not found"}, status=404)
-        print(battle)
         if not battle.check_activity():
             return JsonResponse({"error": "Game was finished"}, status=404)
         return JsonResponse(battle.model_dump(), status=200)

@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import style from '@/styles/battles.module.scss'
 import BattlePersonalBox from "@/components/BattlePersonalBox"
@@ -7,7 +7,8 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { showNoMoneyModal, showUnAuthModal } from '@/redux/modalReducer'
 import { setBattleData } from '@/redux/activeBattleReducer'
 import { AxiosError } from "axios";
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
+import useWebSocket from 'react-use-websocket';
 
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
@@ -16,8 +17,33 @@ function BattleGameField(): React.ReactNode {
     const isAuth = useAppSelector(state => state.user.isAuth)
     const { players_amount, players } = useAppSelector(state => state.activeBattle)
     const router = useRouter();
-    const { battleid: gameId } = useParams<{ battleid: string }>()
+    const [socketOpened, setSocketOpened] = useState<boolean>(false);
+
+    const params = useParams();
+    const searchParams = useSearchParams();
+
+    const gameId = Array.isArray(params.battleid) ? params.battleid[0] : params.battleid; // динамический сегмент
+    const guest = searchParams.get('guest') === 'true'; //
     const dispatch = useAppDispatch();
+
+
+    const { sendMessage, lastJsonMessage, readyState } = useWebSocket(
+        // URL создаём только если socketOpened === true
+        socketOpened && gameId ? `${BACKEND_PATHS.battleGameWSS(gameId, guest)}` : null,
+        {
+            shouldReconnect: () => true,  // авто-переподключение
+            onOpen: () => console.log("WS connected"),
+            onClose: () => console.log("WS closed"),
+            onError: (event: WebSocketEventMap['error']) => console.log(event),
+            onMessage: (event) => {
+                const data = JSON.parse(event.data);
+                console.log(data)
+            },
+            retryOnError: true,
+            reconnectAttempts: 10,
+            reconnectInterval: 3000,
+        }
+    );
 
     async function getServerGameData() {
         try {
@@ -30,8 +56,8 @@ function BattleGameField(): React.ReactNode {
             response.data.cases = JSON.parse(response.data.cases || "[]");
             response.data.players = JSON.parse(response.data.players || "[]");
             response.data.winner = JSON.parse(response.data.winner || "[]");
-            console.log(response.data)
             dispatch(setBattleData(response.data))
+            setSocketOpened(true);
         } catch (err) {
             const error = err as AxiosError;
             console.log(error.status)

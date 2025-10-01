@@ -4,6 +4,7 @@ from redis.exceptions import ConnectionError as RedisConnectionError
 from .models import Case, Battle, Raffles, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
 from .redis_models import CaseRedisStandart, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
 from django.utils import timezone
+from redis.exceptions import RedisError
 
 
 def load_advertisement():
@@ -237,3 +238,42 @@ def load_battles_active_main():
         raise
     except OperationalError:
         print("❌ Postgres ещё не готов — ждём…")
+
+
+async def update_battle_in_redis(battle_id: str, fields: dict):
+    """
+    fields - словарь изменённых полей.
+    Обновляет только эти поля в Redis для конкретной битвы.
+    """
+    try:
+        redis_battle = ActiveBattleRedis.find(
+            ActiveBattleRedis.id == battle_id).first()
+        if not redis_battle:
+            # Если записи нет — создаём заново
+            battle = Battle.objects.filter(id=battle_id).first()
+            if not battle:
+                return
+
+            redis_battle = ActiveBattleRedis(
+                id=str(battle.id),
+                creator_id=str(battle.creator.id) if battle.creator else None,
+                players_amount=battle.players_amount,
+                is_active=battle.is_active,
+                created_at=battle.created_at,
+                ended_at=battle.ended_at
+            )
+
+        # Обновляем только изменённые поля
+        if "players" in fields:
+            redis_battle.set_players(fields["players"])
+        if "cases" in fields:
+            redis_battle.set_cases(fields["cases"])
+        if "winner" in fields:
+            redis_battle.set_winner(fields["winner"])
+        if "is_active" in fields:
+            redis_battle.is_active = fields["is_active"]
+
+        redis_battle.save()
+
+    except RedisError:
+        print(f"❌ Ошибка Redis при обновлении battle {battle_id}")

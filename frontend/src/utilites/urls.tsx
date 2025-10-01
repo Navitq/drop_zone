@@ -22,6 +22,7 @@ interface BackendPaths {
     playCaseGame: (typed: string) => string,
     getCaseItems: (typed: string) => string,
     getCase: (typed: caseType) => string,
+    battleGameWSS: (typed: string, guest: boolean) => string,
 }
 
 
@@ -48,6 +49,7 @@ export const BACKEND_PATHS: BackendPaths = {
     playCaseGame: (typed: string) => `/cases/open_case/${typed}/`,
     getCaseItems: (typed: string) => `/cases/get_case_content/${typed}/`,
     getCase: (typed: caseType) => `/cases/${typed}/`,
+    battleGameWSS: (typed: string, guest: boolean) => `${process.env.NEXT_PUBLIC_API_WSS_BASE_URL}battle/${typed}/?guest=${guest}`,
 }
 
 interface FrontendPaths {

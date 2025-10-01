@@ -69,11 +69,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+ASGI_APPLICATION = "dropzone_backend.asgi.application"
 
 # Application definition
 
 INSTALLED_APPS = [
     "main_app",
+    "daphne",
     'corsheaders',
     'rest_framework_simplejwt',
     'django.contrib.admin',
@@ -82,6 +84,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "channels"
 ]
 
 MIDDLEWARE = [
@@ -129,6 +132,16 @@ TEMPLATES = [
         },
     },
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
 
 WSGI_APPLICATION = 'dropzone_backend.wsgi.application'
 

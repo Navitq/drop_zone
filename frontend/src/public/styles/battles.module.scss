@@ -880,21 +880,20 @@
     justify-content: flex-start;
     height: 100%;
     width: 100%;
+    margin-right: 15px
 }
 
 .cbhGameActiveCases {
     @extend %flexCenter;
     position: relative;
-    max-width: 84px;
-    width: 100%;
+    width: 84px;
+
     height: 76px;
     margin-right: 20px;
     padding: 0px 2px;
     img {
         height: 73px;
         object-fit: contain;
-        max-width: 100%;
-        max-height: 100%;
     }
     &:last-child {
         margin-right: 0px

@@ -8,9 +8,20 @@ https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
 """
 
 import os
-
 from django.core.asgi import get_asgi_application
+from django.urls import path
+from channels.routing import ProtocolTypeRouter, URLRouter
+from main_app.urls_ws import websocket_urlpatterns  # импортируем список маршрутов
+# Импорт твоего кастомного ASGI JWT middleware
+from main_app.web_socket_middleware import JWTAuthMiddlewareCustom
+# Импорт WebSocket consumer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dropzone_backend.settings')
 
-application = get_asgi_application()
+
+application = ProtocolTypeRouter({
+    "http": get_asgi_application(),
+    "websocket": JWTAuthMiddlewareCustom(
+        URLRouter(websocket_urlpatterns)
+    ),
+})

@@ -21,6 +21,7 @@
     "react-redux": "^9.2.0",
     "react-select": "^5.10.2",
     "react-tabs": "^6.1.0",
+    "react-use-websocket": "^4.13.0",
     "swiper": "^11.2.10"
   },
   "devDependencies": {
