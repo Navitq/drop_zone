@@ -27,6 +27,7 @@ from .custom_decorators import async_require_methods
 from django.utils import timezone as timezone_utils
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_http_methods
+from django.db import transaction
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -188,11 +189,11 @@ async def deduct_user_money_raffels(user, raffels):
         return False
 
 
-async def deduct_user_money_upgrade(user, price):
+def deduct_user_money_upgrade(user, price):
     """Списываем стоимость кейса с пользователя и сохраняем в БД."""
     try:
         user.money_amount -= Decimal(str(price))
-        await sync_to_async(user.save)()
+        user.save()
         return True
     except Exception as err:
         print(err)
@@ -252,6 +253,23 @@ async def spin_state_wheel_fake():
     return EXTERIOR_CHOICES[int(round(index))][0]
 
 
+def sync_spin_state_wheel(user):
+    # случайное число 0-99, умножаем на шанс пользователя
+    rand_num = int(random.randint(0, 99) * user.item_state_chance)
+    if rand_num > 99:
+        return EXTERIOR_CHOICES[-1][0]
+    # ограничиваем максимум 99
+    rand_num = min(rand_num, 99)
+
+    range_size = 100 // len(EXTERIOR_CHOICES)
+    index = rand_num // range_size
+
+    if index >= len(EXTERIOR_CHOICES):
+        index = len(EXTERIOR_CHOICES) - 1
+
+    return EXTERIOR_CHOICES[int(round(index))][0]
+
+
 async def spin_state_wheel(user):
     # случайное число 0-99, умножаем на шанс пользователя
     rand_num = int(random.randint(0, 99) * user.item_state_chance)
@@ -267,6 +285,21 @@ async def spin_state_wheel(user):
         index = len(EXTERIOR_CHOICES) - 1
 
     return EXTERIOR_CHOICES[int(round(index))][0]
+
+
+def sync_create_order(item_state: str, item, user):
+    """
+    Создаёт InventoryItem для пользователя и сохраняет в БД.
+    """
+    try:
+        steam_item = SteamItemCs.objects.get(id=item.id)
+        return InventoryItem.objects.create(
+            steam_item=steam_item,
+            owner=user,
+            exterior_wear=item_state,
+        )
+    except DatabaseError as e:
+        print(f"Ошибка при создании InventoryItem: {e}")
 
 
 async def create_order(item_state: str, item, user):
@@ -338,17 +371,15 @@ async def check_user_money_raffels(request, raffles_id):
         return JsonResponse({"detail": "Insufficient funds"}, status=503)
 
 
-async def check_user_money_upgrades(request, server_item_id, client_item_id, price):
+def check_user_money_upgrades(request, server_item_id, client_item_id, price):
     """Проверяем money_amount пользователя из токена."""
     try:
         user_id = request.token_data.get("id")
-        user = await sync_to_async(User.objects.get)(id=user_id)
-        server_item = await sync_to_async(lambda: SteamItemCs.objects.get(id=server_item_id))()
+        user = User.objects.select_for_update().get(id=user_id)
+        server_item = SteamItemCs.objects.get(id=server_item_id)
         if client_item_id:
-            client_item = await sync_to_async(
-                lambda: InventoryItem.objects.select_related(
-                    'steam_item').get(owner_id=user.id, id=client_item_id)
-            )()
+            client_item = InventoryItem.objects.select_for_update().select_related(
+                'steam_item').get(owner_id=user.id, id=client_item_id)
             if not client_item or not server_item:
                 return JsonResponse({"detail": "Item not found"}, status=404)
 
@@ -362,6 +393,12 @@ async def check_user_money_upgrades(request, server_item_id, client_item_id, pri
             return {"user": user, "price": price, "server_item": server_item}
         else:
             return JsonResponse({"detail": "Either client_item_id or price must be provided"}, status=400)
+    except User.DoesNotExist:
+        return JsonResponse({"detail": "User not found"}, status=404)
+    except SteamItemCs.DoesNotExist:
+        return JsonResponse({"detail": "Server item not found"}, status=404)
+    except InventoryItem.DoesNotExist:
+        return JsonResponse({"detail": "Client item not found"}, status=404)
     except NotFoundError:
         return JsonResponse({"detail": "Insufficient funds"}, status=503)
 
@@ -399,9 +436,9 @@ async def get_case_items(case_id):
     ]
 
 
-async def spin_upgrade(user, server_item, price):
+def spin_upgrade(user, server_item, price):
     print(555555555555)
-    ad = await sync_to_async(lambda: GlobalCoefficientRedis.find().first())()
+    ad = GlobalCoefficientRedis.find().first()
     pgrades_global = ad.upgrades_global
     print(0000000000000, 4442)
 
@@ -422,9 +459,8 @@ async def spin_upgrade(user, server_item, price):
         return True
 
 
-async def remover_order(user, client_item):
-    # удаляем объект из БД
-    await sync_to_async(client_item.delete)()
+def sync_remover_order(user, client_item):
+    client_item.delete()
     return client_item
 
 
@@ -586,22 +622,22 @@ async def get_user_by_id(user_id: str):
     )()
 
 
-async def play_upgrade_game(user, server_item, client_item=None, price=None):
+def play_upgrade_game(user, server_item, client_item=None, price=None):
     """Игра на апгрейд предмета. Может использовать client_item или деньги (price)."""
     print(7777777777777)
     # определяем цену апгрейда
     upgrade_price = client_item.steam_item.price if client_item else price
 
     # запускаем апгрейд
-    spin_state = await spin_upgrade(
+    spin_state = spin_upgrade(
         user=user,
         server_item=server_item.price,
         price=upgrade_price
     )
 
     if spin_state is True:
-        item_state = await spin_state_wheel(user)
-        item = await create_order(item_state, server_item, user)
+        item_state = sync_spin_state_wheel(user)
+        item = sync_create_order(item_state, server_item, user)
         order_to_send = {
             "id": str(item.id),
             "gunModel": item.steam_item.item_model,
@@ -1354,29 +1390,34 @@ async def create_battles_view(request):
         return JsonResponse({"error": e}, status=500)
 
 
-@async_require_methods(["POST"])
-async def upgrade_item_view(request):
+@require_http_methods(["POST"])
+def upgrade_item_view(request):
     try:
-        data = json.loads(request.body)
+        with transaction.atomic():
+            data = json.loads(request.body)
 
-        client_item_id = data.get("clientItemId")
-        server_item_id = data.get("serverItemId")
-        price = data.get("price")
+            client_item_id = data.get("clientItemId")
+            server_item_id = data.get("serverItemId")
+            price = data.get("price")
 
-        # Проверяем обязательные поля
-        if not server_item_id or (not price and not client_item_id):
-            return JsonResponse({"success": False, "error": "serverItemId и хотя бы одно из полей clientItemId или price обязательны"}, status=400)
-        money_check = await check_user_money_upgrades(request, server_item_id=server_item_id, client_item_id=client_item_id, price=price)
-        if isinstance(money_check, JsonResponse):
-            return money_check  # 402
-        if isinstance(money_check, dict) and "user" in money_check and ("price" in money_check or "client_item" in money_check):
-            if "client_item" in money_check:
-                answer = await play_upgrade_game(user=money_check["user"], client_item=money_check["client_item"], server_item=money_check["server_item"])
-                await remover_order(money_check["user"], money_check["client_item"])
-                return answer
-            else:
-                await deduct_user_money_upgrade(money_check["user"], money_check["price"])
-                return await play_upgrade_game(user=money_check["user"], price=money_check["price"], server_item=money_check["server_item"])
+            # Проверяем обязательные поля
+            if not server_item_id or (not price and not client_item_id):
+                return JsonResponse({"success": False, "error": "serverItemId и хотя бы одно из полей clientItemId или price обязательны"}, status=400)
+            money_check = check_user_money_upgrades(
+                request, server_item_id=server_item_id, client_item_id=client_item_id, price=price)
+            if isinstance(money_check, JsonResponse):
+                return money_check  # 402
+            if isinstance(money_check, dict) and "user" in money_check and ("price" in money_check or "client_item" in money_check):
+                if "client_item" in money_check:
+                    answer = play_upgrade_game(
+                        user=money_check["user"], client_item=money_check["client_item"], server_item=money_check["server_item"])
+                    sync_remover_order(
+                        money_check["user"], money_check["client_item"])
+                    return answer
+                else:
+                    deduct_user_money_upgrade(
+                        money_check["user"], money_check["price"])
+                    return play_upgrade_game(user=money_check["user"], price=money_check["price"], server_item=money_check["server_item"])
     except Exception as e:
         print(e)
         return JsonResponse({"error": str(e)}, status=500)
