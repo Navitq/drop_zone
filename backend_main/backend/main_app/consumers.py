@@ -8,6 +8,23 @@ from .redis_models import ActiveBattleRedis, PlayerInfo
 from django.db import transaction, IntegrityError, DatabaseError
 from django.db.models import F, Sum
 import redis.asyncio as redis
+from dotenv import load_dotenv
+from redis_om import get_redis_connection
+import os
+
+load_dotenv()
+
+REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
+REDIS_DOCKER_PORT = os.getenv("REDIS_DOCKER_PORT")
+print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP)
+
+
+redis_opened = redis.Redis(
+    host=REDIS_DOCKER_IP,
+    port=int(REDIS_DOCKER_PORT),
+    decode_responses=True
+)
+
 
 async def get_battle_from_game_id(game_id):
     """
@@ -35,17 +52,17 @@ def get_battle_from_game_id_db(game_id):
     Возвращает объект битвы или None, если не найдено или не активно.
     """
     try:
-        def fetch_battle(game_id):
-            return Battle.objects.select_for_update().filter(
-                id=game_id,
-                is_active=True
-            ).first()
-
-        battle = fetch_battle(game_id)
+        print(555555555555555555, game_id)
+        battle = Battle.objects.select_for_update().filter(
+            id=game_id,
+            is_active=True
+        ).first()
+        print(battle, battle.players.count() <
+              battle.players_amount, "ddddddd")
         if (
             battle
             and battle.check_activity()
-            and battle.players.count() < battle.max_players  # ✅ проверяем лимит
+            and battle.players.count() < battle.players_amount  # ✅ проверяем лимит
         ):
             return battle
         else:
@@ -76,11 +93,11 @@ def pay_and_add_to_battle(token_data, game_id):
         with transaction.atomic():
             battle = get_battle_from_game_id_db(game_id)
             user = get_user_db(token_data)
-
-            if battle.players.filter(id=user.id).exists():
+            print(battle, 7777777777)
+            if user is None or battle is None:
                 return None
 
-            if user is None or battle is None:
+            if battle.players.filter(id=user.id).exists():
                 return None
 
             # 1. Проверяем, есть ли свободные слоты
@@ -132,6 +149,8 @@ def pay_and_add_to_battle(token_data, game_id):
 
 
 # waiting | in_process | canceled | finished
+
+
 class BattleConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # Получаем game_id из URL
@@ -139,23 +158,23 @@ class BattleConsumer(AsyncWebsocketConsumer):
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         query_string = self.scope['query_string'].decode()  # "guest=true"
         query_params = parse_qs(query_string)
-
+        print(11111111111111)
         # Берем guest, если нет — по умолчанию False
         guest = query_params.get("guest", ["false"])[0]  # "true" или "false"
         is_guest = guest.lower() == "true"
-        self.battle = get_battle_from_game_id(self.game_id)
+        self.battle = await get_battle_from_game_id(self.game_id)
         if self.battle is None:
             await self.close(code=4003)  # код можно выбрать любой
             return
 
         self.players_amount_redis = f"battle_{self.game_id}_players"
         self.group_state_redis = f"battle_{self.game_id}_state"
-        exists_state = await self.channel_layer.redis.exists(self.group_state_redis)
-        exists_counter = await self.channel_layer.iredself.channel_layers.exists(self.players_amount_redis)
+        exists_state = await redis_opened.exists(self.group_state_redis)
+        exists_counter = await redis_opened.exists(self.players_amount_redis)
         if not exists_state:
-            await self.channel_layer.redis.set(self.group_state_redis, "waiting")
+            await redis_opened.set(self.group_state_redis, "waiting")
         if not exists_counter:
-            await self.channel_layer.redis.set(self.players_amount_redis, 0)
+            await redis_opened.set(self.players_amount_redis, 0)
 
         self.group_name = f"battle_{self.game_id}"
 
@@ -164,18 +183,28 @@ class BattleConsumer(AsyncWebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-
-        if not is_guest:
+        print(2222222222222222222222, is_guest)
+        if is_guest:
             is_payed = await sync_to_async(pay_and_add_to_battle)(
                 token_data=self.scope["token_data"],
                 game_id=self.game_id
             )
+            print(3333333333333333333333333)
             if is_payed:
-                await self.channel_layer.redis.incr(self.players_amount_redis)
-                count = int(await self.channel_layer.redis.get(self.players_amount_redis) or 0)
+                await redis_opened.incr(self.players_amount_redis)
+                count = int(await redis_opened.get(self.players_amount_redis) or 0)
+                if count <= self.battle.players_amount:
+                    await self.channel_layer.group_send(
+                        self.group_name,  # имя группы
+                        {
+                            "type": "players_update",  # имя обработчика
+                            "players": [p.model_dump() for p in is_payed],
+                        }
+                    )
                 if count == self.battle.players_amount:
-                    await self.channel_layer.redis.set(self.group_state_redis, "in_process")
+                    await redis_opened.set(self.group_state_redis, "in_process")
                     # start_battle_game()
+
         await self.accept()
 
     async def receive(self, text_data=None, bytes_data=None):
@@ -225,6 +254,13 @@ class BattleConsumer(AsyncWebsocketConsumer):
             "event": "chat",
             "user": event["user"],
             "message": event["message"]
+        }))
+
+    async def players_update(self, event):
+        # здесь уже напрямую шлём фронту
+        await self.send(text_data=json.dumps({
+            "event": "players_update",   # вот это уйдёт на фронт
+            "players": event["players"]
         }))
 
     # Обработчик событий группы "battle.move"

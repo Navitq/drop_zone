@@ -104,12 +104,23 @@ export const activerBattleSlice = createSlice({
         cleanBattleData: (state) => {
             Object.assign(state, { ...initialState, cases: [], players: [], winner: [], players_ids: [] });
         },
+        setPlayers: (state, action: PayloadAction<PlayersInfo[]>) => {
+            state.players = [
+                ...action.payload, // реальные игроки
+                ...Array.from({ length: state.players_amount - action.payload.length }).map(() => ({
+                    id: "",
+                    imgpath: "",
+                    username: "",
+                    money_amount: 0,
+                }))
+            ];
+        }
 
     }
 });
 
 
 
-export const { setBattleData } = activerBattleSlice.actions;
+export const { setBattleData, setPlayers } = activerBattleSlice.actions;
 
 export default activerBattleSlice.reducer;

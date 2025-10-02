@@ -9,9 +9,17 @@ import { setBattleData } from '@/redux/activeBattleReducer'
 import { AxiosError } from "axios";
 import { useParams, useSearchParams } from 'next/navigation'
 import useWebSocket from 'react-use-websocket';
-
+import { setPlayers } from '@/redux/activeBattleReducer'
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
+
+interface PlayersInfo {
+    id: string;           // UUID
+    imgpath: string;      // Ссылка на изображение
+    username: string;
+    money_amount: number;
+}
+
 
 function BattleGameField(): React.ReactNode {
     const isAuth = useAppSelector(state => state.user.isAuth)
@@ -26,6 +34,20 @@ function BattleGameField(): React.ReactNode {
     const guest = searchParams.get('guest') === 'true'; //
     const dispatch = useAppDispatch();
 
+    type BattleEventMap = {
+
+        players_update: { players: PlayersInfo[] }; // можешь типизировать точнее, если знаешь структуру
+    };
+
+    function setPlayersLocal(players: PlayersInfo[]) {
+        dispatch(setPlayers(players))
+    }
+
+
+    const eventHandlers: Record<keyof BattleEventMap, (payload: any) => void> = {
+        players_update: (payload) => setPlayersLocal(payload.players),
+    };
+
 
     const { sendMessage, lastJsonMessage, readyState } = useWebSocket(
         // URL создаём только если socketOpened === true
@@ -36,8 +58,14 @@ function BattleGameField(): React.ReactNode {
             onClose: () => console.log("WS closed"),
             onError: (event: WebSocketEventMap['error']) => console.log(event),
             onMessage: (event) => {
-                const data = JSON.parse(event.data);
-                console.log(data)
+                const data = JSON.parse(event.data) as { event: keyof BattleEventMap; payload: any };
+                const handler = eventHandlers[data.event];
+                if (handler) {
+                    handler(data);
+                    console.log(data)
+                } else {
+                    console.warn("No handler for event:", data.event, data.payload);
+                }
             },
             retryOnError: true,
             reconnectAttempts: 10,
