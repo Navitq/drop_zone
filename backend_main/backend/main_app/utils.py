@@ -5,6 +5,7 @@ from .models import Case, Battle, Raffles, CaseItem, Advertisement, BackgroundMa
 from .redis_models import CaseRedisStandart, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
 from django.utils import timezone
 from redis.exceptions import RedisError
+from redis_om.model.model import NotFoundError
 
 
 def load_advertisement():
@@ -246,8 +247,71 @@ async def update_battle_in_redis(battle_id: str, fields: dict):
     Обновляет только эти поля в Redis для конкретной битвы.
     """
     try:
-        redis_battle = ActiveBattleRedis.find(
-            ActiveBattleRedis.id == battle_id).first()
+        redis_battle = None
+        print('aaaaaaaassss')
+        try:
+            redis_battle = ActiveBattleRedis.find(
+                ActiveBattleRedis.id == battle_id).first()
+        except NotFoundError:
+            print(f"❌ Не найден battle {battle_id} в Redis")
+        if not redis_battle:
+            # Если записи нет — создаём заново
+            battle = Battle.objects.filter(id=battle_id).first()
+            if not battle:
+                return
+
+            # создаём запись в Redis
+            redis_battle = ActiveBattleRedis(
+                id=str(battle.id),
+                creator_id=str(battle.creator.id) if battle.creator else None,
+                players_amount=battle.players_amount,
+                is_active=battle.is_active,
+                created_at=battle.created_at,
+                ended_at=battle.ended_at
+            )
+
+            # собираем игроков
+            players = [
+                PlayerInfo(
+                    id=str(player.id),
+                    username=player.username,
+                    imgpath=getattr(player, "avatar_url", None),
+                    money_amount=float(player.money_amount)
+                )
+                for player in battle.players.all()
+            ]
+
+            redis_battle.set_players(players)
+
+        # Обновляем только изменённые поля
+        if "players" in fields:
+            redis_battle.set_players(fields["players"])
+        if "cases" in fields:
+            redis_battle.set_cases(fields["cases"])
+        if "winner" in fields:
+            redis_battle.set_winner(fields["winner"])
+        if "is_active" in fields:
+            redis_battle.is_active = fields["is_active"]
+
+        redis_battle.save()
+
+    except RedisError:
+        print(f"❌ Ошибка Redis при обновлении battle {battle_id}")
+
+
+def sync_update_battle_in_redis(battle_id: str, fields: dict):
+    """
+    fields - словарь изменённых полей.
+    Обновляет только эти поля в Redis для конкретной битвы.
+    """
+    try:
+        redis_battle = None
+        print('aaaaaaaassss')
+        try:
+            redis_battle = ActiveBattleRedis.find(
+                ActiveBattleRedis.id == battle_id).first()
+        except NotFoundError:
+            print(f"❌ Не найден battle {battle_id} в Redis")
         if not redis_battle:
             # Если записи нет — создаём заново
             battle = Battle.objects.filter(id=battle_id).first()

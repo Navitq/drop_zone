@@ -55,16 +55,9 @@ class MainAppConfig(AppConfig):
     def ready(self):
         """Запускается один раз при старте Django"""
         from . import signals
-        from .tasks import flush_battles_batch
 
         # Поток для первой загрузки баттлов
         t = threading.Thread(target=try_load_with_retry, daemon=True)
         t.start()
 
         # Поток для фонового батч-обновления Redis
-        def start_loop(loop):
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(flush_battles_batch())
-
-        loop = asyncio.new_event_loop()
-        threading.Thread(target=start_loop, args=(loop,), daemon=True).start()

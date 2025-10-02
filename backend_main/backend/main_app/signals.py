@@ -4,11 +4,12 @@ from django.db.backends.signals import connection_created
 from django.dispatch import receiver
 from redis.exceptions import ConnectionError as RedisConnectionError
 from django.db.models.signals import post_save, post_delete
-from .utils import load_to_redis, load_advertisement, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
+from .utils import load_to_redis, load_advertisement, sync_update_battle_in_redis, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
 from .models import Case, Battle, BattleCase, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
+from main_app.redis_models import CaseInfo, PlayerInfo
 
 
 @receiver(post_save, sender=Case)
@@ -95,57 +96,87 @@ def raffle_saved(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Battle)
-def battle_saved(sender, instance, **kwargs):
-    # пример: обновляем статус и активность битвы
-    queue_battle_update(str(instance.id), {
-        "is_active": instance.is_active
-    })
+def battle_saved(sender, instance, created, **kwargs):
+    """
+    Сигнал для Battle:
+    - при создании объекта сразу создаём запись в Redis
+    - при обновлении добавляем изменения в batch
+    """
+    sync_update_battle_in_redis(str(instance.id), {
+        "is_active": instance.is_active})
+    # queue_battle_update(str(instance.id), {
+    #     "is_active": instance.is_active})
+
+
+@receiver(m2m_changed, sender=Battle.players.through)
+def battle_players_changed(sender, instance, action, pk_set, **kwargs):
+    """
+    Срабатывает, когда добавляются или удаляются игроки из битвы
+    """
+    if action in ['post_add', 'post_remove', 'post_clear']:
+        # собираем актуальный список игроков
+        players = [
+            PlayerInfo(
+                id=str(player.id),
+                username=player.username,
+                imgpath=getattr(player, "avatar_url", None),
+                money_amount=float(player.money_amount)
+            )
+            for player in instance.players.all()
+        ]
+        # обновляем Redis
+        sync_update_battle_in_redis(str(instance.id), {"players": players})
 
 
 @receiver(post_save, sender=BattleCase)
 def battle_case_saved(sender, instance, **kwargs):
-    # обновляем конкретную битву — новые кейсы
     battle_id = str(instance.battle.id)
+
     cases = [
-        {
-            "id": str(bc.case.id),
-            "name": bc.case.name,
-            "imgpath": getattr(bc.case, "icon_url", None),
-            "price": bc.case.price,
-            "case_amount": bc.case_amount
-        } for bc in instance.battle.battle_battles.all()
+        CaseInfo(
+            id=str(bc.case.id),
+            name=bc.case.name if isinstance(bc.case.name, dict) else {
+                "ru": bc.case.name},
+            imgpath=getattr(bc.case, "icon_url", None),
+            price=bc.case.price,
+            case_amount=bc.case_amount
+        )
+        for bc in instance.battle.battle_battles.all()
     ]
-    queue_battle_update(battle_id, {"cases": cases})
+
+    sync_update_battle_in_redis(battle_id, {"cases": cases})
 
 
 @receiver(post_save, sender=BattleDrop)
 def battle_drop_saved(sender, instance, **kwargs):
     # пример: можно добавлять в очередь изменения связанных игроков
-    battle_id = str(instance.battle.id)
-    players = [
-        {
-            "id": str(player.id),
-            "username": player.username,
-            "imgpath": getattr(player, "avatar_url", None),
-            "money_amount": float(player.money_amount)
-        } for player in instance.battle.players.all()
-    ]
-    queue_battle_update(battle_id, {"players": players})
+    return
+    # battle_id = str(instance.battle.id)
+    # players = [
+    #     PlayerInfo(
+    #         id=str(player.id),
+    #         username=player.username,
+    #         imgpath=getattr(player, "avatar_url", None),
+    #         money_amount=float(player.money_amount)
+    #     )
+    #     for player in instance.battle.players.all()
+    # ]
+    # print(players)
+    # sync_update_battle_in_redis(battle_id, {"players": players})
 
 
 @receiver(post_save, sender=BattleDropItem)
 def battle_drop_item_saved(sender, instance, **kwargs):
-    # можно обновлять winner или статистику
     battle_id = str(instance.battle.id)
     winner = []
     if instance.battle.winner:
-        winner.append({
-            "id": str(instance.battle.winner.id),
-            "username": instance.battle.winner.username,
-            "imgpath": getattr(instance.battle.winner, "avatar", None),
-            "money_amount": 0
-        })
-    queue_battle_update(battle_id, {"winner": winner})
+        winner.append(PlayerInfo(
+            id=str(instance.battle.winner.id),
+            username=instance.battle.winner.username,
+            imgpath=getattr(instance.battle.winner, "avatar", None),
+            money_amount=0
+        ))
+    sync_update_battle_in_redis(battle_id, {"winner": winner})
 
 
 @receiver(m2m_changed, sender=Raffles.players.through)

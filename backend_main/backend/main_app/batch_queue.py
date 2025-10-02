@@ -16,6 +16,7 @@ def queue_battle_update(battle_id: str, changed_fields: dict):
         ...
     }
     """
+    print('before_with queue_lock')
     with queue_lock:
         if battle_id not in batch_queue:
             batch_queue[battle_id] = {}

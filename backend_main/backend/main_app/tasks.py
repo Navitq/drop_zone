@@ -7,7 +7,7 @@ from main_app.utils import update_battle_in_redis
 async def flush_battles_batch():
     while True:
         await asyncio.sleep(BATCH_INTERVAL)
-
+        print(7777777)
         with queue_lock:
             if not batch_queue:
                 continue

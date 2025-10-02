@@ -178,11 +178,11 @@ def seconds_until(dt: datetime) -> int:
     return max(diff, 0)
 
 
-async def deduct_user_money_raffels(user, raffels):
+def deduct_user_money_raffels(user, raffels):
     """Списываем стоимость кейса с пользователя и сохраняем в БД."""
     try:
         user.money_amount -= Decimal(str(raffels.participate_price))
-        await sync_to_async(user.save)()
+        user.save()
         return True
     except Exception as err:
         print(err)
@@ -200,11 +200,11 @@ def deduct_user_money_upgrade(user, price):
         return False
 
 
-async def deduct_user_money(user, case):
+def deduct_user_money(user, case):
     """Списываем стоимость кейса с пользователя и сохраняем в БД."""
     try:
         user.money_amount -= Decimal(str(case.price))
-        await sync_to_async(user.save)()
+        user.save()
         return True
     except Exception as err:
         print(err)
@@ -236,7 +236,49 @@ async def spin_roulette_wheel(case, user):
     return items[0]
 
 
+def sync_spin_roulette_wheel(case, user):
+    # Получаем все предметы
+    items = list(
+        ItemRedisStandart.find(ItemRedisStandart.case_id == case.id).all()
+    )
+
+    # Сортируем по drop_chance (необязательно, но для прозрачности)
+    items.sort(key=lambda x: x.drop_chance)
+
+    # Генерируем рандомное число до 100 и умножаем на шанс пользователя
+    roll = random.uniform(0, 100) * user.roulet_chance
+    if roll >= 100:
+        items[-1]
+    cumulative = 0
+    for item in items:
+        cumulative += item.drop_chance
+        if roll <= cumulative:
+            del item.drop_chance
+            return item  # Этот предмет выпал
+
+    # На всякий случай — если не попали (редко), возвращаем последний
+    del items[0].drop_chance
+    return items[0]
+
+
 async def spin_state_wheel_fake():
+    # случайное число 0-99, умножаем на шанс пользователя
+    rand_num = int(random.randint(0, 99))
+    if rand_num > 99:
+        return EXTERIOR_CHOICES[-1][0]
+    # ограничиваем максимум 99
+    rand_num = min(rand_num, 99)
+
+    range_size = 100 // len(EXTERIOR_CHOICES)
+    index = rand_num // range_size
+
+    if index >= len(EXTERIOR_CHOICES):
+        index = len(EXTERIOR_CHOICES) - 1
+
+    return EXTERIOR_CHOICES[int(round(index))][0]
+
+
+def sync_spin_state_wheel_fake():
     # случайное число 0-99, умножаем на шанс пользователя
     rand_num = int(random.randint(0, 99))
     if rand_num > 99:
@@ -317,16 +359,16 @@ async def create_order(item_state: str, item, user):
         print(f"Ошибка при создании InventoryItem: {e}")
 
 
-async def add_to_raffels(raffle_id,  user):
+def add_to_raffels(raffle_id,  user):
     # Находим розыгрыш по UUID
-    raffle = await sync_to_async(Raffles.objects.get)(id=raffle_id)
+    raffle = Raffles.objects.select_for_update().get(id=raffle_id)
 
     # Проверяем, участвует ли уже пользователь
-    exists = await sync_to_async(lambda: raffle.players.filter(id=user.id).exists())()
+    exists = raffle.players.filter(id=user.id).exists()
     if exists:
         return JsonResponse({"detail": "User already in raffle"}, status=409)
 
-    await sync_to_async(raffle.players.add)(user)
+    raffle.players.add(user)
 
     return JsonResponse({
         "detail": "User added to raffle",
@@ -354,14 +396,35 @@ async def check_user_money(request, case_id):
         return JsonResponse({"detail": "Insufficient funds"}, status=503)
 
 
-async def check_user_money_raffels(request, raffles_id):
+def sync_check_user_money(request, case_id):
     """Проверяем money_amount пользователя из токена."""
     try:
-        raffle = await sync_to_async(RafflesRedis.get)(str(raffles_id))
+        cases = list(
+            CaseRedisStandart.find(CaseRedisStandart.id == case_id).all()
+        )
+
+        if not cases:
+            return Response({"detail": "Case not found"}, status=404)
+        user_id = request.token_data.get("id")
+        user = User.objects.select_for_update().get(id=user_id)
+        print(user.money_amount, cases[0].price)
+        if user.money_amount < cases[0].price:
+            return JsonResponse({"detail": "Insufficient funds"}, status=402)
+        return {"user": user, "case": cases[0]}
+    except NotFoundError:
+        return JsonResponse({"detail": "Insufficient funds"}, status=503)
+
+
+def check_user_money_raffels(request, raffles_id):
+    """Проверяем money_amount пользователя из токена."""
+    try:
+        raffle = RafflesRedis.get(str(raffles_id))
         if not raffle:
             return Response({"detail": "Raffels not found"}, status=404)
         user_id = request.token_data.get("id")
-        user = await sync_to_async(User.objects.get)(id=user_id)
+        user = User.objects.select_for_update().get(id=user_id)
+        if raffle.max_users_amount <= len(raffle.players_ids):
+            return JsonResponse({"detail": "Not enough places "}, status=409)
         if user_id in raffle.players_ids:
             return JsonResponse({"detail": "User already in raffle"}, status=409)
         if user.money_amount < raffle.participate_price:
@@ -436,6 +499,29 @@ async def get_case_items(case_id):
     ]
 
 
+def sync_get_case_items(case_id):
+    """Возвращает список предметов кейса в виде массива словарей."""
+    items = list(
+        ItemRedisStandart.find(ItemRedisStandart.case_id == case_id).all()
+    )
+    if not items:
+        raise NotFoundError("Items not found for this case")
+
+    return [
+        {
+            "id": item.id,
+            "gunModel": item.item_model,
+            "gunStyle": item.item_style,
+            "gunPrice": item.price,
+            "imgPath": item.icon_url,
+            "type": item.rarity,
+            "price": item.price,
+            "state": sync_spin_state_wheel_fake()
+        }
+        for item in items
+    ]
+
+
 def spin_upgrade(user, server_item, price):
     print(555555555555)
     ad = GlobalCoefficientRedis.find().first()
@@ -480,6 +566,37 @@ def sync_remover_order(user, client_item):
 #     # возвращаем список и длину
 #     return arrayItems
 
+def sync_get_user_inventory_items(user, ids: list[str]):
+    """
+    Асинхронно возвращает список предметов из инвентаря пользователя по id.
+    Работает в один запрос к БД.
+    """
+    if not ids:
+        return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
+
+    try:
+        # Синхронная функция для materialization QuerySet
+        def fetch_items():
+            return list(
+                InventoryItem.objects.select_for_update().select_related('steam_item')
+                .filter(owner=user, id__in=ids)
+            )
+
+        # Асинхронный вызов
+        print(222222222)
+        items = fetch_items()
+        if not items or len(items) != len(ids):
+            return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
+        return items
+
+    except ObjectDoesNotExist:
+        # Если нет ни одного объекта
+        return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
+
+    except Exception:
+        # Логируем и пробрасываем исключение дальше
+        return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
+
 
 async def get_user_inventory_items(user, ids: list[str]):
     """
@@ -513,7 +630,7 @@ async def get_user_inventory_items(user, ids: list[str]):
         return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
 
 
-async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
+def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
     """
     Возвращает предмет максимально близкий к prize_value в диапазоне [min_value, prize_value*4].
     Если предметов нет, возвращает JsonResponse с 410.
@@ -521,16 +638,16 @@ async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
     # Функция поиска предмета в диапазоне
     print("7777777777777777",  min_value, prize_value)
 
-    async def find_item_in_range(min_val, max_val):
+    def find_item_in_range(min_val, max_val):
         def fetch_items():
             return list(
                 SteamItemCs.objects.filter(
                     price__gte=min_val, price__lte=max_val)
                 .order_by('price')
             )
-        return await sync_to_async(fetch_items)()
+        return fetch_items()
     print("4451231241231",  min_value, prize_value)
-    items = await find_item_in_range(min_value, prize_value)
+    items = find_item_in_range(min_value, prize_value)
     print("123123",  min_value, prize_value)
     if items:
         # Находим предмет с ценой максимально близкой к prize_value
@@ -539,7 +656,7 @@ async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
     print("ccccccc")
 
     # Если не найдено, расширяем поиск до min_value*4
-    items = await find_item_in_range(prize_value, min_value * 4)
+    items = find_item_in_range(prize_value, min_value * 4)
     if items:
         closest_item = min(items, key=lambda x: abs(x.price - prize_value))
         return closest_item
@@ -549,7 +666,7 @@ async def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
     return JsonResponse({"detail": "No items found"}, status=410)
 
 
-async def remove_inventory_objects(items: list[InventoryItem]):
+def remove_inventory_objects(items: list[InventoryItem]):
     """
     Удаляет предметы из инвентаря пользователя.
     :param items: список объектов InventoryItem
@@ -561,10 +678,10 @@ async def remove_inventory_objects(items: list[InventoryItem]):
             id__in=[item.id for item in items]).delete()
         return count
 
-    return await sync_to_async(_delete_items)()
+    return _delete_items()
 
 
-async def play_contracts_game(user, items: list):
+def play_contracts_game(user, items: list):
     """
     Игра "контракты": на вход список InventoryItem, на выход приз.
     """
@@ -577,7 +694,7 @@ async def play_contracts_game(user, items: list):
 
     # 2. Получаем глобальный коэффициент из Redis
     print("--------------------")
-    ad = await sync_to_async(lambda: GlobalCoefficientRedis.find().first())()
+    ad = GlobalCoefficientRedis.find().first()
     print("++++++++++++++++++++")
     pgrades_global = ad.contracts_global
 
@@ -607,19 +724,18 @@ async def play_contracts_game(user, items: list):
     prize_value = Decimal(min_value) + (Decimal(max_value) -
                                         Decimal(min_value)) * Decimal(cof)
     print("7777777777777777")
-    prize_item = await get_random_item_contracts(prize_value=prize_value, min_value=min_value)
+    prize_item = get_random_item_contracts(
+        prize_value=prize_value, min_value=min_value)
     return prize_item
 
 
-async def get_user_by_id(user_id: str):
+def get_user_by_id(user_id: str):
     """
     Асинхронно возвращает пользователя по его UUID.
     :param user_id: UUID пользователя (строка)
     :return: User или None
     """
-    return await sync_to_async(
-        lambda: User.objects.filter(id=user_id).first()
-    )()
+    return User.objects.select_for_update().filter(id=user_id).first()
 
 
 def play_upgrade_game(user, server_item, client_item=None, price=None):
@@ -652,7 +768,7 @@ def play_upgrade_game(user, server_item, client_item=None, price=None):
     return JsonResponse({"status": "client lose"}, status=202)
 
 
-async def check_user_money_battles(user, cases):
+def check_user_money_battles(user, cases):
     balance = user.money_amount
 
     total_price = 0
@@ -660,7 +776,7 @@ async def check_user_money_battles(user, cases):
 
     for item in cases:
         # получаем кейс из базы или Redis (асинхронно)
-        case_obj = await sync_to_async(lambda: Case.objects.get(id=item["case"].id))()
+        case_obj = Case.objects.get(id=item["case"].id)
         case_amount = item["case_amount"]
         price = case_obj.price * case_amount
 
@@ -678,11 +794,11 @@ async def check_user_money_battles(user, cases):
         return JsonResponse("You don't have enough founds!", status=402)
 
 
-async def create_battle_with_cases(creator, valid_cases, players_amount=2, ended_at=timezone_utils.now() + timedelta(hours=2)):
+def create_battle_with_cases(creator, valid_cases, players_amount=2, ended_at=None):
     # Создаём Battle
     created_at = timezone_utils.now()
-    ended_at = created_at + timedelta(hours=2)
-    battle = await sync_to_async(Battle.objects.create)(
+    ended_at = ended_at or (created_at + timedelta(hours=2))
+    battle = Battle.objects.create(
         creator=creator,
         created_at=created_at,
         ended_at=ended_at,
@@ -690,21 +806,17 @@ async def create_battle_with_cases(creator, valid_cases, players_amount=2, ended
         is_active=True
     )
 
-    await sync_to_async(battle.players.add)(creator)
-
-    async def add_case(item):
-        case = item["case"]
-        case_amount = item["case_amount"]
-        if case is None:
-            return
-        await sync_to_async(BattleCase.objects.create)(
-            battle=battle,
-            case=case,
-            case_amount=case_amount
-        )
-
-    # Параллельное добавление кейсов
-    await asyncio.gather(*(add_case(item) for item in valid_cases))
+    battle.players.add(creator)
+    # Синхронное добавление кейсов через обычный цикл
+    for item in valid_cases:
+        case = item.get("case")
+        case_amount = item.get("case_amount")
+        if case is not None:
+            BattleCase.objects.create(
+                battle=battle,
+                case=case,
+                case_amount=case_amount
+            )
 
     return battle.id
 
@@ -927,51 +1039,57 @@ async def get_case_content_view(request, case_id):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-@async_require_methods(["POST"])
-async def get_open_case_view(request, case_id):
+@require_http_methods(["POST"])
+def get_open_case_view(request, case_id):
     try:
-        money_check = await check_user_money(request, case_id)
-        if isinstance(money_check, JsonResponse):
-            return money_check  # 402
-        if isinstance(money_check, dict) and "user" in money_check and "case" in money_check:
-            isFundsWrittenof = await deduct_user_money(money_check["user"], money_check["case"])
-            if isFundsWrittenof is True:
-                prize_item = await spin_roulette_wheel(money_check["case"], money_check["user"])
-                item_state = await spin_state_wheel(money_check["user"])
-                await create_order(item_state, prize_item, money_check["user"])
-                prize_dict = {
-                    "id": prize_item.id,
-                    "gunModel": prize_item.item_model,
-                    "gunStyle": prize_item.item_style,
-                    "gunPrice": prize_item.price,
-                    "imgPath": prize_item.icon_url,
-                    "type": prize_item.rarity,
-                    "price": prize_item.price,
-                    "state": item_state
-                }
-                items_list = await get_case_items(money_check["case"].id)
-                return JsonResponse({"prize_item": prize_dict, "case_items": items_list}, status=200)
-            # Логика открытия кейса
+        with transaction.atomic():
+            money_check = sync_check_user_money(request, case_id)
+            if isinstance(money_check, JsonResponse):
+                return money_check  # 402
+            if isinstance(money_check, dict) and "user" in money_check and "case" in money_check:
+                isFundsWrittenof = deduct_user_money(
+                    money_check["user"], money_check["case"])
+                if isFundsWrittenof is True:
+                    prize_item = sync_spin_roulette_wheel(
+                        money_check["case"], money_check["user"])
+                    item_state = sync_spin_state_wheel(money_check["user"])
+                    sync_create_order(item_state, prize_item,
+                                      money_check["user"])
+                    prize_dict = {
+                        "id": prize_item.id,
+                        "gunModel": prize_item.item_model,
+                        "gunStyle": prize_item.item_style,
+                        "gunPrice": prize_item.price,
+                        "imgPath": prize_item.icon_url,
+                        "type": prize_item.rarity,
+                        "price": prize_item.price,
+                        "state": item_state
+                    }
+                    items_list = sync_get_case_items(money_check["case"].id)
+                    return JsonResponse({"prize_item": prize_dict, "case_items": items_list}, status=200)
+                # Логика открытия кейса
         return JsonResponse({"Error": "server error"}, status=501)
     except Exception as e:
         print(e)
         return JsonResponse({"error": str(e)}, status=500)
 
 
-@async_require_methods(["POST"])
-async def raffles_take_a_part_view(request):
+@require_http_methods(["POST"])
+def raffles_take_a_part_view(request):
     try:
         body = json.loads(request.body)
         raffle_id = body.get("id")  # или
-        money_check = await check_user_money_raffels(request, raffle_id)
-        if isinstance(money_check, JsonResponse):
-            return money_check  # 402
-        if isinstance(money_check, dict) and "user" in money_check and "raffels" in money_check:
-            isFundsWrittenof = await deduct_user_money_raffels(money_check["user"], money_check["raffels"])
-            if isFundsWrittenof is True:
-                return await add_to_raffels(money_check["raffels"].id, money_check["user"])
-            # Логика открытия кейса
-        return JsonResponse({"Error": "server error"}, status=501)
+        with transaction.atomic():
+            money_check = check_user_money_raffels(request, raffle_id)
+            if isinstance(money_check, JsonResponse):
+                return money_check  # 402
+            if isinstance(money_check, dict) and "user" in money_check and "raffels" in money_check:
+                isFundsWrittenof = deduct_user_money_raffels(
+                    money_check["user"], money_check["raffels"])
+                if isFundsWrittenof is True:
+                    return add_to_raffels(money_check["raffels"].id, money_check["user"])
+                # Логика открытия кейса
+            return JsonResponse({"Error": "server error"}, status=501)
     except Exception as e:
         print(e)
         return JsonResponse({"error": str(e)}, status=500)
@@ -1175,9 +1293,10 @@ async def get_inventory_server_items_view(request):
         }, status=500)
 
 
-@async_require_methods(["POST"])
-async def make_contract_view(request):
+@require_http_methods(["POST"])
+def make_contract_view(request):
     try:
+
         body = json.loads(request.body.decode("utf-8"))
         items = body.get("itemClientData", [])
 
@@ -1197,42 +1316,48 @@ async def make_contract_view(request):
         if not (2 < len(unique_items) < 11):
             return JsonResponse({"error": "Number of unique items must be >3 and <10"}, status=403)
         print(100000000000000000000)
-        user_item = await get_user_by_id(request.token_data.get("id"))
+        with transaction.atomic():
+            user_item = get_user_by_id(request.token_data.get("id"))
 
-        item_ids = [str(item["id"]) for item in unique_items if "id" in item]
-        print(111111111111111111111111111, user_item.id, item_ids[0])
+            item_ids = [str(item["id"])
+                        for item in unique_items if "id" in item]
+            print(111111111111111111111111111, user_item.id, item_ids[0])
 
-        inventoryItems = await get_user_inventory_items(ids=item_ids, user=user_item)
-        if isinstance(inventoryItems, JsonResponse):
-            return inventoryItems
-        print(2222222222222222222222222,
-              inventoryItems[0].steam_item.id)
-        won_item = await play_contracts_game(user=user_item, items=inventoryItems)
-        print(333333333333333333333333333333)
-        if isinstance(won_item, JsonResponse):
-            return won_item
-        await remove_inventory_objects(items=inventoryItems)
-        print(44444444444444444444444444444444444)
-        print(5555555555555555555555555555555555555)
-        state = await spin_state_wheel(user_item)
-        print(6666666666666666666666666666666666666666666)
-        order = await create_order(item_state=state, item=won_item, user=user_item)
-        print(77777777777777777777777777777777777777)
-        order_to_send = {
-            "id": str(order.id),
-            "gunModel": order.steam_item.item_model,
-            "gunStyle": order.steam_item.item_style,
-            "gunPrice": order.steam_item.price,
-            "imgPath": order.steam_item.icon_url,
-            "type": order.steam_item.rarity,
-            "price": order.steam_item.price,
-            "state": state
-        }
-        print(order_to_send)
-        return JsonResponse({"status": "client win", 'items': order_to_send}, status=200)
+            inventoryItems = sync_get_user_inventory_items(
+                ids=item_ids, user=user_item)
+            if isinstance(inventoryItems, JsonResponse):
+                return inventoryItems
+            print(2222222222222222222222222,
+                  inventoryItems[0].steam_item.id)
+            won_item = play_contracts_game(
+                user=user_item, items=inventoryItems)
+            print(333333333333333333333333333333)
+            if isinstance(won_item, JsonResponse):
+                return won_item
+            remove_inventory_objects(items=inventoryItems)
+            print(44444444444444444444444444444444444)
+            print(5555555555555555555555555555555555555)
+            state = sync_spin_state_wheel(user_item)
+            print(6666666666666666666666666666666666666666666)
+            order = sync_create_order(
+                item_state=state, item=won_item, user=user_item)
+            print(77777777777777777777777777777777777777)
+            order_to_send = {
+                "id": str(order.id),
+                "gunModel": order.steam_item.item_model,
+                "gunStyle": order.steam_item.item_style,
+                "gunPrice": order.steam_item.price,
+                "imgPath": order.steam_item.icon_url,
+                "type": order.steam_item.rarity,
+                "price": order.steam_item.price,
+                "state": state
+            }
+            print(order_to_send)
+            return JsonResponse({"status": "client win", 'items': order_to_send}, status=200)
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
+        print(e)
         return JsonResponse({"error": str(e)}, status=500)
 
 
@@ -1332,8 +1457,8 @@ async def get_battle_info_view(request, battle_id):
         return JsonResponse({"error": "Internal Server Error"}, status=500)
 
 
-@async_require_methods(["POST"])
-async def create_battles_view(request):
+@require_http_methods(["POST"])
+def create_battles_view(request):
     try:
         print("start")
         data_full = json.loads(request.body)
@@ -1363,7 +1488,8 @@ async def create_battles_view(request):
 
         for item in filtered:
             print("sonic")
-            case_obj = (await sync_to_async(lambda: list(CaseRedisStandart.find(CaseRedisStandart.id == str(item["id"]))))())
+            case_obj = CaseRedisStandart.find(
+                CaseRedisStandart.id == str(item["id"]))
             case_obj = case_obj[0] if case_obj else None
             if case_obj is None:
                 return JsonResponse({"error": f"Case with id {item['id']} not found in Redis"}, status=400)
@@ -1374,15 +1500,17 @@ async def create_battles_view(request):
             })
         user_id = request.token_data.get("id")
         print("user_id: ", user_id)
-        user = await sync_to_async(User.objects.get)(id=user_id)
-        print("user: ", user)
-        cases = await check_user_money_battles(user, valid_cases)
-        print("cases: ", cases)
-        if isinstance(cases, JsonResponse):
-            return cases
-        battle_id = await create_battle_with_cases(creator=user, valid_cases=cases, players_amount=player_total_amount)
-        print("battle_id: ", battle_id)
-        return JsonResponse({"battle_id": battle_id})
+        with transaction.atomic():
+            user = User.objects.select_for_update().get(id=user_id)
+            print("user: ", user)
+            cases = check_user_money_battles(user, valid_cases)
+            print("cases: ", cases)
+            if isinstance(cases, JsonResponse):
+                return cases
+            battle_id = create_battle_with_cases(
+                creator=user, valid_cases=cases, players_amount=player_total_amount)
+            print("battle_id: ", battle_id)
+            return JsonResponse({"battle_id": battle_id})
 
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
