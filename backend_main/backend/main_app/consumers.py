@@ -1,10 +1,13 @@
+from django.db.models import F, Sum
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from urllib.parse import parse_qs
 from asgiref.sync import sync_to_async
-from .models import User, Battle
-from .redis_models import ActiveBattleRedis
-
+from .models import User, Battle, BattleCase
+from .redis_models import ActiveBattleRedis, PlayerInfo
+from django.db import transaction, IntegrityError, DatabaseError
+from django.db.models import F, Sum
+import redis.asyncio as redis
 
 async def get_battle_from_game_id(game_id):
     """
@@ -26,7 +29,32 @@ async def get_battle_from_game_id(game_id):
     return None
 
 
-async def get_user_from_token(token_data):
+def get_battle_from_game_id_db(game_id):
+    """
+    Получает активную битву по game_id из Redis.
+    Возвращает объект битвы или None, если не найдено или не активно.
+    """
+    try:
+        def fetch_battle(game_id):
+            return Battle.objects.select_for_update().filter(
+                id=game_id,
+                is_active=True
+            ).first()
+
+        battle = fetch_battle(game_id)
+        if (
+            battle
+            and battle.check_activity()
+            and battle.players.count() < battle.max_players  # ✅ проверяем лимит
+        ):
+            return battle
+        else:
+            return None
+    except Exception:
+        return None
+
+
+def get_user_db(token_data):
     """
     Получает пользователя по данным токена.
     token_data должен содержать поле 'id' с идентификатором пользователя.
@@ -37,15 +65,77 @@ async def get_user_from_token(token_data):
 
     # Используем sync_to_async для безопасного вызова ORM в async контексте
     try:
-        user = await sync_to_async(lambda: User.objects.filter(id=user_id).first())()
+        user = User.objects.select_for_update().filter(id=user_id).first()
         return user
     except User.DoesNotExist:
         return None
 
 
+def pay_and_add_to_battle(token_data, game_id):
+    try:
+        with transaction.atomic():
+            battle = get_battle_from_game_id_db(game_id)
+            user = get_user_db(token_data)
+
+            if battle.players.filter(id=user.id).exists():
+                return None
+
+            if user is None or battle is None:
+                return None
+
+            # 1. Проверяем, есть ли свободные слоты
+            if battle.players.count() >= battle.players_amount:
+                return None
+
+            # 2. Считаем суммарную цену кейсов в битве
+            total_price = (
+                BattleCase.objects
+                .filter(battle=battle)
+                .aggregate(
+                    total=Sum(F("case__price") * F("case_amount"))
+                )["total"] or 0
+            )
+
+            # 3. Проверяем баланс
+            if user.money_amount < total_price:
+                return None
+
+            # 4. Списываем деньги
+            user.money_amount -= total_price
+            user.save()
+
+            # 5. Добавляем игрока в битву
+            battle.players.add(user)
+            battle.save()
+            players = [
+                PlayerInfo(
+                    id=str(p.id),
+                    username=p.username,
+                    imgpath=p.avatar_url,
+                    money_amount=float(p.money_amount)
+                )
+                for p in battle.players.all()
+            ]
+
+            return players
+
+    except IntegrityError:
+        # ошибка базы, например гонка за слот в битве
+        return None
+    except DatabaseError:
+        # общая ошибка работы с БД
+        return None
+    except Exception as e:
+        # логируем, чтобы не терять причину
+        print(f"Unexpected error in pay_and_add_to_battle: {e}")
+        return None
+
+
+# waiting | in_process | canceled | finished
 class BattleConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # Получаем game_id из URL
+
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         query_string = self.scope['query_string'].decode()  # "guest=true"
         query_params = parse_qs(query_string)
@@ -58,14 +148,15 @@ class BattleConsumer(AsyncWebsocketConsumer):
             await self.close(code=4003)  # код можно выбрать любой
             return
 
-        if not is_guest:
-            self.group_name_players = f"battle_{self.game_id}_players"
-            await self.channel_layer.group_add(
-                self.group_name_players,
-                self.channel_name
-            )
+        self.players_amount_redis = f"battle_{self.game_id}_players"
+        self.group_state_redis = f"battle_{self.game_id}_state"
+        exists_state = await self.channel_layer.redis.exists(self.group_state_redis)
+        exists_counter = await self.channel_layer.iredself.channel_layers.exists(self.players_amount_redis)
+        if not exists_state:
+            await self.channel_layer.redis.set(self.group_state_redis, "waiting")
+        if not exists_counter:
+            await self.channel_layer.redis.set(self.players_amount_redis, 0)
 
-        # Название группы для этой конкретной битвы
         self.group_name = f"battle_{self.game_id}"
 
         # Добавляемся в группу
@@ -74,7 +165,17 @@ class BattleConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        # Принимаем соединение
+        if not is_guest:
+            is_payed = await sync_to_async(pay_and_add_to_battle)(
+                token_data=self.scope["token_data"],
+                game_id=self.game_id
+            )
+            if is_payed:
+                await self.channel_layer.redis.incr(self.players_amount_redis)
+                count = int(await self.channel_layer.redis.get(self.players_amount_redis) or 0)
+                if count == self.battle.players_amount:
+                    await self.channel_layer.redis.set(self.group_state_redis, "in_process")
+                    # start_battle_game()
         await self.accept()
 
     async def receive(self, text_data=None, bytes_data=None):

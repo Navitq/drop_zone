@@ -806,7 +806,6 @@ def create_battle_with_cases(creator, valid_cases, players_amount=2, ended_at=No
         is_active=True
     )
 
-    battle.players.add(creator)
     # Синхронное добавление кейсов через обычный цикл
     for item in valid_cases:
         case = item.get("case")

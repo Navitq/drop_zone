@@ -29,7 +29,7 @@ function BattleGameField(): React.ReactNode {
 
     const { sendMessage, lastJsonMessage, readyState } = useWebSocket(
         // URL создаём только если socketOpened === true
-        socketOpened && gameId ? `${BACKEND_PATHS.battleGameWSS(gameId, guest)}` : null,
+        socketOpened && gameId ? `${BACKEND_PATHS.battleGameWSS(gameId, !guest)}` : null,
         {
             shouldReconnect: () => true,  // авто-переподключение
             onOpen: () => console.log("WS connected"),
