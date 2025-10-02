@@ -148,9 +148,59 @@ def pay_and_add_to_battle(token_data, game_id):
         return None
 
 
+def left_match(token_data, game_id):
+    try:
+        with transaction.atomic():
+            battle = get_battle_from_game_id_db(game_id)
+            user = get_user_db(token_data)
+            print(battle, 7777777777)
+            if user is None or battle is None:
+                return None
+
+            if not battle.players.filter(id=user.id).exists():
+                return None
+
+            total_price = (
+                BattleCase.objects
+                .filter(battle=battle)
+                .aggregate(
+                    total=Sum(F("case__price") * F("case_amount"))
+                )["total"] or 0
+            )
+
+            # 3. Проверяем баланс
+
+            # 4. Списываем деньги
+            user.money_amount += total_price
+            user.save()
+
+            # 5. Добавляем игрока в битву
+            battle.players.remove(user)
+            battle.save()
+            players = [
+                PlayerInfo(
+                    id=str(p.id),
+                    username=p.username,
+                    imgpath=p.avatar_url,
+                    money_amount=float(p.money_amount)
+                )
+                for p in battle.players.all()
+            ]
+
+            return players
+    except IntegrityError:
+        # ошибка базы, например гонка за слот в битве
+        return None
+    except DatabaseError:
+        # общая ошибка работы с БД
+        return None
+    except Exception as e:
+        # логируем, чтобы не терять причину
+        print(f"Unexpected error in pay_and_add_to_battle: {e}")
+        return None
+
+
 # waiting | in_process | canceled | finished
-
-
 class BattleConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # Получаем game_id из URL
@@ -166,7 +216,7 @@ class BattleConsumer(AsyncWebsocketConsumer):
         if self.battle is None:
             await self.close(code=4003)  # код можно выбрать любой
             return
-
+        self.token_data = self.scope["token_data"]
         self.players_amount_redis = f"battle_{self.game_id}_players"
         self.group_state_redis = f"battle_{self.game_id}_state"
         exists_state = await redis_opened.exists(self.group_state_redis)
@@ -240,7 +290,13 @@ class BattleConsumer(AsyncWebsocketConsumer):
                 )
 
     async def disconnect(self, close_code):
-        # Удаляемся из группы
+        # bytes или None
+        exists_state = (await redis_opened.get(self.group_state_redis))
+        exists_state = exists_state.decode(
+            "utf-8") if isinstance(exists_state, bytes) else exists_state
+
+        if exists_state == "canceled" or exists_state == "waiting":
+            await sync_to_async(left_match)(game_id=self.game_id, token_data=self.token_data)
         await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name
