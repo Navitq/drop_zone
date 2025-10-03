@@ -148,6 +148,28 @@ def pay_and_add_to_battle(token_data, game_id):
         return None
 
 
+def start_battle_game(token_data, game_id):
+    try:
+        with transaction.atomic():
+            battle = get_battle_from_game_id_db(game_id)
+
+            if battle is None:
+                return None
+            
+            return
+
+    except IntegrityError:
+        # ошибка базы, например гонка за слот в битве
+        return None
+    except DatabaseError:
+        # общая ошибка работы с БД
+        return None
+    except Exception as e:
+        # логируем, чтобы не терять причину
+        print(f"Unexpected error in pay_and_add_to_battle: {e}")
+        return None
+
+
 def left_match(token_data, game_id):
     try:
         with transaction.atomic():
@@ -176,6 +198,11 @@ def left_match(token_data, game_id):
 
             # 5. Добавляем игрока в битву
             battle.players.remove(user)
+            count = battle.players.count()
+            if count == 0:
+                if battle.game_state == "waiting":
+                    battle.is_active = False
+                    battle.game_state = "canceled"
             battle.save()
             players = [
                 PlayerInfo(
@@ -186,6 +213,7 @@ def left_match(token_data, game_id):
                 )
                 for p in battle.players.all()
             ]
+            print(players)
 
             return players
     except IntegrityError:
@@ -243,6 +271,8 @@ class BattleConsumer(AsyncWebsocketConsumer):
             if is_payed:
                 await redis_opened.incr(self.players_amount_redis)
                 count = int(await redis_opened.get(self.players_amount_redis) or 0)
+                self.is_player_payed = True
+                print(count)
                 if count <= self.battle.players_amount:
                     await self.channel_layer.group_send(
                         self.group_name,  # имя группы
@@ -253,50 +283,42 @@ class BattleConsumer(AsyncWebsocketConsumer):
                     )
                 if count == self.battle.players_amount:
                     await redis_opened.set(self.group_state_redis, "in_process")
-                    # start_battle_game()
+                    # sync_to_async(start_battle_game)(token_data=self.scope["token_data"],  game_id=self.game_id)
 
         await self.accept()
-
-    async def receive(self, text_data=None, bytes_data=None):
-        # Получаем данные от клиента
-        if text_data:
-            data = json.loads(text_data)
-            event_type = data.get("event", "message")
-            payload = data.get("payload", {})
-
-            # Пример обработки события "chat"
-            if event_type == "chat":
-                message = payload.get("message", "")
-                # Отправляем всем участникам группы
-                await self.channel_layer.group_send(
-                    self.group_name,
-                    {
-                        "type": "battle.chat",
-                        "user": payload.get("user", "Anonymous"),
-                        "message": message
-                    }
-                )
-
-            # Можно добавить обработку других событий
-            elif event_type == "move":
-                move = payload.get("move")
-                await self.channel_layer.group_send(
-                    self.group_name,
-                    {
-                        "type": "battle.move",
-                        "move": move,
-                        "user": payload.get("user", "Anonymous")
-                    }
-                )
 
     async def disconnect(self, close_code):
         # bytes или None
         exists_state = (await redis_opened.get(self.group_state_redis))
         exists_state = exists_state.decode(
             "utf-8") if isinstance(exists_state, bytes) else exists_state
+        print(exists_state, 6666666666666)
+        if exists_state == "canceled" or exists_state == "waiting" and self.is_player_payed:
+            self.is_player_payed = False
+            await redis_opened.decr(self.players_amount_redis)
+            players = await sync_to_async(left_match)(game_id=self.game_id, token_data=self.token_data)
+            await self.channel_layer.group_send(
+                self.group_name,  # имя группы
+                {
+                    "type": "players_update",  # имя обработчика
+                    "players": [p.model_dump() for p in players],
+                }
+            )
+            if len(players) == 0:
+                await self.channel_layer.group_send(
+                    self.group_name,  # имя группы
+                    {
+                        "type": "redirect_in_the_end",  # имя обработчика
+                    }
+                )
+                await self.channel_layer.group_send(
+                    self.group_name,  # имя группы
+                    {
+                        "type": "force_disconnect",  # имя обработчика
+                    }
+                )
+                return
 
-        if exists_state == "canceled" or exists_state == "waiting":
-            await sync_to_async(left_match)(game_id=self.game_id, token_data=self.token_data)
         await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name
@@ -305,29 +327,24 @@ class BattleConsumer(AsyncWebsocketConsumer):
             f"Disconnected from battle {self.game_id} with code {close_code}")
 
     # Обработчик событий группы "battle.chat"
-    async def battle_chat(self, event):
-        await self.send(text_data=json.dumps({
-            "event": "chat",
-            "user": event["user"],
-            "message": event["message"]
-        }))
 
     async def players_update(self, event):
         # здесь уже напрямую шлём фронту
         await self.send(text_data=json.dumps({
-            "event": "players_update",   # вот это уйдёт на фронт
+            "event": "redirect_in_the_end",   # вот это уйдёт на фронт
             "players": event["players"]
         }))
 
     # Обработчик событий группы "battle.move"
-    async def battle_move(self, event):
+    async def force_disconnect(self, event):
+        await self.close()
+    # Обработка ошибок (пример)
+
+    async def redirect_in_the_end(self, event):
         await self.send(text_data=json.dumps({
-            "event": "move",
-            "user": event["user"],
-            "move": event["move"]
+            "event": "players_update",   # вот это уйдёт на фронт
         }))
 
-    # Обработка ошибок (пример)
     async def websocket_error(self, event):
         await self.send(text_data=json.dumps({
             "event": "error",

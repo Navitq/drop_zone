@@ -449,8 +449,17 @@ class GlobalCoefficient(models.Model):
     def __str__(self):
         return f"Коэф: raffles={self.raffles_global}, cases={self.cases_global}, upgrades={self.upgrades_global}"
 
+# waiting | in_process | canceled | finished
+
 
 class Battle(models.Model):
+    BATTLE_STATES = [
+        ("waiting", "Ожидание"),       # Usual
+        ("in_process", "В процессе"),  # Rare
+        ("canceled", "Отменен"),      # Elite
+        ("finished", "Завершен успешно"),     # Epic
+        ("failed", "Не состоялся"),   # пустое место можно так назвать
+    ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     creator = models.ForeignKey(
         User, related_name='created_battles', on_delete=models.SET_NULL, null=True, blank=False)
@@ -462,6 +471,8 @@ class Battle(models.Model):
     winner = models.ForeignKey(
         User, related_name='won_battles', null=True, blank=True, on_delete=models.SET_NULL)
     is_active = models.BooleanField(default=True)
+    game_state = models.CharField(
+        max_length=20, choices=BATTLE_STATES, default="waiting")
 
     def check_activity(self) -> bool:
         """Проверяет, активен ли баттл."""
