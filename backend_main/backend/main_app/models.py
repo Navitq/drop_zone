@@ -498,10 +498,20 @@ class BattleCase(models.Model):
     case = models.ForeignKey(
         Case, related_name="battle_cases", on_delete=models.SET_NULL, null=True, blank=False)
     case_amount = models.PositiveSmallIntegerField()
+    position = models.PositiveIntegerField(editable=False)
 
     class Meta:
-        # раньше было 'case_id', нужно имя поля ForeignKey
         unique_together = ('battle', 'case')
+        ordering = ['position']  # всегда сортировать по position
+
+    def save(self, *args, **kwargs):
+        if not self.position:  # если ещё не задан
+            last_position = (
+                BattleCase.objects.filter(battle=self.battle)
+                .aggregate(models.Max("position"))["position__max"]
+            )
+            self.position = (last_position or 0) + 1  # следующий номер
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.case_amount} x Case {self.case.get_name('en')} in Battle {self.battle.id}"

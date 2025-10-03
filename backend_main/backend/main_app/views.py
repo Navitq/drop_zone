@@ -791,7 +791,7 @@ def check_user_money_battles(user, cases):
     if balance >= total_price:
         return valid_cases
     else:
-        return JsonResponse("You don't have enough founds!", status=402)
+        return JsonResponse({"error": "You don't have enough funds!"}, status=402)
 
 
 def create_battle_with_cases(creator, valid_cases, players_amount=2, ended_at=None):
@@ -1134,7 +1134,7 @@ async def get_main_page_background_view(request):
             # Если нет объектов, отдаём пустой массив
             return JsonResponse([], safe=False, status=404)
 
-        return JsonResponse(ad.dict(), safe=False)
+        return JsonResponse(ad.model_dump(), safe=False)
 
     except Exception as e:
         # Логируем ошибку и возвращаем 500

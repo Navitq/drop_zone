@@ -155,6 +155,7 @@ def start_battle_game(token_data, game_id):
 
             if battle is None:
                 return None
+
             
             return
 
@@ -232,7 +233,7 @@ def left_match(token_data, game_id):
 class BattleConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # Получаем game_id из URL
-
+        self.is_player_payed = False
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         query_string = self.scope['query_string'].decode()  # "guest=true"
         query_params = parse_qs(query_string)
@@ -272,15 +273,14 @@ class BattleConsumer(AsyncWebsocketConsumer):
                 await redis_opened.incr(self.players_amount_redis)
                 count = int(await redis_opened.get(self.players_amount_redis) or 0)
                 self.is_player_payed = True
-                print(count)
-                if count <= self.battle.players_amount:
-                    await self.channel_layer.group_send(
-                        self.group_name,  # имя группы
-                        {
-                            "type": "players_update",  # имя обработчика
-                            "players": [p.model_dump() for p in is_payed],
-                        }
-                    )
+                print(count, 7878787878787878)
+                await self.channel_layer.group_send(
+                    self.group_name,  # имя группы
+                    {
+                        "type": "players_update",  # имя обработчика
+                        "players": [p.model_dump() for p in is_payed],
+                    }
+                )
                 if count == self.battle.players_amount:
                     await redis_opened.set(self.group_state_redis, "in_process")
                     # sync_to_async(start_battle_game)(token_data=self.scope["token_data"],  game_id=self.game_id)
@@ -326,23 +326,19 @@ class BattleConsumer(AsyncWebsocketConsumer):
         print(
             f"Disconnected from battle {self.game_id} with code {close_code}")
 
-    # Обработчик событий группы "battle.chat"
-
     async def players_update(self, event):
-        # здесь уже напрямую шлём фронту
+        print(event["players"])
         await self.send(text_data=json.dumps({
-            "event": "redirect_in_the_end",   # вот это уйдёт на фронт
+            "event": "players_update",   # вот это уйдёт на фронт
             "players": event["players"]
         }))
 
-    # Обработчик событий группы "battle.move"
     async def force_disconnect(self, event):
         await self.close()
-    # Обработка ошибок (пример)
 
     async def redirect_in_the_end(self, event):
         await self.send(text_data=json.dumps({
-            "event": "players_update",   # вот это уйдёт на фронт
+            "event": "redirect_in_the_end",   # вот это уйдёт на фронт
         }))
 
     async def websocket_error(self, event):
