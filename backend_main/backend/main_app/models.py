@@ -513,6 +513,8 @@ class BattleCase(models.Model):
             self.position = (last_position or 0) + 1  # следующий номер
         super().save(*args, **kwargs)
 
+
+
     def __str__(self):
         return f"{self.case_amount} x Case {self.case.get_name('en')} in Battle {self.battle.id}"
 

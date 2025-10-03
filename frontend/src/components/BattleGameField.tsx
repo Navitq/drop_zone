@@ -36,7 +36,8 @@ function BattleGameField(): React.ReactNode {
 
     type BattleEventMap = {
 
-        players_update: { players: PlayersInfo[] }; // можешь типизировать точнее, если знаешь структуру
+        players_update: { players: PlayersInfo[] };
+        game_finished: {data: any}; // можешь типизировать точнее, если знаешь структуру
     };
 
     function setPlayersLocal(players: PlayersInfo[]) {
