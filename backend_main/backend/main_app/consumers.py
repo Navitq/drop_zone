@@ -235,8 +235,10 @@ def find_winner(battle, data):
     winner_player_id = None
     for pi in player_items:
         total_price = sum(
-            getattr(item["item"], "price", Decimal("0")) for item in pi["items"]
+            item["item"].get("price", Decimal("0"))  # вместо getattr
+            for item in pi["items"]
         )
+        print('total_price', total_price)
         if total_price > max_value:
             max_value = total_price
             winner_player_id = pi["player"].id
@@ -260,21 +262,25 @@ def generate_lose_items(battle, players_count):
     Количество = players_count - 1
     Цена каждого предмета <= 10% от цены самого дешевого кейса
     """
+    print("players_count", players_count)
     if players_count <= 1:
         return []
 
     # Находим самый дешевый кейс в баттле
     battle_cases = BattleCase.objects.filter(
         battle=battle).select_related("case")
+    print("battle_cases", battle_cases)
     if not battle_cases.exists():
         return []
 
     min_price = min([bc.case.price for bc in battle_cases])
     max_lose_price = (Decimal(min_price) * Decimal("0.1")
                       ).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
-
+    print("battle_cases", battle_cases)
     # Получаем все SteamItemCs с ценой <= max_lose_price
-    cheap_items = list(SteamItemCs.objects.filter(price__lte=max_lose_price))
+    cheap_items_qs = SteamItemCs.objects.filter(price__lte=max_lose_price)
+    cheap_items = list(cheap_items_qs.values())
+    print("cheap_items", cheap_items)
     if not cheap_items:
         return []
 
@@ -308,7 +314,7 @@ def sync_create_order(item_state: str, item, user):
     Создаёт InventoryItem для пользователя и сохраняет в БД.
     """
     try:
-        steam_item = SteamItemCs.objects.get(id=item.id)
+        steam_item = SteamItemCs.objects.get(id=item['id'])
         return InventoryItem.objects.create(
             steam_item=steam_item,
             owner=user,
@@ -376,7 +382,8 @@ def start_battle_game(game_id):
                     for _ in range(players_count):
                         dropped_item = sync_spin_roulette_wheel(
                             battle_case.case)
-                        drops.append(dropped_item)
+                        dropped_item_dict = dropped_item.model_dump()
+                        drops.append(dropped_item_dict)
 
                     results.append({
                         "case_id": str(battle_case.case.id),
@@ -388,10 +395,19 @@ def start_battle_game(game_id):
             print('generate_lose_items', players_count)
             player_items, winner_player_id = find_winner(
                 battle, data={"won_data": results, "lose_data": lose_data})
-            print('lose_data', lose_data)
+            print('winner_player_id', winner_player_id, 6666777766666)
             process_results_to_inventory_for_player(
                 results=results, player_id=winner_player_id)
             print('player_items', player_items)
+            add_lose_items_to_inventory(player_items)
+            for item in player_items:
+                user = item['player']  # объект User
+                item['player'] = {
+                    "id": str(user.id),
+                    "username": user.username,
+                    "avatar_url": user.avatar_url
+                }
+
             battle.game_state = "finished"
             battle.is_active = False
             battle.save()
@@ -517,7 +533,6 @@ class BattleConsumer(AsyncWebsocketConsumer):
                     }
                 )
                 if count == self.battle.players_amount:
-                    print("!!!!!!!!!!!!!!!!!!!!!!!!!")
                     await redis_opened.set(self.group_state_redis, "in_process")
                     data = await sync_to_async(start_battle_game)(game_id=self.game_id)
                     await self.channel_layer.group_send(
@@ -537,6 +552,8 @@ class BattleConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # bytes или None
+        if not hasattr(self, "group_state_redis"):
+            return  # защита от ошибки при неполном connect
         exists_state = (await redis_opened.get(self.group_state_redis))
         exists_state = exists_state.decode(
             "utf-8") if isinstance(exists_state, bytes) else exists_state
@@ -587,7 +604,7 @@ class BattleConsumer(AsyncWebsocketConsumer):
         }))
 
     async def force_disconnect(self, event):
-        await self.close()
+        await self.close(code=1000)
 
     async def redirect_in_the_end(self, event):
         await self.send(text_data=json.dumps({

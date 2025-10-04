@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 from typing import Optional
 import json
+from decimal import Decimal
 load_dotenv()
 
 REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
@@ -58,7 +59,7 @@ class ItemRedisStandart(JsonModel):
     id: str = Field(index=True)
     item_model: str
     item_style: str
-    price: int
+    price: Decimal
     icon_url: str
     rarity: str
     case_id: str = Field(index=True)

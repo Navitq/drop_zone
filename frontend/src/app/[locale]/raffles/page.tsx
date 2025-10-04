@@ -32,7 +32,6 @@ export default function RafflesPage(): React.ReactNode {
     async function getRaffels() {
         try {
             const response = await api.get(BACKEND_PATHS.getRaffles);
-            console.log(response.data)
             setRafflesItems(response.data)
             // setRafflesItems(response.data)
         } catch (err) {

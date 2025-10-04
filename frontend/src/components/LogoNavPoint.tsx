@@ -25,7 +25,6 @@ function LogoNavPoint(props: PointRules): React.ReactNode {
     const pathname = usePathname()
 
     const isActive = useMemo(() => pathname === props.linkPath, [pathname, props.linkPath])
-    console.log(pathname, props.linkPath)
     return (
         <div className={style.navPointBlockCnt}>
             <Link href={props.linkPath} className={style.navPointBlock}>

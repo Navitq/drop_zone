@@ -16,7 +16,6 @@ function AuthHeader(): React.ReactNode {
     const { isVisible } = useAppSelector(state => state.modal.userModal)
     const avatar = useAppSelector(state => state.user.userData.avatar)
 
-    console.log(avatar)
 
     function handleOutsideClick() {
         document.removeEventListener('click', handleOutsideClick);

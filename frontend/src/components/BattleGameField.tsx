@@ -9,7 +9,7 @@ import { setBattleData } from '@/redux/activeBattleReducer'
 import { AxiosError } from "axios";
 import { useParams, useSearchParams } from 'next/navigation'
 import useWebSocket from 'react-use-websocket';
-import { setPlayers } from '@/redux/activeBattleReducer'
+import { setPlayers, setStartGameData } from '@/redux/activeBattleReducer'
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
 
@@ -37,16 +37,49 @@ function BattleGameField(): React.ReactNode {
     type BattleEventMap = {
 
         players_update: { players: PlayersInfo[] };
-        game_finished: {data: any}; // можешь типизировать точнее, если знаешь структуру
+        game_finished: { data: any }; // можешь типизировать точнее, если знаешь структуру
     };
 
     function setPlayersLocal(players: PlayersInfo[]) {
         dispatch(setPlayers(players))
     }
 
+    function startGameData(data: any) {
+        data.game_data = JSON.parse(data.game_data)
+        console.log(data)
+        // data.game_data.won_data.forEach(obj => {
+        //     console.log(obj, 11111111111111)
+
+        //     try {
+        //         // первый уровень — превращаем строку в массив
+
+        //         // второй уровень — распарсим свойства внутри элементов, например data
+        //         obj.items.forEach(item => {
+        //             console.log(item, 44444444444)
+        //             if (item === 'string') {
+        //                 try {
+        //                     item = JSON.parse(item);
+        //                 } catch (e) {
+        //                     item = null;
+        //                 }
+        //             }
+
+        //         });
+
+        //     } catch (e) {
+        //         console.error('Failed to parse items for object', obj, e);
+        //         obj.items = [];
+        //     }
+
+        // });
+        console.log(data)
+        dispatch(setStartGameData(data))
+    }
+
 
     const eventHandlers: Record<keyof BattleEventMap, (payload: any) => void> = {
         players_update: (payload) => setPlayersLocal(payload.players),
+        game_finished: (payload) => startGameData(payload),
     };
 
 
@@ -63,7 +96,6 @@ function BattleGameField(): React.ReactNode {
                 const handler = eventHandlers[data.event];
                 if (handler) {
                     handler(data);
-                    console.log(data)
                 } else {
                     console.warn("No handler for event:", data.event, data.payload);
                 }
@@ -123,7 +155,6 @@ function BattleGameField(): React.ReactNode {
     return (
         <div className={`${style.bgfCnt} ${players_amount === 3 ? style.threePlayerCnt : players_amount === 4 ? style.fourPlayerCnt : ""}`}>
             {players.map((value, index) => {
-                console.log(value)
                 return (
                     <BattlePersonalBox
                         key={index}

@@ -51,10 +51,13 @@ interface ActiveBattle {
     players: PlayersInfo[],
     players_ids: string[],
     winner_id: string,
+    won_items: []
     winner: PlayersInfo[]
     isGameFinished: boolean,
     totalCaseAmount: number,
-    totalPrice: number
+    totalPrice: number,
+    // itemsGameData: {
+    // }
 }
 
 const initialState: ActiveBattle = {
@@ -104,6 +107,9 @@ export const activerBattleSlice = createSlice({
         cleanBattleData: (state) => {
             Object.assign(state, { ...initialState, cases: [], players: [], winner: [], players_ids: [] });
         },
+        setStartGameData: (state, action: PayloadAction<any>) => {
+            return
+        },
         setPlayers: (state, action: PayloadAction<PlayersInfo[]>) => {
             state.players = [
                 ...action.payload, // реальные игроки
@@ -121,6 +127,6 @@ export const activerBattleSlice = createSlice({
 
 
 
-export const { setBattleData, setPlayers } = activerBattleSlice.actions;
+export const { setBattleData, setPlayers, setStartGameData } = activerBattleSlice.actions;
 
 export default activerBattleSlice.reducer;

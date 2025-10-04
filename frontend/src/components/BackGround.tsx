@@ -28,7 +28,6 @@ export default function BackGround(): React.ReactNode {
     async function getAndSetBackground() {
         try {
             const response = await api.get(BACKEND_PATHS.homePageBackground);
-            console.log(response.data)
             setBackground(response.data)
         } catch (err) {
             console.log(err)

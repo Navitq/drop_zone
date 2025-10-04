@@ -27,7 +27,6 @@ function StandartCase(props: caseInt): React.ReactNode {
     async function openRulletCase() {
         try {
             const response = await api.post(BACKEND_PATHS.playCaseGame(props.caseId));
-            console.log(response.data)
             dispatch(showRulletCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.case_items, prize_item: response.data.prize_item }))
         } catch (err) {
             const error = err as AxiosError;
@@ -45,7 +44,6 @@ function StandartCase(props: caseInt): React.ReactNode {
     async function openCaseData() {
         try {
             const response = await api.get(BACKEND_PATHS.getCaseItems(props.caseId));
-            console.log(response.data)
             dispatch(showStCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.items }))
         } catch (err) {
             console.log(err)

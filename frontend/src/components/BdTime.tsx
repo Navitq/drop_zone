@@ -34,7 +34,6 @@ function BdTime(props: { seconds: number }) {
         return Math.floor((remainingSeconds % 3600) / 60)
     }, [remainingSeconds])
 
-    console.log(minutes, 4444444444)
 
     const t = useTranslations("homePage")
     return (
