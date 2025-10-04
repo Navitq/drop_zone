@@ -6,7 +6,9 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import CtSlotData from '@/components/CtSlotData'
+import { data } from 'motion/react-client'
 
+import isEqual from 'lodash.isequal';
 
 interface GunData {
     id: string,
@@ -18,10 +20,24 @@ interface GunData {
     type: "usuall" | "rare" | "elite" | "epic" | "classified",
 }
 
-function CtSlot(props: { data?: GunData, index: number, click?: () => void, }): React.ReactNode {
+interface ussualItemIntFront {
+    case_id?: string,
+    imgPath: string,
+    id: string,
+    gunModel: string,
+    gunStyle: string,
+    gunPrice: number
+    pk?: string,
+    price: string,
+    rarity: string,
+    type: 'usuall' | 'rare' | 'elite' | 'epic' | 'classified',
+    state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
+}
+
+function CtSlot(props: { data?: GunData | ussualItemIntFront, index: number, click?: () => void, }): React.ReactNode {
 
     const t = useTranslations('contracts');
-
+    console.log(data)
     return (
         <div className={`${style.ctSlotCnt} ${'contractsSlotGlobal'}`} onClick={() => { props.click?.() }}>
             {
@@ -38,4 +54,4 @@ function CtSlot(props: { data?: GunData, index: number, click?: () => void, }): 
     )
 }
 
-export default React.memo(CtSlot)
+export default React.memo(CtSlot, (prevProps, nextProps) => isEqual(prevProps, nextProps));

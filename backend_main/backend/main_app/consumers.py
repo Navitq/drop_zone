@@ -339,6 +339,7 @@ def process_results_to_inventory_for_player(results, player_id):
         for drop in drops:
             item_state = sync_spin_state_wheel()  # можно рандомизировать
             sync_create_order(item_state, drop, user)
+            drop['state'] = item_state
 
 
 def add_lose_items_to_inventory(player_items):
@@ -352,6 +353,7 @@ def add_lose_items_to_inventory(player_items):
             # item_state можно задать по умолчанию
             item_state = sync_spin_state_wheel()
             sync_create_order(item_state, lose_item, user)
+            lose_item['state'] = item_state
 
 
 def start_battle_game(game_id):

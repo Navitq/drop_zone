@@ -7,23 +7,99 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import ScmCaseItem from '@/components/ScmCaseItem'
 
 import 'swiper/css';
+import { useAppSelector } from '@/lib/hooks';
 
 
-function BattleRouletteCnt(): React.ReactNode {
+
+
+
+interface ussualItemInt {
+  case_id?: string
+  icon_url: string
+  id: string
+  item_model: string
+  item_style: string
+  pk?: string
+  price: string
+  rarity: string,
+}
+
+interface WinnerCollectinItemInt {
+  case_id: string,
+  item: ussualItemInt
+}
+interface GunData {
+  id: string,
+  state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred',
+  gunModel: string,
+  gunStyle: string,
+  gunPrice: number,
+  imgPath: string,
+  type: "usuall" | "rare" | "elite" | "epic" | "classified",
+}
+interface GunData {
+  id: string,
+  state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred',
+  gunModel: string,
+  gunStyle: string,
+  gunPrice: number,
+  imgPath: string,
+  type: "usuall" | "rare" | "elite" | "epic" | "classified",
+}
+
+
+
+interface ussualItemIntFront {
+  case_id?: string,
+  imgPath: string,
+  id: string,
+  gunModel: string,
+  gunStyle: string,
+  gunPrice: number
+  pk?: string,
+  price: string,
+  rarity: string,
+  type: 'usuall' | 'rare' | 'elite' | 'epic' | 'classified',
+  state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
+}
+
+
+interface propsDataInt {
+  playerData: WinnerCollectinItemInt | null,
+  addElement: (elem: | ussualItemIntFront) => void
+}
+
+function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
 
   const swiperRef = useRef<any>(null);
   const isSpinningRef = useRef(false);            // быстрый флаг для логики
   const [spinning, setSpinning] = useState(false); // чтобы обновлять props (allowTouchMove)
   const timeoutsRef = useRef<number[]>([]);
-  const slides = Array.from({ length: 10 }, (value, index) => ({
-    imgPath: "/images/example_gun_blue.png",
-    gunModel: "AK-47",
-    type: index % 5 === 0 ? "usuall" : index % 5 === 1 ? "rare" : index % 5 === 2 ? "elite" : index % 5 === 3 ? "epic" : "classified",
-    gunStyle: "LIZARD PIZARD",
-    gunPrice: 58.48,
-  }));
+
+
+  const activeCaseRoulleteItems = useAppSelector(state => state.activeBattle.activeCaseRoulleteItems);
+  let slides = []
+  if (activeCaseRoulleteItems.length < 5) {
+    slides = [...activeCaseRoulleteItems, ...activeCaseRoulleteItems, ...activeCaseRoulleteItems]; // ×3
+  } else if (activeCaseRoulleteItems.length < 10) {
+    slides = [...activeCaseRoulleteItems, ...activeCaseRoulleteItems]; // ×2
+  } else {
+    slides = activeCaseRoulleteItems
+  }
+
+
 
   useEffect(() => {
+    if (activeCaseRoulleteItems.length > 0) {
+      const endSlidePosition = activeCaseRoulleteItems?.findIndex((slide: any) => slide.id === props.playerData?.item.id) ?? -1;
+      console.log(props.playerData?.item.id, 4442132232456894444212134, endSlidePosition)
+      spinToSlide(endSlidePosition);
+      console.log(activeCaseRoulleteItems[endSlidePosition], 1111111)
+      setTimeout(() => {
+        props.addElement(activeCaseRoulleteItems[endSlidePosition])
+      }, 1000)
+    }
+
     return () => {
       // очистка таймаутов при unmount
       timeoutsRef.current.forEach((id) => clearTimeout(id));
@@ -31,7 +107,12 @@ function BattleRouletteCnt(): React.ReactNode {
       isSpinningRef.current = false;
       setSpinning(false);
     };
-  }, []);
+  }, [activeCaseRoulleteItems]);
+
+
+  if (activeCaseRoulleteItems.length == 0) {
+    return null
+  }
 
   const stopAll = () => {
     timeoutsRef.current.forEach((id) => clearTimeout(id));
@@ -118,7 +199,7 @@ function BattleRouletteCnt(): React.ReactNode {
           {slides.map((value, num) => (
             <SwiperSlide className={style.battleSwiperSlide} key={num}>
               <div className={style.battleSwiperSlideContentCnt}>
-                <ScmCaseItem imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} />
+                <ScmCaseItem state={value.state} imgPath={value.imgPath} gunModel={value.gunModel} type={value.type} gunStyle={value.gunStyle} gunPrice={value.gunPrice} />
               </div>
             </SwiperSlide>
           ))}
@@ -126,14 +207,14 @@ function BattleRouletteCnt(): React.ReactNode {
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-        <button
+        {/* <button
           onClick={() => {
             const target = Math.floor(Math.random() * slides.length);
             spinToSlide(target);
           }}
         >
           Spin
-        </button>
+        </button> */}
 
         {/* <button onClick={() => spinToSlide(0)}>To slide 1</button>
         <button onClick={() => spinToSlide(slides.length - 1)}>To last</button> */}

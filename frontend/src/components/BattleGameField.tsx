@@ -9,7 +9,7 @@ import { setBattleData } from '@/redux/activeBattleReducer'
 import { AxiosError } from "axios";
 import { useParams, useSearchParams } from 'next/navigation'
 import useWebSocket from 'react-use-websocket';
-import { setPlayers, setStartGameData } from '@/redux/activeBattleReducer'
+import { setPlayers, setStartGameData, setActiveCaseData, changeRoundNumber, changeStartGameState } from '@/redux/activeBattleReducer'
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
 
@@ -19,6 +19,7 @@ interface PlayersInfo {
     username: string;
     money_amount: number;
 }
+
 
 
 function BattleGameField(): React.ReactNode {
@@ -32,10 +33,28 @@ function BattleGameField(): React.ReactNode {
 
     const gameId = Array.isArray(params.battleid) ? params.battleid[0] : params.battleid; // динамический сегмент
     const guest = searchParams.get('guest') === 'true'; //
+    const { active_round, players_items } = useAppSelector(state => state.activeBattle)
+
     const dispatch = useAppDispatch();
 
-    type BattleEventMap = {
+    useEffect(() => {
+        if (active_round == 0) {
+            return
+        }
+        console.log(players_items[0].items)
+        getCaseData(players_items[0].items[active_round - 1].case_id)
+    }, [active_round])
 
+    async function getCaseData(case_id: string) {
+        try {
+            const response = await api.get(BACKEND_PATHS.getCaseItems(case_id));
+            dispatch(setActiveCaseData(response.data.items))
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    type BattleEventMap = {
         players_update: { players: PlayersInfo[] };
         game_finished: { data: any }; // можешь типизировать точнее, если знаешь структуру
     };
@@ -46,34 +65,10 @@ function BattleGameField(): React.ReactNode {
 
     function startGameData(data: any) {
         data.game_data = JSON.parse(data.game_data)
-        console.log(data)
-        // data.game_data.won_data.forEach(obj => {
-        //     console.log(obj, 11111111111111)
-
-        //     try {
-        //         // первый уровень — превращаем строку в массив
-
-        //         // второй уровень — распарсим свойства внутри элементов, например data
-        //         obj.items.forEach(item => {
-        //             console.log(item, 44444444444)
-        //             if (item === 'string') {
-        //                 try {
-        //                     item = JSON.parse(item);
-        //                 } catch (e) {
-        //                     item = null;
-        //                 }
-        //             }
-
-        //         });
-
-        //     } catch (e) {
-        //         console.error('Failed to parse items for object', obj, e);
-        //         obj.items = [];
-        //     }
-
-        // });
-        console.log(data)
-        dispatch(setStartGameData(data))
+        console.log(data.game_data)
+        dispatch(setStartGameData(data.game_data))
+        dispatch(changeRoundNumber())
+        dispatch(changeStartGameState(true))
     }
 
 
@@ -117,7 +112,9 @@ function BattleGameField(): React.ReactNode {
             response.data.cases = JSON.parse(response.data.cases || "[]");
             response.data.players = JSON.parse(response.data.players || "[]");
             response.data.winner = JSON.parse(response.data.winner || "[]");
+
             dispatch(setBattleData(response.data))
+
             setSocketOpened(true);
         } catch (err) {
             const error = err as AxiosError;

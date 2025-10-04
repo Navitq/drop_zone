@@ -24,6 +24,18 @@ interface PlayersInfo {
     money_amount: number;
 }
 
+interface ussualItemInt {
+    case_id?: string
+    icon_url: string
+    id: string
+    item_model: string
+    item_style: string
+    pk?: string
+    price: string
+    rarity: string
+}
+
+
 interface IncomeServerData {
     cases: GameCase[],
     created_at: string,
@@ -36,6 +48,26 @@ interface IncomeServerData {
     players_ids: string[],
     winner_id: string,
     winner: PlayersInfo[]
+}
+
+
+interface WinnerCollectinItemInt {
+    case_id: string,
+    item: ussualItemInt
+}
+
+interface PlayerData {
+    avatar_url: string,
+    id: string,
+    username: string,
+}
+
+
+
+interface PlayersGameDataInt {
+    player: PlayerData,
+    lose_items: ussualItemInt[],
+    items: WinnerCollectinItemInt[]
 }
 
 
@@ -56,11 +88,31 @@ interface ActiveBattle {
     isGameFinished: boolean,
     totalCaseAmount: number,
     totalPrice: number,
-    // itemsGameData: {
-    // }
+    winner_collection: WinnerCollectinItemInt[],
+    players_items: PlayersGameDataInt[],
+    isGameStart: boolean,
+    activeCaseRoulleteItems: ussualItemIntFront[],
+    rounds_amount: number
+
 }
 
+interface ussualItemIntFront {
+    case_id?: string,
+    imgPath: string,
+    id: string,
+    gunModel: string,
+    gunStyle: string,
+    gunPrice: number
+    pk?: string,
+    price: string,
+    rarity: string,
+    type: 'usuall' | 'rare' | 'elite' | 'epic' | 'classified',
+    state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
+}
+
+
 const initialState: ActiveBattle = {
+    won_items: [],
     active_round: 0,
     cases: [],
     isGameFinished: false,
@@ -76,6 +128,11 @@ const initialState: ActiveBattle = {
     winner: [],
     totalCaseAmount: 0,
     totalPrice: 0,
+    winner_collection: [],
+    players_items: [],
+    isGameStart: false,
+    activeCaseRoulleteItems: [],
+    rounds_amount: 0.
 };
 
 export const activerBattleSlice = createSlice({
@@ -108,7 +165,19 @@ export const activerBattleSlice = createSlice({
             Object.assign(state, { ...initialState, cases: [], players: [], winner: [], players_ids: [] });
         },
         setStartGameData: (state, action: PayloadAction<any>) => {
-            return
+            state.winner_id = action.payload.winner_id
+            state.winner_collection = [...action.payload.won_data]
+            state.players_items = [...action.payload.players_items]
+            state.rounds_amount = action.payload.players_items[0].items.length;
+        },
+        setActiveCaseData: (state, action: PayloadAction<ussualItemIntFront[]>) => {
+            state.activeCaseRoulleteItems = [...action.payload]
+        },
+        changeRoundNumber: (state) => {
+            state.active_round++;
+        },
+        changeStartGameState: (state, action: PayloadAction<boolean>) => {
+            state.isGameStart = action.payload;
         },
         setPlayers: (state, action: PayloadAction<PlayersInfo[]>) => {
             state.players = [
@@ -127,6 +196,6 @@ export const activerBattleSlice = createSlice({
 
 
 
-export const { setBattleData, setPlayers, setStartGameData } = activerBattleSlice.actions;
+export const { changeRoundNumber, changeStartGameState, setBattleData, setPlayers, setStartGameData, setActiveCaseData } = activerBattleSlice.actions;
 
 export default activerBattleSlice.reducer;
