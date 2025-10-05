@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import style from '@/styles/battles.module.scss'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl';
@@ -6,7 +6,8 @@ import { useTranslations } from 'next-intl';
 import BattleStateCnt from "@/components/BattleStateCnt"
 import BattleRouletteCnt from "@/components/BattleRouletteCnt"
 import CtSlot from "@/components/CtSlot"
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector, useAppDispatch } from '@/lib/hooks';
+import { changeRoundNumber, openWonState } from '@/redux/activeBattleReducer'
 
 interface BattlePersonalBoxInt {
     imgPath: string;
@@ -41,36 +42,44 @@ interface ussualItemIntFront {
 
 function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
     const t = useTranslations("battles")
-    const { isGameStart, players_items, active_round, rounds_amount } = useAppSelector(state => state.activeBattle)
-
+    const { isGameStart, isGameFinished, winner_id, players_items, active_round, rounds_amount } = useAppSelector(state => state.activeBattle)
+    const dispatch = useAppDispatch()
     const [items, setItems] = useState<ussualItemIntFront[]>([])
-
     function addElement(item: ussualItemIntFront) {
-        console.log(item, "awdwaddwawdaw2da")
+
         setItems((state) => {
             return [...state, item]
         })
+        if (active_round < rounds_amount) {
+            dispatch(changeRoundNumber())
+        } else {
+            dispatch(openWonState())
+        }
     }
 
     // Ищем игрока с совпадающим id
-    const currentPersonData = players_items?.find?.(
-        (p: any) => p.player?.id === props.id
-    ) ?? null;
+    const playerData = useMemo(() => {
+        const currentPersonData = players_items?.find?.(
+            (p: any) => p.player?.id === props.id
+        );
 
-    let playerData = null;
-
-    if (active_round > 0 && currentPersonData?.items) {
-        playerData = currentPersonData.items[active_round - 1] ?? null;
-    }
+        if (active_round > 0 && currentPersonData?.items) {
+            return currentPersonData.items[active_round - 1] ?? null;
+        }
+        console.log(1111111111111111111111111111112222222333333)
+        return null;
+    }, [players_items, props.id, active_round]);
 
     return (
         <div className={style.bpbBlock}>
             <div className={`${style.bpbCnt}`}>
                 {
-                    isGameStart ? (
+                    isGameStart && playerData ? (
                         <BattleRouletteCnt addElement={(elem: ussualItemIntFront) => { addElement(elem) }} playerData={playerData ? playerData : null}></BattleRouletteCnt>
                     ) : (
-                        <BattleStateCnt imgPath={props.id ? "/images/battles_check.svg" : "/images/battles_clock.svg"} altText={props.id ? t("player_waiting_alt") : t("player_ready_alt")} text={props.id ? t("player_ready") : t("player_waiting")}></BattleStateCnt>
+                        !isGameFinished ? (<BattleStateCnt imgPath={props.id ? "/images/battles_check.svg" : "/images/battles_clock.svg"} altText={props.id ? t("player_waiting_alt") : t("player_ready_alt")} text={props.id ? t("player_ready") : t("player_waiting")}></BattleStateCnt>) : (
+                            <BattleStateCnt imgPath={winner_id == props.id ? "/images/battles_check.svg" : "/images/battles_clock.svg"} altText={winner_id == props.id ? t("win_alt") : t("lose_alt")} text={winner_id == props.id ? t("win") : t("lose")}></BattleStateCnt>
+                        )
                     )
                 }
 
@@ -98,15 +107,11 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
                 {Array.from({ length: rounds_amount }).map((_, index) => {
                     const item = items[index] ?? undefined; // undefined для пустых слотов
                     console.log(item)
-                    return <CtSlot key={index} data={item} index={index} />;
+                    return <div className='itemWithoutHover' key={index}><CtSlot click={() => { }} data={item} index={index} /></div>;
                 })}
 
-                {/* <CtSlot data={{ imgPath: '/images/example_gun_blue.png', gunModel: "AK-47", type: "usuall", gunStyle: 'LIZARD PIZARD', gunPrice: 58.48 }} index={1} />
-                <CtSlot data={{ imgPath: '/images/example_gun_blue.png', gunModel: "AK-47", type: "epic", gunStyle: 'LIZARD PIZARD', gunPrice: 58.48 }} index={2} />
-                <CtSlot index={2} /> */}
-
             </div>
-        </div>
+        </div >
     )
 }
 

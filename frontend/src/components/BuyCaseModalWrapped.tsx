@@ -21,6 +21,7 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
     const timeoutsRef = useRef<number[]>([]);
     const t = useTranslations("homePage")
     const [showPrize, setShowPrize] = useState(false);
+    const isClosetRef = useRef<boolean>(false)
 
     const { caseName, items, prize_index, prize_item } = useAppSelector(state => state.modal.rulletCaseModal)
     // 👉 базовый массив предметов
@@ -28,7 +29,20 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
     // 👉 размножаем массив, чтобы Swiper был заполнен (например, до 100 элементов)
     const slides = useMemo(() => {
         if (!items || items.length === 0) return [];
-        return Array.from({ length: 30 }, (_, i) => items[i % items.length]);
+
+        const multiplier =
+            items.length <= 5
+                ? 4
+                : items.length < 10
+                    ? 2
+                    : 1;
+
+        const totalLength = Math.max(items.length * multiplier, 30);
+
+        return Array.from(
+            { length: totalLength },
+            (_, i) => items[i % items.length]
+        );
     }, [items]);
 
 
@@ -36,7 +50,7 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
         if (prize_index < 0) {
             return;
         }
-        spinToSlide(prize_index)
+        spinToSlide(prize_index, items[prize_index].id)
     }, [prize_index]);
 
 
@@ -45,6 +59,7 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
             timeoutsRef.current.forEach((id) => clearTimeout(id));
             timeoutsRef.current = [];
             isSpinningRef.current = false;
+            isClosetRef.current = true;
         };
     }, []);
 
@@ -54,49 +69,96 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
         isSpinningRef.current = false;
     };
 
-    const spinToSlide = (
-        targetIndex: number,
-        options?: { rounds?: number; minDuration?: number; maxDuration?: number }
-    ) => {
+    // const spinToSlide = (
+    //     targetIndex: number,
+    //     options?: { rounds?: number; minDuration?: number; maxDuration?: number }
+    // ) => {
+    //     if (!swiperRef.current || isSpinningRef.current) return;
+    //     isSpinningRef.current = true;
+
+    //     const slidesCount = slides.length;
+    //     const rounds = options?.rounds ?? 1;
+    //     const minDuration = options?.minDuration ?? 60;
+    //     const maxDuration = options?.maxDuration ?? 400;
+
+    //     const currentReal = swiperRef.current.realIndex;
+    //     const distance = (targetIndex - currentReal + slidesCount) % slidesCount;
+    //     const totalSteps = rounds * slidesCount + distance;
+
+    //     let cumulative = 0;
+
+    //     for (let s = 0; s < totalSteps; s++) {
+    //         const k = s / Math.max(1, totalSteps - 1);
+    //         const duration = Math.min(
+    //             maxDuration,
+    //             Math.round(minDuration + (maxDuration - minDuration) * (k * k))
+    //         );
+
+    //         const gap = 30;
+    //         cumulative += duration + gap;
+
+    //         const id = window.setTimeout(() => {
+    //             if (!swiperRef.current) return;
+    //             swiperRef.current.slideNext(duration);
+
+    //             if (s === totalSteps - 1) {
+    //                 const cleanup = window.setTimeout(() => {
+    //                     isSpinningRef.current = false;
+    //                 }, duration + 20);
+    //                 timeoutsRef.current.push(cleanup);
+    //                 setTimeout(() => { setShowPrize(true) }, 500)
+    //             }
+    //         }, cumulative);
+
+    //         timeoutsRef.current.push(id);
+    //     }
+    // };
+
+    const spinToSlide = (target: number, targetId: string) => {
         if (!swiperRef.current || isSpinningRef.current) return;
         isSpinningRef.current = true;
 
-        const slidesCount = slides.length;
-        const rounds = options?.rounds ?? 1;
-        const minDuration = options?.minDuration ?? 60;
-        const maxDuration = options?.maxDuration ?? 400;
+        const minDuration = 0;
+        const maxDuration = 200;
+        let step = 0;
 
-        const currentReal = swiperRef.current.realIndex;
-        const distance = (targetIndex - currentReal + slidesCount) % slidesCount;
-        const totalSteps = rounds * slidesCount + distance;
+        const totalStepsRollet = slides.length * 2 + target; // минимум 30 шагов
+        console.log()
+        const moveStep = () => {
+            console.log(targetId, 777777777)
 
-        let cumulative = 0;
+            if (!swiperRef.current || isClosetRef.current) return;
 
-        for (let s = 0; s < totalSteps; s++) {
-            const k = s / Math.max(1, totalSteps - 1);
-            const duration = Math.min(
-                maxDuration,
-                Math.round(minDuration + (maxDuration - minDuration) * (k * k))
+            const currentIndex = swiperRef.current.realIndex;
+            console.log(targetId, 666666666)
+
+            // безопасная проверка
+            if (currentIndex === undefined || !slides[currentIndex]) {
+                console.log(2222)
+                setTimeout(moveStep, minDuration);
+                return;
+            }
+
+            const currentSlide = slides[currentIndex];
+            console.log(currentSlide.id, targetId, 6555555)
+            // Если нашли нужный слайд после мин. количества шагов
+            if (step >= totalStepsRollet && currentSlide.id === targetId) {
+                isSpinningRef.current = false;
+                setTimeout(() => { setShowPrize(true) }, 500)
+                return;
+            }
+
+            step++;
+            const duration = Math.round(
+                minDuration + (maxDuration - minDuration) * Math.pow(step / totalStepsRollet, 2)
             );
 
-            const gap = 30;
-            cumulative += duration + gap;
-
-            const id = window.setTimeout(() => {
-                if (!swiperRef.current) return;
-                swiperRef.current.slideNext(duration);
-
-                if (s === totalSteps - 1) {
-                    const cleanup = window.setTimeout(() => {
-                        isSpinningRef.current = false;
-                    }, duration + 20);
-                    timeoutsRef.current.push(cleanup);
-                    setTimeout(() => { setShowPrize(true) }, 500)
-                }
-            }, cumulative);
-
+            swiperRef.current.slideNext(duration);
+            const id = window.setTimeout(moveStep, duration);
             timeoutsRef.current.push(id);
-        }
+        };
+
+        moveStep();
     };
 
 

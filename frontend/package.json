@@ -13,7 +13,6 @@
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.11.0",
     "lodash": "^4.17.21",
-    "lodash.isequal": "^4.5.0",
     "motion": "^12.23.12",
     "next": "^15.4.5",
     "next-intl": "^4.3.4",

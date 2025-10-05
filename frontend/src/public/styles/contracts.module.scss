@@ -417,7 +417,9 @@
     margin-top: 0px;
 }
 
-
+:global(.itemWithoutHover) .ctSlotCnt:hover .ctSlotCntHover{
+     display: none;
+}
 
 
 @media (max-width: 1439px) {

@@ -6,9 +6,7 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import CtSlotData from '@/components/CtSlotData'
-import { data } from 'motion/react-client'
 
-import isEqual from 'lodash.isequal';
 
 interface GunData {
     id: string,
@@ -37,7 +35,6 @@ interface ussualItemIntFront {
 function CtSlot(props: { data?: GunData | ussualItemIntFront, index: number, click?: () => void, }): React.ReactNode {
 
     const t = useTranslations('contracts');
-    console.log(data)
     return (
         <div className={`${style.ctSlotCnt} ${'contractsSlotGlobal'}`} onClick={() => { props.click?.() }}>
             {
@@ -54,4 +51,4 @@ function CtSlot(props: { data?: GunData | ussualItemIntFront, index: number, cli
     )
 }
 
-export default React.memo(CtSlot, (prevProps, nextProps) => isEqual(prevProps, nextProps));
+export default CtSlot

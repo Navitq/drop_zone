@@ -9,7 +9,7 @@ import { setBattleData } from '@/redux/activeBattleReducer'
 import { AxiosError } from "axios";
 import { useParams, useSearchParams } from 'next/navigation'
 import useWebSocket from 'react-use-websocket';
-import { setPlayers, setStartGameData, setActiveCaseData, changeRoundNumber, changeStartGameState } from '@/redux/activeBattleReducer'
+import { setPlayers, setStartGameData, setActiveCaseData, cleanBattleData } from '@/redux/activeBattleReducer'
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
 
@@ -30,7 +30,7 @@ function BattleGameField(): React.ReactNode {
 
     const params = useParams();
     const searchParams = useSearchParams();
-
+    const lastProcessedRoundRef = useRef<number | null>(null);
     const gameId = Array.isArray(params.battleid) ? params.battleid[0] : params.battleid; // динамический сегмент
     const guest = searchParams.get('guest') === 'true'; //
     const { active_round, players_items } = useAppSelector(state => state.activeBattle)
@@ -38,12 +38,32 @@ function BattleGameField(): React.ReactNode {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (active_round == 0) {
-            return
-        }
-        console.log(players_items[0].items)
-        getCaseData(players_items[0].items[active_round - 1].case_id)
-    }, [active_round])
+        // функция, которую вызываем при уходе со страницы
+        const handleLeave = () => {
+            dispatch(cleanBattleData()); // пример очистки состояния
+        };
+
+        // срабатывает при размонтировании компонента
+        return () => {
+            handleLeave();
+        };
+    }, [dispatch]);
+
+
+    useEffect(() => {
+        if (active_round <= 0) return;
+        if (!players_items?.length) return;
+        if (!players_items[0]?.items?.length) return;
+
+        if (lastProcessedRoundRef.current === active_round) return; // уже обработали
+
+        const roundIndex = active_round - 1;
+        const item = players_items[0].items[roundIndex];
+        if (!item) return;
+
+        lastProcessedRoundRef.current = active_round; // помечаем как обработанный
+        getCaseData(item.case_id);
+    }, [active_round, players_items]);
 
     async function getCaseData(case_id: string) {
         try {
@@ -67,8 +87,6 @@ function BattleGameField(): React.ReactNode {
         data.game_data = JSON.parse(data.game_data)
         console.log(data.game_data)
         dispatch(setStartGameData(data.game_data))
-        dispatch(changeRoundNumber())
-        dispatch(changeStartGameState(true))
     }
 
 
@@ -82,7 +100,15 @@ function BattleGameField(): React.ReactNode {
         // URL создаём только если socketOpened === true
         socketOpened && gameId ? `${BACKEND_PATHS.battleGameWSS(gameId, !guest)}` : null,
         {
-            shouldReconnect: () => true,  // авто-переподключение
+            shouldReconnect: (closeEvent) => {
+                // closeEvent.code — код закрытия WS
+                if (closeEvent) {
+                    const code = closeEvent.code;
+                    // Если код 1000–2000, не переподключаемся
+                    if (code >= 1000 && code < 2000) return false;
+                }
+                return true; // иначе переподключаемся
+            },  // авто-переподключение
             onOpen: () => console.log("WS connected"),
             onClose: () => console.log("WS closed"),
             onError: (event: WebSocketEventMap['error']) => console.log(event),

@@ -213,6 +213,10 @@
     "sell_all": "sell everything"
   },
   "battles": {
+    "win": "Win",
+    "lose": "Lose",
+    "win_alt":"check in the shield image",
+    "lose_alt":"cross in the shield image",
     "all_battles":"total battles",
     "active_battles": "active battles",
     "your_victories": "your victories",

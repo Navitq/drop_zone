@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import style from '@/styles/battles.module.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -8,6 +8,7 @@ import ScmCaseItem from '@/components/ScmCaseItem'
 
 import 'swiper/css';
 import { useAppSelector } from '@/lib/hooks';
+import { steps } from 'motion';
 
 
 
@@ -66,47 +67,73 @@ interface ussualItemIntFront {
 
 interface propsDataInt {
   playerData: WinnerCollectinItemInt | null,
-  addElement: (elem: | ussualItemIntFront) => void
+  addElement: (elem: ussualItemIntFront) => void
 }
 
 function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
 
   const swiperRef = useRef<any>(null);
   const isSpinningRef = useRef(false);            // быстрый флаг для логики
-  const [spinning, setSpinning] = useState(false); // чтобы обновлять props (allowTouchMove)
   const timeoutsRef = useRef<number[]>([]);
-
+  const isClosetRef = useRef<boolean>(false)
 
   const activeCaseRoulleteItems = useAppSelector(state => state.activeBattle.activeCaseRoulleteItems);
-  let slides = []
-  if (activeCaseRoulleteItems.length < 5) {
-    slides = [...activeCaseRoulleteItems, ...activeCaseRoulleteItems, ...activeCaseRoulleteItems]; // ×3
-  } else if (activeCaseRoulleteItems.length < 10) {
-    slides = [...activeCaseRoulleteItems, ...activeCaseRoulleteItems]; // ×2
-  } else {
-    slides = activeCaseRoulleteItems
-  }
+  const slides = useMemo(() => {
+    if (!activeCaseRoulleteItems || activeCaseRoulleteItems.length === 0) return [];
 
+    const multiplier =
+      activeCaseRoulleteItems.length <= 5
+        ? 4
+        : activeCaseRoulleteItems.length < 10
+          ? 2
+          : 1;
+    return Array.from(
+      { length: activeCaseRoulleteItems.length * multiplier },
+      (_, i) => activeCaseRoulleteItems[i % activeCaseRoulleteItems.length]
+    );
+  }, [activeCaseRoulleteItems]);
 
 
   useEffect(() => {
-    if (activeCaseRoulleteItems.length > 0) {
-      const endSlidePosition = activeCaseRoulleteItems?.findIndex((slide: any) => slide.id === props.playerData?.item.id) ?? -1;
-      console.log(props.playerData?.item.id, 4442132232456894444212134, endSlidePosition)
-      spinToSlide(endSlidePosition);
-      console.log(activeCaseRoulleteItems[endSlidePosition], 1111111)
-      setTimeout(() => {
-        props.addElement(activeCaseRoulleteItems[endSlidePosition])
-      }, 1000)
-    }
-
     return () => {
       // очистка таймаутов при unmount
       timeoutsRef.current.forEach((id) => clearTimeout(id));
       timeoutsRef.current = [];
       isSpinningRef.current = false;
-      setSpinning(false);
+      isClosetRef.current = true;
     };
+  }, [])
+
+
+  useEffect(() => {
+
+    if (
+      !activeCaseRoulleteItems.length ||
+      !props.playerData?.item?.id ||
+      isSpinningRef.current
+    )
+      return;
+
+    let checkInterval: any;
+
+    const trySpin = () => {
+      if (!swiperRef.current) return; // ждем инициализацию
+
+      const endSlidePosition = activeCaseRoulleteItems.findIndex(
+        (slide: any) => slide.id === props.playerData?.item.id
+      );
+
+      console.log(slides[endSlidePosition], props.playerData?.item, endSlidePosition)
+      if (endSlidePosition === -1) return;
+      console.log(props.playerData?.item)
+      spinToSlide(endSlidePosition, props.playerData?.item.id ? props.playerData?.item.id : "");
+
+      clearInterval(checkInterval);
+    };
+
+    checkInterval = setInterval(trySpin, 100); // пробуем каждые 100ms
+
+    return () => clearInterval(checkInterval);
   }, [activeCaseRoulleteItems]);
 
 
@@ -114,73 +141,103 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
     return null
   }
 
-  const stopAll = () => {
-    timeoutsRef.current.forEach((id) => clearTimeout(id));
-    timeoutsRef.current = [];
-    isSpinningRef.current = false;
-    setSpinning(false);
-  };
 
-  /**
-   * spinToSlide(targetIndex)
-   * targetIndex: индекс (0..slides.length-1) слайда, на котором нужно остановиться
-   * options.rounds — сколько полных кругов (по умолчанию 3..5 рандом)
-   * options.minDuration / maxDuration — минимальная/максимальная длительность перехода (ms)
-   */
-  const spinToSlide = (
-    targetIndex: number,
-    options?: { rounds?: number; minDuration?: number; maxDuration?: number }
-  ) => {
+
+  // const spinToSlide = (
+  //   targetIndex: number,
+  //   options?: { rounds?: number; minDuration?: number; maxDuration?: number }
+  // ) => {
+  //   if (!swiperRef.current || isSpinningRef.current) return;
+  //   isSpinningRef.current = true;
+
+  //   const slidesCount = slides.length;
+  //   const rounds = options?.rounds ?? 1;
+  //   const minDuration = options?.minDuration ?? 200;
+  //   const maxDuration = options?.maxDuration ?? 400;
+
+  //   const currentReal = swiperRef.current.realIndex;
+  //   const distance = (targetIndex - currentReal + slidesCount) % slidesCount;
+  //   const totalSteps = rounds * slidesCount + distance;
+
+  //   let cumulative = 0;
+
+  //   for (let s = 0; s < totalSteps; s++) {
+  //     const k = s / Math.max(1, totalSteps - 1);
+  //     const duration = Math.min(
+  //       maxDuration,
+  //       Math.round(minDuration + (maxDuration - minDuration) * (k * k))
+  //     );
+
+  //     const gap = 30;
+  //     cumulative += duration + gap;
+  //     console.log(s)
+  //     const id = window.setTimeout(() => {
+  //       if (!swiperRef.current) return;
+  //       swiperRef.current.slideNext(duration);
+
+  //       if (s === totalSteps - 1) {
+  //         const cleanup = window.setTimeout(() => {
+  //           isSpinningRef.current = false;
+  //         }, duration + 20);
+  //         timeoutsRef.current.push(cleanup);
+
+  //       }
+  //     }, cumulative);
+
+  //     timeoutsRef.current.push(id);
+  //   }
+  // };
+
+  const spinToSlide = (target, targetId: string) => {
     if (!swiperRef.current || isSpinningRef.current) return;
-
     isSpinningRef.current = true;
-    setSpinning(true);
 
-    const slidesCount = slides.length;
-    const rounds =
-      options?.rounds ?? (2 + Math.floor(Math.random() * 2)); // 2-4 полных кругов по умолчанию
-    const minDuration = options?.minDuration ?? 60; // быстрые шаги в начале
-    const maxDuration = options?.maxDuration ?? 600; // медленные шаги в конце
+    const minDuration = 0;
+    const maxDuration = 200;
+    let step = 0;
+    const totalStepsRollet = slides.length * 2 + target; // минимум 30 шагов
+    console.log()
+    const moveStep = () => {
 
-    // используем realIndex (реальный индекс слайда без дублей)
-    const currentReal = swiperRef.current.realIndex;
-    const distance = (targetIndex - currentReal + slidesCount) % slidesCount;
-    const totalSteps = rounds * slidesCount + distance;
 
-    let cumulative = 0;
+      if (!swiperRef.current || isClosetRef.current) return;
 
-    for (let s = 0; s < totalSteps; s++) {
-      // k от 0 до 1 — используется для "ease out" замедления
-      const k = s / Math.max(1, totalSteps - 1);
-      // квадратичная кривая (мягкое ускорение -> резкое замедление)
-      const duration = Math.min(
-        maxDuration,
-        Math.round(minDuration + (maxDuration - minDuration) * (k * k))
+      const currentIndex = swiperRef.current.realIndex;
+
+      // безопасная проверка
+      if (currentIndex === undefined || !slides[currentIndex]) {
+        setTimeout(moveStep, minDuration);
+
+        return;
+      }
+
+      const currentSlide = slides[currentIndex];
+      // Если нашли нужный слайд после мин. количества шагов
+      if (step >= totalStepsRollet && currentSlide.id === targetId) {
+        isSpinningRef.current = false;
+        setTimeout(() => {
+          props.addElement(currentSlide);
+        }, 1000)
+        return;
+      }
+
+      step++;
+      const duration = Math.round(
+        minDuration + (maxDuration - minDuration) * Math.pow(step / totalStepsRollet, 2)
       );
 
-      // небольшой интервал между шагами дополнительно, чтобы не накладывать анимации
-      const gap = 30;
-      cumulative += duration + gap;
-
-      const id = window.setTimeout(() => {
-        if (!swiperRef.current) return;
-        // slideNext с указанием длительности анимации
-        swiperRef.current.slideNext(duration);
-
-        // если последний шаг — завершаем спин
-        if (s === totalSteps - 1) {
-          // даём последней анимации отработать и сбрасываем флаги
-          const cleanup = window.setTimeout(() => {
-            isSpinningRef.current = false;
-            setSpinning(false);
-          }, duration + 20);
-          timeoutsRef.current.push(cleanup);
-        }
-      }, cumulative);
-
+      swiperRef.current.slideNext(duration);
+      const id = window.setTimeout(moveStep, duration);
       timeoutsRef.current.push(id);
-    }
+    };
+
+    moveStep();
   };
+
+
+
+
+
 
   return (
     <div className={`${style.bstCntRoulet} bstCnt`}>
@@ -190,7 +247,7 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
           slidesPerView={'auto'}
           autoHeight={false}
           loop={true} // важное — loop, чтобы не было резких "прыжков" к началу
-          allowTouchMove={!spinning}
+          allowTouchMove={false}
           className={style.brcSliderSwiper}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
           spaceBetween={40}
@@ -206,21 +263,7 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
         </Swiper>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-        {/* <button
-          onClick={() => {
-            const target = Math.floor(Math.random() * slides.length);
-            spinToSlide(target);
-          }}
-        >
-          Spin
-        </button> */}
 
-        {/* <button onClick={() => spinToSlide(0)}>To slide 1</button>
-        <button onClick={() => spinToSlide(slides.length - 1)}>To last</button> */}
-
-        {/* <button onClick={stopAll}>Stop</button> */}
-      </div>
     </div>
   );
 }
