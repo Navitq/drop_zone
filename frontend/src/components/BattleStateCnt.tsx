@@ -21,4 +21,4 @@ function BattleStateCnt(props: BattleStateCntInt) {
     )
 }
 
-export default BattleStateCnt
+export default React.memo(BattleStateCnt)

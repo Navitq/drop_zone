@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import style from '@/styles/battles.module.scss'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl';
@@ -7,7 +7,7 @@ import BattleStateCnt from "@/components/BattleStateCnt"
 import BattleRouletteCnt from "@/components/BattleRouletteCnt"
 import CtSlot from "@/components/CtSlot"
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
-import { changeRoundNumber, openWonState } from '@/redux/activeBattleReducer'
+import { changeRoundNumber, openWonState, setWinnerColor } from '@/redux/activeBattleReducer'
 
 interface BattlePersonalBoxInt {
     imgPath: string;
@@ -34,26 +34,81 @@ interface ussualItemIntFront {
     gunStyle: string,
     gunPrice: number
     pk?: string,
-    price: string,
+    price: number,
     rarity: string,
     type: 'usuall' | 'rare' | 'elite' | 'epic' | 'classified',
     state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
 }
 
+interface ussualItemInt {
+    case_id?: string
+    icon_url: string
+    id: string
+    item_model: string
+    item_style: string
+    pk?: string
+    price: number
+    rarity: string
+    state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
+}
+
 function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
     const t = useTranslations("battles")
-    const { isGameStart, isGameFinished, winner_id, players_items, active_round, rounds_amount } = useAppSelector(state => state.activeBattle)
+    const { isGameStart, isGameFinished, showRoundWinner, wonRoundsGuys, winner_id, players_items, active_round, rounds_amount, winner_collection } = useAppSelector(state => state.activeBattle)
+    const [items, setItems] = useState<ussualItemIntFront[] | GunData[]>([])
+    const loseItemsRef = useRef<GunData[]>([]);
     const dispatch = useAppDispatch()
-    const [items, setItems] = useState<ussualItemIntFront[]>([])
-    function addElement(item: ussualItemIntFront) {
 
-        setItems((state) => {
-            return [...state, item]
-        })
+    function convertToGunDataArray(items: ussualItemInt[]): GunData[] {
+        return items.map((item) => ({
+            id: item.id,
+            state: item.state,
+            gunModel: item.item_model,
+            gunStyle: item.item_style,
+            gunPrice: item.price,
+            imgPath: item.icon_url,
+            type: item.rarity as GunData["type"],
+        }));
+    }
+
+
+
+
+    const totalPrice = useMemo(() => {
+        if (!items || items.length === 0) return 0;
+        return items.reduce((sum, item) => sum + Number(item.price ?? item.gunPrice), 0);
+    }, [items]);
+
+    function delay(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function addElement(item: ussualItemIntFront) {
+        // добавляем элемент
+        setItems(state => [...state, item]);
+
+        // меняем цвет победителя
+        dispatch(setWinnerColor({ price: Number(item.price), id: props.id }));
+
+        // ждём 1 секунду
+        await delay(1000);
+
         if (active_round < rounds_amount) {
-            dispatch(changeRoundNumber())
+            dispatch(changeRoundNumber());
         } else {
-            dispatch(openWonState())
+            dispatch(openWonState());
+
+            // ждём ещё 1 секунду
+            await delay(1000);
+
+            if (winner_id !== props.id) {
+                // ещё 1 секунда перед проигрышем
+                await delay(1000);
+                setItems([...loseItemsRef.current]);
+            } else {
+                await delay(1000);
+                setItems([...convertToGunDataArray(winner_collection)])
+            }
         }
     }
 
@@ -63,12 +118,32 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
             (p: any) => p.player?.id === props.id
         );
 
+        if (loseItemsRef.current.length == 0) {
+            console.log(currentPersonData, 'awdawd')
+            if (currentPersonData?.lose_items) {
+                loseItemsRef.current = convertToGunDataArray(currentPersonData.lose_items)
+            }
+        }
+
         if (active_round > 0 && currentPersonData?.items) {
             return currentPersonData.items[active_round - 1] ?? null;
         }
-        console.log(1111111111111111111111111111112222222333333)
+
         return null;
     }, [players_items, props.id, active_round]);
+
+
+    const slots = useMemo(() => {
+        const length = items.length <= rounds_amount ? rounds_amount : items.length;
+        return Array.from({ length }).map((_, index) => {
+            const item = items[index] ?? undefined; // undefined для пустых слотов
+            return (
+                <div className="itemWithoutHover" key={index}>
+                    <CtSlot click={() => { }} data={item} index={index} />
+                </div>
+            );
+        });
+    }, [items, rounds_amount]);
 
     return (
         <div className={style.bpbBlock}>
@@ -78,13 +153,13 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
                         <BattleRouletteCnt addElement={(elem: ussualItemIntFront) => { addElement(elem) }} playerData={playerData ? playerData : null}></BattleRouletteCnt>
                     ) : (
                         !isGameFinished ? (<BattleStateCnt imgPath={props.id ? "/images/battles_check.svg" : "/images/battles_clock.svg"} altText={props.id ? t("player_waiting_alt") : t("player_ready_alt")} text={props.id ? t("player_ready") : t("player_waiting")}></BattleStateCnt>) : (
-                            <BattleStateCnt imgPath={winner_id == props.id ? "/images/battles_check.svg" : "/images/battles_clock.svg"} altText={winner_id == props.id ? t("win_alt") : t("lose_alt")} text={winner_id == props.id ? t("win") : t("lose")}></BattleStateCnt>
+                            <BattleStateCnt imgPath={winner_id == props.id ? "/images/battles_successfully.svg" : "/images/battles_notsuccessfully.svg"} altText={winner_id == props.id ? t("win_alt") : t("lose_alt")} text={""}></BattleStateCnt>
                         )
                     )
                 }
 
 
-                <div className={`${style.bpbPlayerFieldCnt}  ${false ? style.bpbPlayerFieldCntLose : ""}`}>
+                <div className={`${style.bpbPlayerFieldCnt}  ${showRoundWinner && (wonRoundsGuys.length > 0 ? !wonRoundsGuys.includes(props.id) : false) ? style.bpbPlayerFieldCntLose : ""}`}>
                     {props.id ? (
                         <>
                             <div className={style.bpbPlayerProfileInfo}>
@@ -93,7 +168,7 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
                                 </div>
                                 <div className={style.bpbPlayerProfileName}>{props.userName}</div>
                             </div>
-                            <div className={style.bpbPlayerWonPrice}>{`${Number((props.money_amount).toFixed(2))} Dc`}</div>
+                            <div className={style.bpbPlayerWonPrice}>{`${Number((totalPrice).toFixed(2))} Dc`}</div>
                         </>
                     ) : (
                         <div className={style.bpbPlayerProfileInfoWaiting}>
@@ -104,12 +179,7 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
                 </div>
             </div>
             <div className={`${style.bpbItemsCnt}`}>
-                {Array.from({ length: rounds_amount }).map((_, index) => {
-                    const item = items[index] ?? undefined; // undefined для пустых слотов
-                    console.log(item)
-                    return <div className='itemWithoutHover' key={index}><CtSlot click={() => { }} data={item} index={index} /></div>;
-                })}
-
+                {slots}
             </div>
         </div >
     )

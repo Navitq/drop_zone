@@ -166,7 +166,6 @@ def pay_and_add_to_battle(token_data, game_id):
                     id=str(p.id),
                     username=p.username,
                     imgpath=p.avatar_url,
-                    money_amount=float(p.money_amount)
                 )
                 for p in battle.players.all()
             ]
@@ -466,7 +465,6 @@ def left_match(token_data, game_id):
                     id=str(p.id),
                     username=p.username,
                     imgpath=p.avatar_url,
-                    money_amount=float(p.money_amount)
                 )
                 for p in battle.players.all()
             ]

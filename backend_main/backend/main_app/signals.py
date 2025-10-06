@@ -120,7 +120,6 @@ def battle_players_changed(sender, instance, action, pk_set, **kwargs):
                 id=str(player.id),
                 username=player.username,
                 imgpath=getattr(player, "avatar_url", None),
-                money_amount=float(player.money_amount)
             )
             for player in instance.players.all()
         ]

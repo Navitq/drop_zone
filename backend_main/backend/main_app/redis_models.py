@@ -122,7 +122,6 @@ class PlayerInfo(BaseModel):
     id: str
     username: str
     imgpath: str | None = None
-    money_amount: float
 
 
 class CaseInfo(BaseModel):

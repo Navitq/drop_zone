@@ -26,7 +26,7 @@ interface ussualItemIntFront {
     gunStyle: string,
     gunPrice: number
     pk?: string,
-    price: string,
+    price: number,
     rarity: string,
     type: 'usuall' | 'rare' | 'elite' | 'epic' | 'classified',
     state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
@@ -51,4 +51,4 @@ function CtSlot(props: { data?: GunData | ussualItemIntFront, index: number, cli
     )
 }
 
-export default CtSlot
+export default React.memo(CtSlot)

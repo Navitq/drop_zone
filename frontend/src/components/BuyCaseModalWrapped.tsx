@@ -123,7 +123,6 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
         let step = 0;
 
         const totalStepsRollet = slides.length * 2 + target; // минимум 30 шагов
-        console.log()
         const moveStep = () => {
             console.log(targetId, 777777777)
 

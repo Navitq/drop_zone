@@ -17,7 +17,6 @@ interface PlayersInfo {
     id: string;           // UUID
     imgpath: string;      // Ссылка на изображение
     username: string;
-    money_amount: number;
 }
 
 
@@ -84,7 +83,12 @@ function BattleGameField(): React.ReactNode {
     }
 
     function startGameData(data: any) {
-        data.game_data = JSON.parse(data.game_data)
+        data.game_data = JSON.parse(data.game_data, (key, value) => {
+            if (key === "price" && typeof value === "string") {
+                return parseFloat(value);
+            }
+            return value;
+        });
         console.log(data.game_data)
         dispatch(setStartGameData(data.game_data))
     }
@@ -129,10 +133,6 @@ function BattleGameField(): React.ReactNode {
 
     async function getServerGameData() {
         try {
-            if (!gameId) {
-                console.log(gameId)
-            }
-            console.log(gameId)
             const response = await api.post(BACKEND_PATHS.getGameData(gameId), { gameId: gameId });
 
             response.data.cases = JSON.parse(response.data.cases || "[]");

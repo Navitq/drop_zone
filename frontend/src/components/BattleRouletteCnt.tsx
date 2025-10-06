@@ -21,8 +21,9 @@ interface ussualItemInt {
   item_model: string
   item_style: string
   pk?: string
-  price: string
+  price: number
   rarity: string,
+  state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
 }
 
 interface WinnerCollectinItemInt {
@@ -58,7 +59,7 @@ interface ussualItemIntFront {
   gunStyle: string,
   gunPrice: number
   pk?: string,
-  price: string,
+  price: number,
   rarity: string,
   type: 'usuall' | 'rare' | 'elite' | 'epic' | 'classified',
   state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
@@ -123,9 +124,7 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
         (slide: any) => slide.id === props.playerData?.item.id
       );
 
-      console.log(slides[endSlidePosition], props.playerData?.item, endSlidePosition)
       if (endSlidePosition === -1) return;
-      console.log(props.playerData?.item)
       spinToSlide(endSlidePosition, props.playerData?.item.id ? props.playerData?.item.id : "");
 
       clearInterval(checkInterval);
@@ -196,7 +195,6 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
     const maxDuration = 200;
     let step = 0;
     const totalStepsRollet = slides.length * 2 + target; // минимум 30 шагов
-    console.log()
     const moveStep = () => {
 
 
@@ -215,9 +213,7 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
       // Если нашли нужный слайд после мин. количества шагов
       if (step >= totalStepsRollet && currentSlide.id === targetId) {
         isSpinningRef.current = false;
-        setTimeout(() => {
-          props.addElement(currentSlide);
-        }, 1000)
+        props.addElement(currentSlide);
         return;
       }
 
@@ -268,4 +264,4 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
   );
 }
 
-export default BattleRouletteCnt;
+export default React.memo(BattleRouletteCnt);

@@ -188,7 +188,6 @@ def load_battles_active_main():
                     id=str(player.id),
                     username=player.username,
                     imgpath=getattr(player, "avatar_url", None),
-                    money_amount=float(player.money_amount),
                 )
                 for player in battle.players.all()
             ]
@@ -212,7 +211,6 @@ def load_battles_active_main():
                     id=str(battle.winner.id),
                     username=battle.winner.username,
                     imgpath=getattr(battle.winner, "avatar", None),
-                    money_amount=0,
                 ))
 
             # создаём запись в Redis
@@ -276,7 +274,6 @@ async def update_battle_in_redis(battle_id: str, fields: dict):
                     id=str(player.id),
                     username=player.username,
                     imgpath=getattr(player, "avatar_url", None),
-                    money_amount=float(player.money_amount)
                 )
                 for player in battle.players.all()
             ]
