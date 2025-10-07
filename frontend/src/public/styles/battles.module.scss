@@ -828,8 +828,8 @@
 
 .CbhPriceInfo {
     @extend %flexStart;
-
     justify-content: space-between;
+    align-items: center;
     height: 55px;
 }
 
@@ -872,6 +872,7 @@
 }
 
 .cbhHeadSideblock {
+    @extend %flexCenter;
     flex: 1;
 }
 
@@ -1034,6 +1035,7 @@
     @extend %flexCenter;
     height: 100px;
     width: auto;
+    padding: 1px;
 }
 
 .swiperCnt {
@@ -1197,6 +1199,15 @@
     display: none;
 }
 
+.mlbbLeaveBtnPosition {
+    width: 100%;
+    button, div {
+        width: 100%;
+    }
+    display: none;
+    margin-bottom: 20px;
+}
+
 @media (max-width: 1439px) {
 
     .bpMobileRules {
@@ -1264,9 +1275,40 @@
     .abcCnt {
         height: fit-content;
     }
+    .CbhPriceInfoCnt {
+        height: 38px;
+    }
 }
 
 @media (max-width: 1024px) {
+    .cbhGameActiveCases {
+        height: 55px;
+        width: 55px;
+    }
+    .cbhGameState {
+        height: 64px;
+        font-size: 16px;
+        line-height: 100%;
+    }
+    .cbhSwiperSlide, .cbhSliderSwiper {
+        height: 90px;
+    }
+
+    .cbhCntMobile {
+        height: 90px;
+    }
+    .CbhPriceInfoData {
+        order: 1;
+        font-size: 16px;
+        line-height: 100%;
+    }
+    .CbhPriceAndAmount {
+        align-items: flex-end;
+        order: 2;
+        margin-right: 0px;
+        margin-left: 10px;
+    }
+
     .abcPlayerInfoMobile {
         justify-content: space-between;
     }
@@ -1370,6 +1412,38 @@
 }
 
 @media (max-width: 768px) {
+    .CbhPriceInfoCnt {
+        height: 30px;
+    }
+    .mlbbLeaveBtnPosition {
+        display: block;
+    }
+    .cbhGameActiveCases {
+        height: 47px;
+        width: 47px;
+    }
+    .cbhGameState {
+        height: 47px;
+        font-size: 13px;
+        line-height: 100%;
+        padding-left: 23px;
+        padding-right: 23px;
+    }
+    .cbhSwiperSlide, .cbhSliderSwiper {
+        height: 80px;
+    }
+
+    .cbhCntMobile {
+        height: 80px;
+        margin-bottom: 15px;
+    }
+    .CbhPriceInfoData {
+        font-size: 13px;
+        line-height: 100%;
+    }
+    .cbhMobileNone {
+        display: none;
+    }
     .mnBattlesStuffCnt{
         padding-right: 10px;
         padding-left: 10px;

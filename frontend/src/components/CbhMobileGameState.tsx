@@ -39,11 +39,20 @@ function CbhMobileGameState(): React.ReactNode {
                 direction="vertical"
                 slidesPerView={'auto'}
                 autoHeight={false}
-                allowTouchMove={true}
+                allowTouchMove={false}
                 className={style.cbhSliderSwiper}
                 spaceBetween={10}
                 centeredSlides={true}
                 onSwiper={(swiper) => (swiperRef.current = swiper)}
+                breakpoints={{
+                    0: {           // для экранов >= 0px
+                        slidesPerView: 1.6,
+                    },
+                    769: {         // для экранов >= 769px
+                        slidesPerView: 'auto', // обычное поведение
+                    },
+                }}
+
             >
                 <SwiperSlide className={style.cbhSwiperSlide} key={-1}>
                     <div className={style.cbhGameState}>
@@ -82,6 +91,7 @@ function CbhMobileGameState(): React.ReactNode {
                 </SwiperSlide>
             </Swiper>
         </div>
+
     )
 }
 

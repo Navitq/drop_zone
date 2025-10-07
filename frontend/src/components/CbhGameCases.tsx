@@ -19,7 +19,7 @@ function CbhGameCases(): React.ReactNode {
 
     return (
         <>
-            <div className={`${style.cbhGameCases} ${style.cbhHeadSideblock}`}>
+            <div className={`${style.cbhGameCases} ${style.cbhHeadSideblock} ${style.cbhMobileNone}`}>
                 {!isGameFinished ? (
                     <div className={style.cbhGameCasesCnt}>
                         {cases.flatMap((value, index) => {

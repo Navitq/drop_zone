@@ -7,6 +7,7 @@ import { useAppDispatch } from '@/lib/hooks'
 import { showRulesModal } from '@/redux/modalReducer'
 import { useTranslations } from 'next-intl'
 
+
 function MnHeadRules(): React.ReactNode {
     const t = useTranslations("battles")
 

@@ -7,7 +7,7 @@ import { useAppSelector } from '@/lib/hooks'
 
 function CbhPriceInfo(): React.ReactNode {
     const t = useTranslations("battles")
-    const { totalCaseAmount, totalPrice } = useAppSelector(state => state.activeBattle)
+    const { totalCaseAmount, totalPrice, active_round } = useAppSelector(state => state.activeBattle)
 
     function formatNumber(num: number): string {
         return new Intl.NumberFormat('ru-RU').format(num);
@@ -18,7 +18,7 @@ function CbhPriceInfo(): React.ReactNode {
             <div className={style.CbhPriceInfoCnt}>
                 <div className={`${style.CbhPriceInfoData} ${style.CbhPriceAndAmount}`}>
                     <div>{`${formatNumber(totalPrice)} Dc`}</div>
-                    <div>{totalCaseAmount}</div>
+                    <div>{`${active_round <= totalCaseAmount ? active_round : totalCaseAmount}/${totalCaseAmount}`}</div>
                 </div>
                 <div className={style.CbhPriceInfoData}>
                     <div>{t('battles_price')}</div>
