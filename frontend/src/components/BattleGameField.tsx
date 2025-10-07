@@ -176,7 +176,7 @@ function BattleGameField(): React.ReactNode {
     }
 
     return (
-        <div className={`${style.bgfCnt} ${players_amount === 3 ? style.threePlayerCnt : players_amount === 4 ? style.fourPlayerCnt : ""}`}>
+        <div className={`${style.bgfCnt} ${players_amount === 3 ? style.threePlayerCnt : players_amount === 4 ? style.fourPlayerCnt : ""} ${players_amount === 3 ? 'threePlayerCnt' : players_amount === 4 ? 'fourPlayerCnt' : ""}`}>
             {players.map((value, index) => {
                 return (
                     <BattlePersonalBox

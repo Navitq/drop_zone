@@ -417,6 +417,10 @@
     margin-top: 0px;
 }
 
+:global(.itemWithoutHover) {
+    @extend %flexCenter;
+}
+
 :global(.itemWithoutHover) .ctSlotCnt:hover .ctSlotCntHover{
      display: none;
 }
@@ -433,6 +437,15 @@
 }
 
 @media (max-width: 1024px) {
+    :global(.bpbItemsCnt){
+        overflow: visible;
+    }
+    :global(.bpbItemsCnt) .ctSlotCnt {
+        width: 153px;
+        height: 153px;
+        overflow: visible;
+    }
+
     .ctStaffTxtCnt {
         display: flex;
         align-items: center;
@@ -442,9 +455,18 @@
         font-size: 24px;
         line-height: 100%;
     }
+    :global(.bpbItemsCnt) .ctSlotCnt > img{
+        padding: 10px !important;
+    }
 }
 
 @media (max-width: 768px) {
+    :global(.bpbItemsCnt) .ctSlotCnt {
+        width: 50px;
+        height: 50px;
+        overflow: visible;
+        border-radius: 3px;
+    }
     .ctObjectPrizeCnt {
         max-width: 343px;
         height: 133px;
@@ -572,5 +594,8 @@
         height: 9px;
         top: 5px;
         right: 5px;
+    }
+    :global(.bpbItemsCnt) .ctSlotCnt > img{
+        padding: 5px !important;
     }
 }

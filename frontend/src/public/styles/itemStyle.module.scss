@@ -16,6 +16,8 @@
     padding: 10px 8px 8px 8px;
 }
 
+
+
 .smItemCnt {
     @extend %flex-center;
     border-width: 1px;
@@ -483,14 +485,42 @@
 
 
 @media (max-width: 1439px) {
+    :global(.threePlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
+        box-shadow: 0 0 16px rgba(255, 195, 0, .25);
+    }
+    :global(.fourPlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
+        box-shadow: 0 0 16px rgba(255, 195, 0, .25);
+    }
 
 }
 
 @media (max-width: 1024px) {
+    :global(.bpbItemsCnt) .smItemCnt {
+        width: 153px;
+        height: 153px;
+        overflow: visible;
+        background-size: contain;
+    }
+    :global(.bpbItemsCnt) .smItemCnt {
+        width: 153px;
+        height: 153px;
+        overflow: visible;
+        background-size: contain;
+    }
 
+    :global(.bpbItemsCnt) .smItemGunPrice {
+        font-size: 16px;
+        margin-bottom: 0px;
+        margin-top: 5px;
+    }
+    :global(.bpbItemsCnt) .smItemGunModel, :global(.bpbItemsCnt) .smItemGunStyle {
+        font-size: 15px;
+        line-height: 15px;
+    }
 }
 
 @media (max-width: 768px) {
+
 
     .smRemoveBtn {
         display: block;
@@ -676,5 +706,42 @@
         background-size: auto 100%; /* ширина авто, высота 100% */
         background-repeat: no-repeat; /* чтобы не повторялось */
         background-position: center;  /* по центру блока */
+    }
+     :global(.bpbItemsCnt) .smItemInfoBlck {
+        margin-top: 2px;
+    }
+    :global(.bpbItemsCnt) .smItemCnt {
+        width: 50px;
+        height: 50px;
+        padding: 4px 4px 6px 4px;
+        overflow: visible;
+        background-size: contain;
+        border-radius: 3px;
+    }
+    :global(.bpbItemsCnt) .smItemCnt {
+        width: 50px;
+        height: 50px;
+        overflow: visible;
+        background-size: contain;
+    }
+    :global(.bpbItemsCnt) .smItemCnt::before {
+        border-radius: 3px;
+    }
+
+    :global(.bpbItemsCnt) .smItemGunPrice {
+        font-size: 7px !important;
+        line-height: 100%;
+        margin-bottom: 0px;
+        margin-top: 2px !important;
+    }
+    :global(.bpbItemsCnt) .smItemGunModel, :global(.bpbItemsCnt) .smItemGunStyle {
+        font-size: 4px !important;
+        line-height: 4px !important;
+    }
+    .ScmCaseItem, .ScmCaseItem::before {
+        border-radius: 6px;
+    }
+    :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
+        box-shadow: 0 0 6px rgba(255, 195, 0, .25);
     }
 }

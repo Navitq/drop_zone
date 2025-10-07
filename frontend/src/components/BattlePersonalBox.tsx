@@ -148,7 +148,7 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
     return (
         <div className={style.bpbBlock}>
             <div className={`${style.bpbCnt}`}>
-                {
+                {/* {
                     isGameStart && playerData ? (
                         <BattleRouletteCnt addElement={(elem: ussualItemIntFront) => { addElement(elem) }} playerData={playerData ? playerData : null}></BattleRouletteCnt>
                     ) : (
@@ -156,9 +156,9 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
                             <BattleStateCnt imgPath={winner_id == props.id ? "/images/battles_successfully.svg" : "/images/battles_notsuccessfully.svg"} altText={winner_id == props.id ? t("win_alt") : t("lose_alt")} text={""}></BattleStateCnt>
                         )
                     )
-                }
+                } */}
 
-
+                <BattleRouletteCnt addElement={(elem: ussualItemIntFront) => { addElement(elem) }} playerData={playerData ? playerData : null}></BattleRouletteCnt>
                 <div className={`${style.bpbPlayerFieldCnt}  ${showRoundWinner && (wonRoundsGuys.length > 0 ? !wonRoundsGuys.includes(props.id) : false) ? style.bpbPlayerFieldCntLose : ""}`}>
                     {props.id ? (
                         <>
@@ -171,14 +171,16 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
                             <div className={style.bpbPlayerWonPrice}>{`${Number((totalPrice).toFixed(2))} Dc`}</div>
                         </>
                     ) : (
-                        <div className={style.bpbPlayerProfileInfoWaiting}>
-                            {t('players_waiting')}
+                        <div className={style.bpbPlayerProfileInfoWaitingParent}>
+                            <div className={style.bpbPlayerProfileInfoWaiting}>
+                                {t('players_waiting')}
+                            </div>
                         </div>
                     )}
 
                 </div>
             </div>
-            <div className={`${style.bpbItemsCnt}`}>
+            <div className={`${style.bpbItemsCnt} bpbItemsCnt`}>
                 {slots}
             </div>
         </div >

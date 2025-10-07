@@ -909,11 +909,13 @@
 .bgfCnt {
     @extend %flexCenter;
     justify-content: space-between;
+    align-items: flex-start;
     margin-left: auto;
     margin-right: auto;
     max-width: 1440px;
     width: 100%;
     margin-top: 70px;
+    column-gap: 20px;
 }
 
 .bpbCnt {
@@ -927,6 +929,7 @@
 }
 
 .bpbPlayerProfileInfo {
+    min-width: 0;
     @extend %flexCenter;
     justify-content: flex-start
 }
@@ -945,10 +948,12 @@
 
 .bpbPlayerProfileImgCnt {
     @extend %flexCenter;
+    flex-shrink: 0;
     height: 45px;
     width: 52px;
     margin-right: 22px;
     position: relative;
+    border-radius: 2px;
     img {
         object-fit: contain;
         border: 2px solid rgba(255, 148, 0, 1);
@@ -964,8 +969,16 @@
     color: rgba(255, 255, 255, 1);
 }
 
+.bpbPlayerProfileName {
+  white-space: nowrap;        /* не переносить строку */
+  overflow: hidden;           /* скрывать лишнее */
+  text-overflow: ellipsis;    /* добавить "..." */
+}
+
 .bpbPlayerWonPrice {
     color: rgba(229, 133, 0, 1);
+    white-space: nowrap;
+    margin-left: 15px;
 }
 
 .bpbPlayerFieldCntLose {
@@ -1001,6 +1014,7 @@
 }
 
 .bpbBlock {
+    min-width: 0;
     max-width: 623px;
     width: 100%;
 }
@@ -1106,7 +1120,7 @@
     grid-auto-rows: min-content; /* высота строк под контент */
     gap: 25px; /* row-gap и column-gap */
     width: 100%;
-    height: 100vh; /* или 100% родителя */
+    height:fit-content; /* или 100% родителя */
     overflow: auto;
 }
 
@@ -1183,13 +1197,24 @@
 .cardPlayersImgMobile{
     display: none;
 }
+.bpbPlayerProfileInfoWaitingParent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center; /* если нужно центрировать текст по горизонтали */
+  width: 100%;             /* или max-width: 200px для контроля */
+  min-width: 0;            /* важно для ellipsis */
+}
+
 .bpbPlayerProfileInfoWaiting {
-    @extend %flexCenter;
-    height: 100%;
-    width: 100%;
-    font-size: 24px;
-    font-family: var(--font-headBold);
-    color: rgba(255, 255, 255, 1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;          /* разрешаем сжатие */
+  min-width: 0;            /* критично внутри flex */
+  font-size: 24px;
+  font-family: var(--font-headBold);
+  color: #fff;
 }
 .cgsLeaveBtnPosition {
     margin-left: auto;
@@ -1232,6 +1257,63 @@
         justify-content: center;
         align-items: center;
     }
+
+
+
+
+
+
+    .fourPlayerCnt {
+        .bpbBlock {
+            .bpbCnt {
+                height: 360px;
+                padding: 15px 15px ;
+            }
+            .bpbPlayerFieldCnt  {
+                height: 45px;
+                border-radius: 7px;
+            }
+            .bpbPlayerFieldCnt {
+                padding: 0px 15px ;
+            }
+            .bpbPlayerProfileImgCnt {
+                width: 30px;
+                height: 30px;
+                border-radius: 2px;
+                margin-right: 12px;
+                img {
+                     border-radius: 2px;
+                }
+            }
+            .bpbPlayerProfileName, .bpbPlayerWonPrice {
+                font-size: 14px;
+            }
+            .bpbPlayerProfileInfoWaiting{
+                font-size: 16px;
+            }
+            .bstStateTitle {
+                font-size: 16px;
+            }
+            .bstStateImgCnt {
+                width:73px;
+                height:73px;
+            }
+            .bstCntRoulet {
+                max-height: 200px;
+            }
+            .bpbItemsCnt {
+                gap: 10px;
+            }
+            .bpbBlock {
+                max-width: 394px;
+            }
+            .bpbCnt {
+                height: 311px;
+                padding: 30px 30px 20px 30px;
+            }
+        }
+    }
+
 
 }
 
@@ -1281,6 +1363,59 @@
 }
 
 @media (max-width: 1024px) {
+    .faqTitleCnt {
+        margin-bottom: 40px;
+    }
+    .bgfCnt {
+        margin-top: 40px;
+    }
+    .threePlayerCnt, .fourPlayerCnt {
+        .bpbBlock {
+            .bpbCnt {
+                height: 360px;
+                padding: 30px 30px 20px 30px;
+            }
+        }
+    }
+    .bpbItemsCnt {
+        gap: 10px;
+    }
+    .bpbBlock {
+        max-width: 394px;
+    }
+    .bpbCnt {
+        height: 311px;
+        padding: 30px 30px 20px 30px;
+    }
+    .bpbPlayerFieldCnt  {
+        height: 45px;
+        border-radius: 7px;
+    }
+    .bpbPlayerFieldCnt {
+        padding: 0px 15px ;
+    }
+    .bpbPlayerProfileImgCnt {
+        width: 30px;
+        height: 30px;
+        border-radius: 2px;
+        margin-right: 12px;
+    }
+    .bpbPlayerProfileName, .bpbPlayerWonPrice {
+        font-size: 14px;
+    }
+    .bpbPlayerProfileInfoWaiting{
+        font-size: 16px;
+    }
+    .bstStateTitle {
+        font-size: 16px;
+    }
+    .bstStateImgCnt {
+        width:73px;
+        height:73px;
+    }
+    .bstCntRoulet {
+        max-height: 200px;
+    }
     .cbhGameActiveCases {
         height: 55px;
         width: 55px;
@@ -1409,9 +1544,81 @@
     .mnStuffTitle {
         margin-top: 1;
     }
+    .bpbItemsCnt {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(153px, 1fr)); /* колонки растягиваются по ширине контейнера */
+        grid-auto-rows: min-content; /* высота строк под контент */
+        gap: 10px; /* row-gap и column-gap */
+        width: 100%;
+        height:fit-content; /* или 100% родителя */
+        overflow: auto;
+    }
+    .mnBattlesStuffCnt{
+        margin-top: 40px
+    }
 }
 
 @media (max-width: 768px) {
+    .faqTitleCnt {
+        margin-bottom: 20px;
+    }
+
+    .bpbBlock {
+        max-width: 165px;
+    }
+    .bgfCnt {
+        justify-content: space-around;
+        margin-top: 0px;
+        column-gap: 10px;
+    }
+    .bpbCnt {
+        height: 130px;
+        border-radius: 5px;
+        padding: 10px 13px 10px 13px;
+        margin-bottom: 7px;
+    }
+    .bstStateImgCnt {
+        width:29px;
+        height:29px;
+    }
+    .bstStateTitle {
+        font-size: 13px;
+        margin-top: 9px;
+    }
+    .bpbPlayerFieldCnt  {
+        height: 23px;
+        border-radius: 3px;
+    }
+    .bpbPlayerFieldCnt {
+        padding: 0px 10px ;
+    }
+    .bpbPlayerProfileImgCnt {
+        width: 15px;
+        height: 15px;
+        margin-right: 6px;
+        border-width: 1px;
+        img {
+            border-radius: 2px;
+            border-width: 1px;
+        }
+    }
+    .bpbPlayerProfileName {
+        font-size: 8px;
+    }
+    .bpbPlayerWonPrice{
+        font-size: 9px;
+    }
+    .bpbPlayerProfileInfoWaiting{
+        font-size: 8px;
+    }
+
+    .bpbItemsCnt {
+        gap: 10px;
+    }
+
+    .bstCntRoulet {
+        max-height: 200px;
+    }
     .CbhPriceInfoCnt {
         height: 30px;
     }
@@ -1428,6 +1635,7 @@
         line-height: 100%;
         padding-left: 23px;
         padding-right: 23px;
+        border-radius: 6px;
     }
     .cbhSwiperSlide, .cbhSliderSwiper {
         height: 80px;
@@ -1436,6 +1644,8 @@
     .cbhCntMobile {
         height: 80px;
         margin-bottom: 15px;
+        padding: 0 15px;
+        border-radius: 5px;
     }
     .CbhPriceInfoData {
         font-size: 13px;
@@ -1445,6 +1655,7 @@
         display: none;
     }
     .mnBattlesStuffCnt{
+        margin-top: 20px;
         padding-right: 10px;
         padding-left: 10px;
     }
@@ -1796,5 +2007,18 @@
         line-height: 100%;
         margin-right: 0px;
         border-radius: 4px;
+    }
+
+    .bpbItemsCnt {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); /* колонки растягиваются по ширине контейнера */
+        grid-auto-rows: min-content; /* высота строк под контент */
+        gap: 7px; /* row-gap и column-gap */
+        width: 100%;
+        height:fit-content; /* или 100% родителя */
+        overflow: auto;
+    }
+    .bstCntRoulet {
+        max-height: 78px;
     }
 }

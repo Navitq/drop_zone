@@ -246,8 +246,13 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
           allowTouchMove={false}
           className={style.brcSliderSwiper}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
-          spaceBetween={40}
           centeredSlides={true}
+          spaceBetween={25} // значение для экранов <= 1024px
+          breakpoints={{
+            1025: {
+              spaceBetween: 40, // для экранов > 1024px
+            },
+          }}
         >
           {slides.map((value, num) => (
             <SwiperSlide className={style.battleSwiperSlide} key={num}>
