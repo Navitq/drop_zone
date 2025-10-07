@@ -1026,6 +1026,16 @@
     height: 100%;
 }
 
+.cbhSliderSwiper {
+    height: 100px;
+    width: auto;
+}
+.cbhSwiperSlide {
+    @extend %flexCenter;
+    height: 100px;
+    width: auto;
+}
+
 .swiperCnt {
     max-width: 100%;
     width: 100%;
@@ -1179,6 +1189,13 @@
     font-family: var(--font-headBold);
     color: rgba(255, 255, 255, 1);
 }
+.cgsLeaveBtnPosition {
+    margin-left: auto;
+}
+
+.cbtmMobileState{
+    display: none;
+}
 
 @media (max-width: 1439px) {
 
@@ -1208,6 +1225,18 @@
 }
 
 @media (max-width: 1200px) {
+    .cbhGameCasesCnt, .cbtPcState {
+        display: none;
+    }
+    .cbtmMobileState{
+        display: block;
+    }
+    .CbhPriceInfoData, .CbhPriceAndAmount {
+        white-space: nowrap;
+    }
+    .cbhHeadSideblock {
+        margin-right: 10px;
+    }
     .abcCardPriceButton {
         display: none;
     }
