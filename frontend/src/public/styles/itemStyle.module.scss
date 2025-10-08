@@ -517,10 +517,16 @@
         font-size: 15px;
         line-height: 15px;
     }
+    :global(.threePlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
+        box-shadow: 0 0 12px rgba(255, 195, 0, .25);
+    }
+    :global(.threePlayerCnt) :global(.bstCnt) .ScmCaseItem {
+        width: 160px;
+        height: 101px;
+    }
 }
 
 @media (max-width: 768px) {
-
 
     .smRemoveBtn {
         display: block;
@@ -743,5 +749,112 @@
     }
     :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
         box-shadow: 0 0 6px rgba(255, 195, 0, .25);
+    }
+    :global(.threePlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
+        box-shadow: 0 0 6px rgba(255, 195, 0, .25);
+    }
+    :global(.threePlayerCnt) :global(.bpbItemsCnt) .smItemCnt {
+        width: 75px;
+        height: 47px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        &.usuallItemSmType {
+            background-image: url(/images/mobile_blue_scm_item_background.png);
+            &::before {
+                background: linear-gradient(180deg, rgba(0, 81, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+            }
+            .scmCaseGunPrice {
+                color: rgba(184, 208, 255, 1);
+            }
+            .scmCaseGunModel {
+                color: rgba(0, 140, 255, 1);
+            }
+        }
+        &.rareItemSmType {
+            background-image: url(/images/mobile_violet_scm_item_background.png);
+            &::before {
+                background: linear-gradient(180deg, rgba(123, 0, 255, 0.5) 0%, rgba(56, 56, 56, 0) 107.01%);
+            }
+            .scmCaseGunPrice {
+                color: rgba(228, 203, 255, 1);
+            }
+            .scmCaseGunModel {
+                color: rgba(179, 108, 255, 1)
+            }
+        }
+
+        &.classifiedItemSmType {
+            background-image: url(/images/mobile_pink_scm_item_background.png);
+            &::before {
+                background: linear-gradient(180deg, rgba(212, 0, 255, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+            }
+            .scmCaseGunPrice {
+                color: rgba(255, 217, 248, 1);
+            }
+            .scmCaseGunModel {
+                color: rgba(255, 56, 229, 1)
+            }
+        }
+
+        &.eliteItemSmType {
+            background-image: url(/images/mobile_red_scm_item_background.png);
+            &::before {
+                background: linear-gradient(180deg, rgba(221, 36, 38, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
+            }
+            .scmCaseGunPrice {
+                color: rgba(255, 217, 217, 1);
+            }
+            .scmCaseGunModel {
+                color: rgba(255, 80, 80, 1);
+            }
+        }
+        &.epicItemSmType {
+            background-image: url(/images/mobile_yellow_scm_item_background.png);
+            &::before {
+                background: linear-gradient(180deg, rgba(255, 195, 0, 0.5) 0%, rgba(17, 18, 26, 0) 100%);
+            }
+            .scmCaseGunPrice {
+                color: rgba(254, 245, 163, 1);
+            }
+            .scmCaseGunModel{
+                color: rgba(255, 195, 0, 1);
+            }
+        }
+    }
+    :global(.threePlayerCnt) :global(.bstCnt) .ScmCaseItem {
+        width: 55px;
+        height: 55px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        .scmCaseGunStyle, .scmCaseGunModel, .scmCaseGunPrice {
+            font-size: 5px !important;
+            line-height: 100%;
+            white-space: nowrap;
+            margin-right: 0px;
+        }
+        .scmCaseGunStyle{
+            padding-top: 1px;
+        }
+        .scmCaseInfoBlck{
+            margin-top: 1px;
+        }
+        .scmCaseGunPrice{
+            margin-top: 2px;
+        }
+        &.usuallScmCaseItem {
+            background-image: url(/images/mobile_blue_item_background.png) !important;
+        }
+        &.rareScmCaseItem {
+            background-image: url(/images/mobile_violet_item_background.png) !important;
+        }
+        &.classifiedScmCaseItem {
+            background-image: url(/images/mobile_pink_item_background.png) !important;
+        }
+        &.eliteScmCaseItem {
+            background-image: url(/images/mobile_red_item_background.png) !important;
+        }
+        &.epicScmCaseItem {
+            background-image: url(/images/mobile_gold_item_background.png) !important;
+        }
     }
 }

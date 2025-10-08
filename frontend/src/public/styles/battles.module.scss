@@ -1369,14 +1369,7 @@
     .bgfCnt {
         margin-top: 40px;
     }
-    .threePlayerCnt, .fourPlayerCnt {
-        .bpbBlock {
-            .bpbCnt {
-                height: 360px;
-                padding: 30px 30px 20px 30px;
-            }
-        }
-    }
+
     .bpbItemsCnt {
         gap: 10px;
     }
@@ -1555,6 +1548,14 @@
     }
     .mnBattlesStuffCnt{
         margin-top: 40px
+    }
+    .threePlayerCnt {
+        .bpbBlock {
+            .bpbCnt {
+                height: 360px;
+                padding: 30px 15px 20px;
+            }
+        }
     }
 }
 
@@ -2008,7 +2009,6 @@
         margin-right: 0px;
         border-radius: 4px;
     }
-
     .bpbItemsCnt {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); /* колонки растягиваются по ширине контейнера */
@@ -2020,5 +2020,63 @@
     }
     .bstCntRoulet {
         max-height: 78px;
+    }
+    html body .threePlayerCnt {
+        .bpbBlock {
+            max-width: 75px;
+            .bpbCnt {
+                height: 132px;
+                padding: 5px 0px;
+            }
+            .bstStateImgCnt {
+                width: 38px !important;
+                height: 38px !important;
+            }
+            .bstStateTitle {
+                margin-top: 5px !important;
+                font-size: 7px;
+            }
+            .bpbPlayerFieldCnt {
+                padding: 6px !important;
+                max-width: 51px;
+                height: 25px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 15px;
+            }
+            .bstCntRoulet  {
+                max-height: 80px !important;
+            }
+            .bpbPlayerFieldCntLose {
+                box-shadow: none !important;
+            }
+            .bpbPlayerProfileInfoWaiting{
+                white-space: normal;
+                word-wrap: break-word;
+                text-align: center;
+                font-size: 7px;
+                overflow: visible;
+            }
+        }
+        .MobilePlayerFieldCnt.bpbPlayerFieldCnt {
+            margin-top: 0px;
+            flex-direction: column;
+            height: fit-content;
+            background: none !important;
+            .bpbPlayerProfileName {
+                display: none;
+            }
+            .bpbPlayerProfileInfo{
+                margin-right: 0px;
+                order: 2;
+            }
+            .bpbPlayerProfileImgCnt{
+                margin-right:0px !important;
+            }
+            .bpbPlayerWonPrice{
+                margin-bottom: 6px;
+                margin-left:0px !important;
+            }
+        }
     }
 }

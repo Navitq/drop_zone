@@ -458,9 +458,24 @@
     :global(.bpbItemsCnt) .ctSlotCnt > img{
         padding: 10px !important;
     }
+    // :global(.threePlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt {
+    //     width: 153px;
+    //     height: 153px;
+    //     overflow: visible;
+    // }
 }
 
 @media (max-width: 768px) {
+    :global(.threePlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 75px !important;
+        height: 47px !important;
+    }
+    :global(.threePlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt > img{
+        padding: 9px !important;
+    }
     :global(.bpbItemsCnt) .ctSlotCnt {
         width: 50px;
         height: 50px;
