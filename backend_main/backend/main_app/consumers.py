@@ -329,6 +329,8 @@ def process_results_to_inventory_for_player(results, player_id):
     """
     try:
         user = User.objects.get(id=player_id)
+        user.total_battles += 1
+        user.save()
     except User.DoesNotExist:
         print(f"Пользователь с id={player_id} не найден")
         return
@@ -347,6 +349,8 @@ def add_lose_items_to_inventory(player_items):
     """
     for pi in player_items:
         user = pi.get("player")
+        user.total_battles += 1
+        user.save()
         lose_items = pi.get("lose_items", [])
         for lose_item in lose_items:
             # item_state можно задать по умолчанию

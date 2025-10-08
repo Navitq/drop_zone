@@ -45,6 +45,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
+
+    best_case = models.JSONField(default=dict)
+    best_skin = models.JSONField(default=dict)
+    total_case_opened = models.PositiveIntegerField(
+        default=0, null=False, blank=False)
+    total_upgrades = models.PositiveIntegerField(
+        default=0, null=False, blank=False)
+    total_raffles = models.PositiveIntegerField(
+        default=0, null=False, blank=False)
+    total_battles = models.PositiveIntegerField(
+        default=0, null=False, blank=False)
+    total_contracts = models.PositiveIntegerField(
+        default=0, null=False, blank=False)
+
     token_version = models.PositiveIntegerField(
         blank=True, null=False, default=0)
     objects = CustomUserManager()
@@ -513,8 +527,6 @@ class BattleCase(models.Model):
             self.position = (last_position or 0) + 1  # следующий номер
         super().save(*args, **kwargs)
 
-
-
     def __str__(self):
         return f"{self.case_amount} x Case {self.case.get_name('en')} in Battle {self.battle.id}"
 
@@ -539,3 +551,50 @@ class BattleDropItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.item.name} (Round {self.round}) for {self.battle_drop.user}"
+
+
+class GlobalStateCoeff(models.Model):
+    EXTERIOR_CHOICES = [
+        ("factory_new", "Factory New"),
+        ("minimal_wear", "Minimal Wear"),
+        ("field_tested", "Field-Tested"),
+        ("well_worn", "Well-Worn"),
+        ("battle_scarred", "Battle-Scarred"),
+    ]
+
+    factory_new = models.FloatField("Factory New", default=0)
+    minimal_wear = models.FloatField("Minimal Wear", default=0)
+    field_tested = models.FloatField("Field-Tested", default=0)
+    well_worn = models.FloatField("Well-Worn", default=0)
+    battle_scarred = models.FloatField("Battle-Scarred", default=0)
+
+    def clean(self):
+        # Проверка на диапазон 0-100
+        for field in ['factory_new', 'minimal_wear', 'field_tested', 'well_worn', 'battle_scarred']:
+            value = getattr(self, field)
+            if not (0 <= value <= 100):
+                raise ValidationError(
+                    {field: "Значение должно быть от 0 до 100"})
+
+        # Проверка суммы
+        total = (
+            self.factory_new +
+            self.minimal_wear +
+            self.field_tested +
+            self.well_worn +
+            self.battle_scarred
+        )
+        if round(total, 2) != 100:
+            raise ValidationError(
+                "Сумма всех коэффициентов должна быть равна 100")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # Проверка перед сохранением
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "GlobalStateCoeff"
+
+    class Meta:
+        verbose_name = "Глобальные коэффициенты состояния"
+        verbose_name_plural = "Глобальные коэффициенты состояния"

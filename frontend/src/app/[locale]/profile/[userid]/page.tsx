@@ -42,7 +42,7 @@ export default function ProfilePage(): React.ReactNode {
             <PrBestSkin imgPath='/images/example_profile_knife.png' type='elite' gunModel={"Knife"} gunStyle={"Zakalka"} gunPrice={32.42}></PrBestSkin>
           </PrBestObject>
         </div>
-        <PrStuffsCnt></PrStuffsCnt>
+        {/* <PrStuffsCnt></PrStuffsCnt> */}
 
       </div>
     </div >

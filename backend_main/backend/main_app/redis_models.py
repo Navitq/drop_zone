@@ -133,6 +133,17 @@ class CaseInfo(BaseModel):
     case_amount: int
 
 
+class GlobalStateCoeffRedis(BaseModel):
+    factory_new: float
+    minimal_wear: float
+    field_tested: float
+    well_worn: float
+    battle_scarred: float
+
+    class Config:
+        orm_mode = True
+
+
 class ActiveBattleRedis(JsonModel):
     id: str = Field(index=True)  # UUID баттла
     creator_id: str = Field(index=True)  # ID создателя

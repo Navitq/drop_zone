@@ -4,8 +4,8 @@ from django.db.backends.signals import connection_created
 from django.dispatch import receiver
 from redis.exceptions import ConnectionError as RedisConnectionError
 from django.db.models.signals import post_save, post_delete
-from .utils import load_to_redis, load_advertisement, sync_update_battle_in_redis, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
-from .models import Case, Battle, BattleCase, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
+from .utils import load_to_redis, load_advertisement, sync_update_battle_in_redis, load_global_state_coeff, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
+from .models import Case, Battle, BattleCase, GlobalStateCoeff, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
@@ -24,6 +24,20 @@ def case_saved(sender, instance, created, **kwargs):
     try:
         pass
         load_to_redis()
+    except RedisConnectionError:
+        pass
+
+
+@receiver(post_save, sender=GlobalStateCoeff)
+def load_global_state(sender, instance, created, **kwargs):
+    """
+    Срабатывает при создании или изменении кейса
+    """
+    if not os.environ.get("RUN_MAIN") == "true":
+        return
+    try:
+        pass
+        load_global_state_coeff()
     except RedisConnectionError:
         pass
 

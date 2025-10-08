@@ -367,7 +367,8 @@ def add_to_raffels(raffle_id,  user):
     exists = raffle.players.filter(id=user.id).exists()
     if exists:
         return JsonResponse({"detail": "User already in raffle"}, status=409)
-
+    user.total_raffles += 1
+    user.save()
     raffle.players.add(user)
 
     return JsonResponse({
@@ -750,7 +751,8 @@ def play_upgrade_game(user, server_item, client_item=None, price=None):
         server_item=server_item.price,
         price=upgrade_price
     )
-
+    user.total_upgrades += 1
+    user.save()
     if spin_state is True:
         item_state = sync_spin_state_wheel(user)
         item = sync_create_order(item_state, server_item, user)
@@ -1052,6 +1054,8 @@ def get_open_case_view(request, case_id):
                     prize_item = sync_spin_roulette_wheel(
                         money_check["case"], money_check["user"])
                     item_state = sync_spin_state_wheel(money_check["user"])
+                    money_check["user"].total_case_opened += 1
+                    money_check["user"].save()
                     sync_create_order(item_state, prize_item,
                                       money_check["user"])
                     prize_dict = {
@@ -1338,6 +1342,8 @@ def make_contract_view(request):
             print(5555555555555555555555555555555555555)
             state = sync_spin_state_wheel(user_item)
             print(6666666666666666666666666666666666666666666)
+            user_item.total_contracts += 1
+            user_item.save()
             order = sync_create_order(
                 item_state=state, item=won_item, user=user_item)
             print(77777777777777777777777777777777777777)

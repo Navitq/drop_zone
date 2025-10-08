@@ -1,8 +1,8 @@
 
 from django.db.utils import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
-from .models import Case, Battle, Raffles, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
-from .redis_models import CaseRedisStandart, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
+from .models import Case, Battle, Raffles, GlobalStateCoeff, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
+from .redis_models import CaseRedisStandart, GlobalStateCoeffRedis, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
 from django.utils import timezone
 from redis.exceptions import RedisError
 from redis_om.model.model import NotFoundError
@@ -235,6 +235,38 @@ def load_battles_active_main():
     except RedisConnectionError:
         print("❌ Redis недоступен — баттлы не загружены")
         raise
+    except OperationalError:
+        print("❌ Postgres ещё не готов — ждём…")
+
+
+def load_global_state_coeff():
+    try:
+        # проверка доступности Redis
+        GlobalStateCoeffRedis.db().ping()
+
+        # очищаем старые записи в Redis
+        GlobalStateCoeffRedis.find().delete()
+
+        # забираем единственную запись из базы
+        try:
+            coeff_obj = GlobalStateCoeff.objects.get()
+        except GlobalStateCoeff.DoesNotExist:
+            print("❌ В базе нет GlobalStateCoeff")
+            return
+
+        # создаём объект для Redis и сохраняем
+        GlobalStateCoeffRedis(
+            factory_new=coeff_obj.factory_new,
+            minimal_wear=coeff_obj.minimal_wear,
+            field_tested=coeff_obj.field_tested,
+            well_worn=coeff_obj.well_worn,
+            battle_scarred=coeff_obj.battle_scarred,
+        ).save()
+
+        print("✅ Redis синхронизирован: GlobalStateCoeff сохранён")
+
+    except RedisError:
+        print("❌ Redis недоступен")
     except OperationalError:
         print("❌ Postgres ещё не готов — ждём…")
 
