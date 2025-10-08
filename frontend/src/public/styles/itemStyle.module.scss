@@ -225,6 +225,7 @@
     border-radius: 10px;
     outline: none;
     justify-content: space-between;
+    background-repeat: no-repeat;
 
     &.usuallScmCaseItem {
         background-image: url(/images/blue_scm_item_background.png);
@@ -483,18 +484,54 @@
     display: none;
 }
 
+:global(.bstCnt), :global(.bpbItemsCnt) {
+    .scmCaseGunModel, .scmCaseGunStyle, .smItemGunStyle , .smItemGunModel {
+        white-space: nowrap !important;
+    }
+}
+:global(.fourPlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
+     box-shadow: 0 0 22px rgba(255, 195, 0, .25);
+}
 
 @media (max-width: 1439px) {
+    :global(.fourPlayerCnt) :global(.bstCnt) .ScmCaseItem {
+        width: 160px;
+        height: 101px;
+    }
     :global(.threePlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
         box-shadow: 0 0 16px rgba(255, 195, 0, .25);
     }
     :global(.fourPlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
-        box-shadow: 0 0 16px rgba(255, 195, 0, .25);
+        box-shadow: 0 0 10px rgba(255, 195, 0, .25);
     }
 
 }
 
 @media (max-width: 1024px) {
+    :global(.fourPlayerCnt) :global(.bstCnt) .ScmCaseItem {
+        width: 106px;
+        height: 106px;
+        background-size: cover;
+        .scmCaseGunModel, .scmCaseGunStyle {
+          font-size: 9px;
+          margin-top: 5px;
+        }
+        &.usuallScmCaseItem {
+            background-image: url(/images/mobile_blue_item_background.png);
+        }
+        &.rareScmCaseItem {
+            background-image: url(/images/mobile_violet_item_background.png);
+        }
+        &.classifiedScmCaseItem {
+            background-image: url(/images/mobile_pink_item_background.png);
+        }
+        &.eliteScmCaseItem {
+            background-image: url(/images/mobile_red_item_background.png);
+        }
+        &.epicScmCaseItem {
+            background-image: url(/images/mobile_gold_item_background.png);
+        }
+    }
     :global(.bpbItemsCnt) .smItemCnt {
         width: 153px;
         height: 153px;
@@ -512,6 +549,7 @@
         font-size: 16px;
         margin-bottom: 0px;
         margin-top: 5px;
+        line-height: 100%;
     }
     :global(.bpbItemsCnt) .smItemGunModel, :global(.bpbItemsCnt) .smItemGunStyle {
         font-size: 15px;
@@ -753,7 +791,10 @@
     :global(.threePlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
         box-shadow: 0 0 6px rgba(255, 195, 0, .25);
     }
-    :global(.threePlayerCnt) :global(.bpbItemsCnt) .smItemCnt {
+    :global(.fourPlayerCnt) :global(.bstCnt) :global(.swiper-slide-active) .ScmCaseItem {
+        box-shadow: 0 0 6px rgba(255, 195, 0, .25);
+    }
+    :global(.threePlayerCnt) :global(.bpbItemsCnt) .smItemCnt, :global(.fourPlayerCnt) :global(.bpbItemsCnt) .smItemCnt {
         width: 75px;
         height: 47px;
         background-repeat: no-repeat;
@@ -821,7 +862,7 @@
             }
         }
     }
-    :global(.threePlayerCnt) :global(.bstCnt) .ScmCaseItem {
+    :global(.threePlayerCnt) :global(.bstCnt) .ScmCaseItem, :global(.fourPlayerCnt) :global(.bstCnt) .ScmCaseItem  {
         width: 55px;
         height: 55px;
         background-size: contain;

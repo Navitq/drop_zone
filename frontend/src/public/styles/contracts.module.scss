@@ -466,14 +466,14 @@
 }
 
 @media (max-width: 768px) {
-    :global(.threePlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt {
+    :global(.threePlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt, :global(.fourPlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 75px !important;
         height: 47px !important;
     }
-    :global(.threePlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt > img{
+    :global(.threePlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt > img, :global(.fourPlayerCnt) :global(.bpbItemsCnt) .ctSlotCnt > img{
         padding: 9px !important;
     }
     :global(.bpbItemsCnt) .ctSlotCnt {

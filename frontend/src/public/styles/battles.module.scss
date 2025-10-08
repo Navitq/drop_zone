@@ -336,7 +336,7 @@
     @extend %flexCenter;
     position: relative;   // обязательно для fill
     width: auto;          // ширина будет по содержимому
-    height: 54px;         // максимальная высота блока
+    height: 46px;         // максимальная высота блока
     flex-shrink: 0;
     width: 46px;
     border-radius: 7px;
@@ -1279,10 +1279,10 @@
             .bpbPlayerProfileImgCnt {
                 width: 30px;
                 height: 30px;
-                border-radius: 2px;
+                border-radius: 4px;
                 margin-right: 12px;
                 img {
-                     border-radius: 2px;
+                     border-radius: 4px;
                 }
             }
             .bpbPlayerProfileName, .bpbPlayerWonPrice {
@@ -1313,7 +1313,16 @@
             }
         }
     }
-
+    html body .fourPlayerCnt {
+        .bpbBlock {
+            .bstCntRoulet  {
+                max-height: 200px !important;
+            }
+            .bpbCnt {
+                padding: 30px 15px 20px;
+            }
+        }
+    }
 
 }
 
@@ -1557,6 +1566,7 @@
             }
         }
     }
+
 }
 
 @media (max-width: 768px) {
@@ -2021,7 +2031,20 @@
     .bstCntRoulet {
         max-height: 78px;
     }
-    html body .threePlayerCnt {
+    html body .fourPlayerCnt{
+        .bpbPlayerWonPrice {
+            font-size: 9px !important;
+        }
+        .bpbPlayerProfileImgCnt {
+            width: 15px !important;
+            height: 15px !important;
+            border-radius: 2px !important;
+            img {
+                border-radius: 2px !important;
+            }
+        }
+    }
+    html body .threePlayerCnt, html body .fourPlayerCnt {
         .bpbBlock {
             max-width: 75px;
             .bpbCnt {
@@ -2043,6 +2066,7 @@
                 margin-left: auto;
                 margin-right: auto;
                 margin-top: 15px;
+                border-radius: 3px !important;
             }
             .bstCntRoulet  {
                 max-height: 80px !important;
