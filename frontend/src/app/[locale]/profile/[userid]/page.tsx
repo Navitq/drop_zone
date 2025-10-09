@@ -19,22 +19,34 @@ import { BACKEND_PATHS, FRONTEND_PATHS } from '@/utilites/urls'
 import { useRouter } from 'next/navigation'
 import { clearProfileData, setProfileData } from '@/redux/profileReducer'
 import api from "@/lib/api";
+import { useLocale } from 'next-intl';
 
-
+interface CaseName {
+  en: string;
+  ru: string;
+}
 
 
 export default function ProfilePage(): React.ReactNode {
 
   const ownerId = useAppSelector(state => state.user.userData.id)
-  const money_amount = useAppSelector(state => state.user.userData.money_amount)
+  const { money_amount, username, avatar_url, provider, best_case, best_skin } = useAppSelector(state => state.profile)
   const dispatch = useAppDispatch()
   const params = useParams()
   const router = useRouter()
+  const locale = useLocale()
   const userId = params.userid
 
-  function capitalizeFirstLetter(str) {
+  function capitalizeFirstLetter(str: string) {
     if (!str) return str;
     return str[0].toUpperCase() + str.slice(1);
+  }
+
+  function removeSteamPrefix(str: string) {
+    if (str.startsWith("steam_")) {
+      return str.slice(6); // длина "steam_" = 6
+    }
+    return str;
   }
 
   async function getUserPageData() {
@@ -77,8 +89,8 @@ export default function ProfilePage(): React.ReactNode {
       </div>
       <div className={style.mainUserInfoCnt}>
         {ownerId == userId ?
-          <PrOwnerInfo link={'https://steamcommunity.com/id/pinoygamestore'} imgPath='/images/example_user_image.png' nickName={"Marco Polo"} balance={758.18} accountType={"Steam"}></PrOwnerInfo> :
-          <PrUserInfo link={'https://steamcommunity.com/id/pinoygamestore'} imgPath='/images/example_user_image.png' nickName={"Marco Polo"} accountType={"Steam"}></PrUserInfo>}
+          <PrOwnerInfo link={capitalizeFirstLetter(provider) == 'Steam' ? `https://steamcommunity.com/profiles/${removeSteamPrefix(username)}` : capitalizeFirstLetter(provider) == 'Vk' ? `https://vk.com/id${username}` : `${FRONTEND_PATHS.profile}/${userId}`} imgPath={avatar_url} nickName={username} balance={money_amount} accountType={capitalizeFirstLetter(provider)}></PrOwnerInfo> :
+          <PrUserInfo link={capitalizeFirstLetter(provider) == 'Steam' ? `https://steamcommunity.com/profiles/${removeSteamPrefix(username)}` : capitalizeFirstLetter(provider) == 'Vk' ? `https://vk.com/id${username}` : `${FRONTEND_PATHS.profile}/${userId}`} imgPath={avatar_url} nickName={username} accountType={capitalizeFirstLetter(provider)}></PrUserInfo>}
         <div className={style.siteUserInfoCnt}>
           {ownerId == userId ? <PrTradeLinkBlock></PrTradeLinkBlock> : null}
           <PrSiteActivities></PrSiteActivities>
@@ -88,10 +100,16 @@ export default function ProfilePage(): React.ReactNode {
 
         <div className={style.prBestObjectCnt}>
           <PrBestObject>
-            <PrBestCase imgPath='/images/case_mock.png' caseName={"Весення кура"}></PrBestCase>
+            <PrBestCase imgPath={typeof best_case === "object" && best_case.imgPath ? best_case.imgPath : ''} caseName={typeof best_case === "object" && best_case.name ? best_case.name[locale as keyof CaseName] : ''}></PrBestCase>
           </PrBestObject>
           <PrBestObject>
-            <PrBestSkin imgPath='/images/example_profile_knife.png' type='elite' gunModel={"Knife"} gunStyle={"Zakalka"} gunPrice={32.42}></PrBestSkin>
+            <PrBestSkin
+              imgPath={typeof best_skin === "object" && best_skin.imgPath ? best_skin.imgPath : ''}
+              type={typeof best_skin === "object" && best_skin.type ? best_skin.type : 'usuall'}
+              gunModel={typeof best_skin === "object" && best_skin.gunModel ? best_skin.gunModel : ''}
+              gunStyle={typeof best_skin === "object" && best_skin.gunStyle ? best_skin.gunStyle : ''}
+              gunPrice={typeof best_skin === "object" && best_skin.gunPrice ? best_skin.gunPrice : 0}
+            />
           </PrBestObject>
         </div>
         {/* <PrStuffsCnt></PrStuffsCnt> */}

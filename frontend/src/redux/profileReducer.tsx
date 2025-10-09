@@ -24,7 +24,7 @@ interface ProfileData {
         total_contracts: number,
     },
     best_case: { id: string, imgPath: string, name: CaseName } | "" | string,
-    best_skin: { id: string, imgPath: string, name: CaseName, gunPrice: string, gunModel: string, gunStyle: string, state?: items_state, type: items_type } | "" | string,
+    best_skin: { id: string, imgPath: string, name: CaseName, gunPrice: number, gunModel: string, gunStyle: string, state?: items_state, type: items_type } | "" | string,
 }
 
 
