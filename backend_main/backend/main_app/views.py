@@ -1462,6 +1462,68 @@ async def get_battle_info_view(request, battle_id):
         return JsonResponse({"error": "Internal Server Error"}, status=500)
 
 
+@async_require_methods(['POST'])
+async def profile_info_view(request):
+    try:
+        data_full = json.loads(request.body)
+        asked_user_id = data_full.get("id")
+
+        if not asked_user_id:
+            return JsonResponse({"error": "User ID is required"}, status=400)
+
+        # Получаем пользователя асинхронно (через sync_to_async)
+        asked_user = await sync_to_async(User.objects.get)(id=asked_user_id)
+        owner_id = request.token_data.get("id")
+        first_social_account = await sync_to_async(lambda: asked_user.social_accounts.first())()
+        provider = first_social_account.provider if first_social_account else None
+
+        if owner_id == asked_user_id:
+            response_data = {
+                "id": str(asked_user.id),
+                "provider": provider,
+                "username": asked_user.username,
+                "email": asked_user.email,
+                "avatar_url": asked_user.avatar_url,
+                "money_amount": float(asked_user.money_amount),
+                "stats": {
+                    "total_case_opened": asked_user.total_case_opened,
+                    "total_upgrades": asked_user.total_upgrades,
+                    "total_raffles": asked_user.total_raffles,
+                    "total_battles": asked_user.total_battles,
+                    "total_contracts": asked_user.total_contracts,
+                },
+                "best_case": asked_user.best_case,
+                "best_skin": asked_user.best_skin,
+            }
+        else:
+            response_data = {
+                "id": str(asked_user.id),
+                "provider": provider,
+                "username": asked_user.username,
+                "email": asked_user.email,
+                "avatar_url": asked_user.avatar_url,
+                "stats": {
+                    "total_case_opened": asked_user.total_case_opened,
+                    "total_upgrades": asked_user.total_upgrades,
+                    "total_raffles": asked_user.total_raffles,
+                    "total_battles": asked_user.total_battles,
+                    "total_contracts": asked_user.total_contracts,
+                },
+                "best_case": asked_user.best_case,
+                "best_skin": asked_user.best_skin,
+            }
+        return JsonResponse(response_data, status=200, safe=False)
+
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
 @require_http_methods(["POST"])
 def create_battles_view(request):
     try:

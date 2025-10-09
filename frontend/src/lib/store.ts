@@ -6,8 +6,10 @@ import activeBattleReducer from '@/redux/activeBattleReducer'
 import advertisementReducer from '@/redux/advertisementReducer'
 import upgradeReducer from '@/redux/upgradeReducer'
 import contractsReducer from '@/redux/contractsReducer'
+import profileReducer from '@/redux/profileReducer'
 
 import { merge } from 'lodash'
+import { profile } from 'console'
 
 // export const makeStore = () => {
 //   return configureStore({
@@ -47,6 +49,7 @@ export const makeStore = (preloadedState: Partial<AuthState> = {} ) => configure
     advertisement: advertisementReducer,
     upgrade: upgradeReducer,
     contracts: contractsReducer,
+    profile: profileReducer,
   },
   preloadedState:  {
     user: merge({}, userInitialState, preloadedState),

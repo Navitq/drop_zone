@@ -133,15 +133,12 @@ class CaseInfo(BaseModel):
     case_amount: int
 
 
-class GlobalStateCoeffRedis(BaseModel):
+class GlobalStateCoeffRedis(JsonModel):
     factory_new: float
     minimal_wear: float
     field_tested: float
     well_worn: float
     battle_scarred: float
-
-    class Config:
-        orm_mode = True
 
 
 class ActiveBattleRedis(JsonModel):
