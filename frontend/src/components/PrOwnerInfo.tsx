@@ -12,7 +12,7 @@ interface PrOwnerInfoInt {
     nickName: string,
     balance: number,
     link: string,
-    accountType: "Steam" | "Telegram" | "Vk"
+    accountType: "Steam" | "Google" | "Vk"
 }
 
 function PrOwnerInfo(props: PrOwnerInfoInt): React.ReactNode {

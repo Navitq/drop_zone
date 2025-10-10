@@ -335,6 +335,20 @@ def sync_create_order(item_state: str, item, user):
     """
     try:
         steam_item = SteamItemCs.objects.get(id=item.id)
+        if (
+            "price" not in user.best_skin
+            or float(user.best_skin.get("gunPrice", 0)) <= float(item.price)
+        ):
+            user.best_skin = {
+                "id": str(item.id),
+                "imgPath": item.icon_url,
+                "gunPrice": float(item.price or 0),
+                "gunModel": item.item_model,
+                "gunStyle": item.item_style,
+                "state": item_state,
+                "type": item.rarity,
+            }
+            user.save()
         return InventoryItem.objects.create(
             steam_item=steam_item,
             owner=user,
@@ -344,19 +358,19 @@ def sync_create_order(item_state: str, item, user):
         print(f"Ошибка при создании InventoryItem: {e}")
 
 
-async def create_order(item_state: str, item, user):
-    """
-    Создаёт InventoryItem для пользователя и сохраняет в БД.
-    """
-    try:
-        steam_item = await sync_to_async(SteamItemCs.objects.get)(id=item.id)
-        return await sync_to_async(InventoryItem.objects.create)(
-            steam_item=steam_item,
-            owner=user,
-            exterior_wear=item_state,
-        )
-    except DatabaseError as e:
-        print(f"Ошибка при создании InventoryItem: {e}")
+# async def create_order(item_state: str, item, user):
+#     """
+#     Создаёт InventoryItem для пользователя и сохраняет в БД.
+#     """
+#     try:
+#         steam_item = await sync_to_async(SteamItemCs.objects.get)(id=item.id)
+#         return await sync_to_async(InventoryItem.objects.create)(
+#             steam_item=steam_item,
+#             owner=user,
+#             exterior_wear=item_state,
+#         )
+#     except DatabaseError as e:
+#         print(f"Ошибка при создании InventoryItem: {e}")
 
 
 def add_to_raffels(raffle_id,  user):
@@ -1055,6 +1069,18 @@ def get_open_case_view(request, case_id):
                         money_check["case"], money_check["user"])
                     item_state = sync_spin_state_wheel(money_check["user"])
                     money_check["user"].total_case_opened += 1
+                    print(money_check["user"].best_case.get(
+                        "price", 0),  money_check["case"].price, 67676767)
+                    if (
+                        "price" not in money_check["user"].best_case
+                        or float(money_check["user"].best_case.get("price", 0)) <= float(money_check["case"].price)
+                    ):
+                        money_check["user"].best_case = {
+                            "id": money_check["case"].id,
+                            "imgPath": money_check["case"].icon_url,
+                            "name": money_check["case"].name,
+                            "price": money_check["case"].price,
+                        }
                     money_check["user"].save()
                     sync_create_order(item_state, prize_item,
                                       money_check["user"])

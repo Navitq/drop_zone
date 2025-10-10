@@ -10,7 +10,7 @@ interface PrUserInfoInt {
     imgPath?: string,
     nickName: string,
     link: string,
-    accountType: "Steam" | "Telegram" | "Vk"
+    accountType: "Steam" | "Google" | "Vk"
 }
 
 
@@ -31,7 +31,7 @@ function PrUserInfo(props: PrUserInfoInt): React.ReactNode {
                     <Image src={`/images/profile_${(props.accountType).toLowerCase()}_icon.svg`} width={35} height={35} alt={props.accountType}></Image>
                 </Link>
             </div>
-            
+
         </div >
     )
 }

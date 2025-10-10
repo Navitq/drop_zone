@@ -66,7 +66,6 @@ export default function ProfilePage(): React.ReactNode {
         // router.push(FRONTEND_PATHS.home)
       }
     }
-
   }
 
   useEffect(() => {

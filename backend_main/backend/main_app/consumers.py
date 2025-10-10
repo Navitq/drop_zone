@@ -314,6 +314,21 @@ def sync_create_order(item_state: str, item, user):
     """
     try:
         steam_item = SteamItemCs.objects.get(id=item['id'])
+        if (
+            "price" not in user.best_skin
+            or float(user.best_skin.get("gunPrice", 0)) <= float(item.price)
+        ):
+            user.best_skin = {
+                "id": str(item.id),
+                "imgPath": item.icon_url,
+                "name": item.name,
+                "gunPrice": float(item.price or 0),
+                "gunModel": item.item_model,
+                "gunStyle": item.item_style,
+                "state": item_state,
+                "type": item.rarity,
+            }
+            user.save()
         return InventoryItem.objects.create(
             steam_item=steam_item,
             owner=user,
