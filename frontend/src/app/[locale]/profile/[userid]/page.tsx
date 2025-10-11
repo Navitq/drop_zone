@@ -111,7 +111,7 @@ export default function ProfilePage(): React.ReactNode {
             />
           </PrBestObject>
         </div>
-        {/* <PrStuffsCnt></PrStuffsCnt> */}
+        <PrStuffsCnt client_id={Array.isArray(userId) ? userId[0] : userId ?? ''} ownerId={ownerId}></PrStuffsCnt>
 
       </div>
     </div >

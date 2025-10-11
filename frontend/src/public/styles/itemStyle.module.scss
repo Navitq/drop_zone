@@ -493,6 +493,18 @@
      box-shadow: 0 0 22px rgba(255, 195, 0, .25);
 }
 
+:global(.prStuffsCnt) .smRemoveBtn {
+    display: block;
+    font-size: 14px;
+}
+
+:global(.prStuffsCnt) .smRemoveBtn button {
+    font-size: 14px;
+    line-height: 14px;
+    height: 29px;
+}
+
+
 @media (max-width: 1439px) {
     :global(.fourPlayerCnt) :global(.bstCnt) .ScmCaseItem {
         width: 160px;
@@ -565,6 +577,16 @@
 }
 
 @media (max-width: 768px) {
+    :global(.prStuffsCnt) .smRemoveBtn {
+        font-size: 8px;
+    }
+
+    :global(.prStuffsCnt) .smRemoveBtn button {
+        font-size: 8px;
+        line-height: 8px;
+        height: 15px;
+        border-radius: 4px;
+    }
 
     .smRemoveBtn {
         display: block;

@@ -34,6 +34,8 @@ interface ExClientStuffsInt {
     removeItem?: (value: gunItemModel) => void,
     deleteTxt?: string,
     isContracts?: boolean,
+    isActiveProfile?: boolean,
+    activeBtlText?: string
 }
 
 
@@ -276,10 +278,11 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                                 gunPrice={value.gunPrice}
                                 type={value.type}
                                 state={value.state}
-                                activateBtnColor={isActive}
+                                activateBtnColor={props.isActiveProfile ? props.isActiveProfile : isActive}
                                 activateBtn={handleActivate(value)}
                                 deleteBtn={handleRemove(value)}
                                 deleteTxt={props.deleteTxt ? props.deleteTxt : ""}
+                                activeBtlText={props.activeBtlText ? props.activeBtlText : ""}
                             />
                         );
                     })

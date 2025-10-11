@@ -16,7 +16,8 @@ interface ItemSmInt {
     state: string
     activateBtn: () => void,
     deleteBtn?: () => void,
-    deleteTxt?: string
+    deleteTxt?: string,
+    activeBtlText?: string
 }
 
 function ItemSm(props: ItemSmInt): React.ReactNode {
@@ -56,7 +57,7 @@ function ItemSm(props: ItemSmInt): React.ReactNode {
                 <ItemBtn
                     isActive={props.activateBtnColor} // чётко булево
                     activateBtn={handleActivate}
-                    price={t('add_good')}
+                    price={props.activeBtlText ? props.activeBtlText : t('add_good')}
                 />
                 {props.deleteTxt && props.activateBtnColor ? (
                     <div className={style.smRemoveBtn}>

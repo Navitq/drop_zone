@@ -54,11 +54,14 @@
 
 .prOwnerImageCnt {
     @extend %flexCenter;
-    max-width: 168px;
+    position: relative;
+    width: 168px;
     height: 168px;
-    width: 100%;
     position: relative;
     flex-shrink: 0;
+    img {
+        object-fit: contain;
+    }
 }
 
 .prUserImageCnt {
@@ -86,6 +89,7 @@
 .prOwnerDataBlock {
     width: 100%;
     margin-left: 25px;
+    max-width: 280px;
 }
 
 .prOwnerDataCnt{
@@ -101,6 +105,8 @@
     padding-bottom: 7px;
     margin-right: 20px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .prTopUpBalance {
@@ -111,7 +117,7 @@
     border-radius: 7px;
     padding: 7px 14px;
     color: rgba(255, 255, 255, 1);
-
+    margin-left: auto;
     &:hover {
        background-color: rgba(255, 169, 49, 0.3);
     }
@@ -138,6 +144,7 @@
     justify-content: space-between;
     height: 43px;
     margin-bottom: 22px;
+    max-width: 100%;
 }
 
 .prNickname {
@@ -145,6 +152,15 @@
     font-size: 24px;
     line-height: 17px;
     color: rgba(255, 255, 255, 1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;       /* важно для flex */
+    max-width: 100%;    /* ограничивает ширину родителем */
+    flex: 1 1 auto;
+}
+.makeInLiner {
+    @extend %flexCenter
 }
 
 .prAccountType {
@@ -173,11 +189,13 @@
     width: 100%;
 }
 
+
 .prAccountBalanceCnt {
     @extend %flexStart;
     flex-direction: column;
     justify-content: space-between;
     height: 53px;
+    width: inherit
 }
 
 .prUserInfo {
@@ -197,6 +215,10 @@
     line-height: 100%;
     color: rgba(255, 255, 255, 1);
     height: 44px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .prUserMainInfo {
@@ -205,6 +227,7 @@
 }
 
 .prUserAccountType {
+    margin-left: 15px;
     @extend %flexCenter;
 }
 
@@ -323,6 +346,12 @@
 
 .prActivityImageCnt {
     @extend %flexCenter;
+    height: 60px;
+    width: 60px;
+    position: relative;
+    img {
+        object-fit: contain;
+    }
 }
 
 .prActivityName {
@@ -395,6 +424,9 @@
     max-height: 326px;
     flex: 1;
     width: 100%;
+    img {
+        object-fit: contain;
+    }
 }
 
 .prBestCaseImgCnt img {
@@ -407,6 +439,7 @@
     font-size: 36px;
     line-height: 100%;
     text-align: center;
+
 }
 
 .prBestSkinStyle  {
@@ -487,10 +520,12 @@
     flex: 1;
     height: 100%;
     width: 100%;
+    img {
+        object-fit: contain;
+    }
 }
 
 .prBestSkinImg {
-    object-fit: "contain";
     transition: transform 0.5s ease;
 }
 
@@ -568,13 +603,269 @@
 }
 
 @media (max-width: 1439px) {
+    .mainUserInfoCnt {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .prTradeLinkBlock {
+        margin-bottom: 20px;
+    }
+    .prSiteActivities {
+        padding: 0 40px;
+    }
+}
 
+@media (max-width: 1200px) {
+
+    .prBestObject {
+        &:first-child {
+            margin-bottom: 25px;
+        }
+        .prBestCase {
+            width: 280px;
+            min-height: 384px;
+            padding: 35px 15px 15px;
+        }
+        .prBestCaseTxt {
+            font-size: 20px;
+            line-height: 100%;
+        }
+        .prBestCaseName, .prStaffTitle {
+            font-size: 32px;
+            line-height: 100%;
+        }
+        .prBestCaseTxtCnt {
+            height: 62px;
+        }
+        .prBestCaseImgCnt {
+            margin-top: 15px;
+        }
+        .prBestSkinModel, .prBestSkinStyle {
+            font-size: 22px;
+        }
+        .prBestCase  {
+            padding-bottom: 34px;
+        }
+        .prBestSkinPrice {
+            font-size: 40px;
+            margin-top: 10px;
+        }
+    }
 }
 
 @media (max-width: 1024px) {
-
+    .prUserNickname {
+        font-size: 20px;
+    }
+    .prBestObject {
+        margin-bottom: 0px;
+    }
+    .prActivityImageCnt{
+        width: 40px;
+        height: 40px;
+    }
+    .prStaffTitle{
+        font-size: 30px;
+    }
+    .prActivityAmount {
+        font-size: 28px;
+    }
+    .prBestObjectCnt {
+        .prBestObject:first-child {
+            margin-right: 20px;
+        }
+        margin-bottom: 0px;
+        margin-top: 25px;
+    }
+    .prActivity {
+        align-items: center;
+    }
+    .prActivityCnt {
+        margin-right: 20px;
+    }
+    .prActivityData {
+        margin-left: 15px;
+    }
+    .prActivityAmount {
+        margin-top: 3px;
+    }
+    .prCasesData {
+        margin-top: 25px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .prBestObjectCnt {
+        margin-right: 0px;
+        flex-direction: row;
+        order: 2;
+    }
 }
 
 @media (max-width: 768px) {
+    .prTradeInput {
+        font-size: 14px;
+        &::placeholder {
+            font-size: 14px;
+        }
+    }
+    .prUserInfo {
+        width: 343px;
+        height: 115px;
+    }
+    .prTradeLinkBlock {
+        height: 39px;
+        padding: 0 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+    .prSiteActivities {
+        border-radius: 5px;
+        display: flex;
+        flex-wrap: wrap; /* чтобы элементы переносились на новую строку */
+        justify-content: space-between;
+        row-gap: 20px; /* расстояние между рядами */
+        padding: 23px 30px; /* поправил синтаксис */
+        height: fit-content;
+    }
 
+    .prSiteActivities > * {
+        flex: 0 0 calc(50% - 10px); /* каждый элемент занимает половину строки минус промежуток */
+        box-sizing: border-box; /* чтобы padding и border учитывались */
+    }
+    .prActivityCnt {
+        margin-right: 0px;
+    }
+    .prSiteActivities > *:nth-child(even) .prActivityData {
+        flex: 0;
+        width: fit-content;
+    }
+    .prSiteActivities > *:nth-child(even) .prActivity {
+        justify-content: flex-end;
+    }
+    .prActivityImageCnt{
+        width: 30px;
+        height: 30px;
+    }
+    .prActivityAmount {
+        font-size: 24px;
+        line-height: 100%;
+        margin-top: 0px;
+    }
+    .prActivityName {
+        font-size: 13px;
+        line-height: 100%;
+    }
+    .prActivityData {
+        height: 35px;
+        margin-bottom: 0px;
+        margin-top: 0px;
+        margin-left: 15px;
+    }
+    .prOwnerInfo {
+        gap: 15px;
+        width: 343px;
+        height: 178px;
+        padding: 22px 13px;
+    }
+    .prOwnerImageCnt {
+        max-width: 113px;
+        height: 100%;
+    }
+    .prNickname {
+        font-size: 20px;
+        line-height: 100%;
+    }
+    .prAccountType {
+        font-size: 12px;
+        margin-top: 8px;
+    }
+    .prNicknameAccountCnt {
+        margin-bottom: 10px;
+    }
+    .prOwnerDataBlock {
+        max-width: 200px;
+        margin-left: 0px;
+    }
+    .prAccountBalance{
+        font-size: 16px;
+        margin-bottom: 3px;
+        margin-right: 0px;
+    }
+    .prCurrentBalance {
+        width: 100%;
+        font-size: 20px;
+        line-height: 100%;
+        margin-right: 6px;
+        padding-bottom: 0px;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .prAccountBalanceCnt {
+        width: 100%;
+        height: fit-content;
+    }
+    .prTopUpBalance {
+        height: 24px;
+        border-radius: 6px;
+        font-size: 12px;
+        padding: 0px 11px;
+        margin-bottom: 0;
+    }
+    .prOwnerDataCnt {
+        height: fit-content;
+    }
+    .prCurrentBalanceCnt {
+        display: flex;
+        align-items: center;
+    }
+    .prLogOutCnt {
+        height: 29px;
+        font-size: 14px;
+    }
+    .prBestObject {
+        border-radius: 5px !important;
+        .prBestCase {
+            width: 160px;
+            min-height: 180px;
+            padding: 18px 11px;
+        }
+        .prBestCaseTxt {
+            font-size: 12px;
+            line-height: 100%;
+        }
+        .prBestCaseTxtCnt {
+            height: 28px;
+        }
+        .prBestCaseName {
+            font-size: 15px;
+        }
+        .prBestSkinModel, .prBestSkinStyle {
+            font-size: 13px;
+        }
+        .prBestSkinPrice {
+            font-size: 15px;
+            margin-top: 10px;
+        }
+    }
+    .prBestObjectCnt {
+        margin-top: 20px;
+    }
+    .notUser {
+        margin-bottom: 20px;
+        .prStuffCntInfo {
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .prStaffTitle {
+            font-size: 13px;
+        }
+        .prStuffCntInfo {
+            font-size: 10px;
+        }
+        .prStuffAmount {
+            margin-right: 0px;
+            margin-bottom: 4px;
+        }
+    }
 }

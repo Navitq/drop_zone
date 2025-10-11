@@ -11,7 +11,7 @@ interface PrUserStaffHeaderInt {
 function PrUserStaffHeader(props: PrUserStaffHeaderInt): React.ReactNode {
     const t = useTranslations("profile")
     return (
-        <div className={style.prUserStaffHeader}>
+        <div className={`${style.prUserStaffHeader} ${style.notUser}`}>
             <div className={style.prOwnerStaffTitle}>
                 <PrStaffTitle text={t('user_objects')}></PrStaffTitle>
             </div>

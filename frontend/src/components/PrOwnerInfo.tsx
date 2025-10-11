@@ -21,7 +21,7 @@ function PrOwnerInfo(props: PrOwnerInfoInt): React.ReactNode {
     return (
         <div className={style.prOwnerInfo}>
             <div className={style.prOwnerImageCnt}>
-                <Image className={style.prImage} alt={`${t('user_image')} ${props.nickName}`} src={avatar || props.imgPath || '/images/'} width={168} height={168} ></Image>
+                <Image className={style.prImage} alt={`${t('user_image')} ${props.nickName}`} src={avatar || props.imgPath || '/images/'} fill ></Image>
             </div>
             <div className={style.prOwnerDataBlock}>
                 <div className={style.prOwnerDataCnt}>

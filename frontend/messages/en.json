@@ -155,6 +155,8 @@
     "unauth_upgrade_sub_title": "Please log in to access the upgrade",
     "auth_upgrade": "log in",
     "open_return": "You don't have any skins, open the case and come back",
+    "get_item": "get from shop",
+    "sell_good": "sell",
     "go_to_case": "go to case",
     "wait_for_items": "Wait a bit. We're already heading to the warehouse for skins"
   },
@@ -205,6 +207,7 @@
     "prof_cases": "Open cases:",
     "prof_upgrades": "Upgrades:",
     "best_case": "Best case",
+    "best_skin": "Best skin",
     "case": "Case",
     "your_objects": "Your items",
     "user_objects": "Items",

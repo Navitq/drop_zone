@@ -17,8 +17,8 @@ function PrBestSkin(props: PrBestSkinInt): React.ReactNode {
     return (
         <div className={`${style.prBestCase} ${style[`${props.type}PrBestySkin`]}`}>
             <div className={`${style.prBestCaseTxtCnt} ${style.prBestSkinTxtCnt}`}>
-                <div className={style.prBestCaseTxt}>{t('best_case')}</div>
-                <div><span className={style.prBestSkinModel}>{`${props.gunModel}`}&nbsp;&nbsp;|</span><span className={style.prBestSkinStyle}>&nbsp;{`${props.gunStyle}`}</span></div>
+                <div className={style.prBestCaseTxt}>{t('best_skin')}</div>
+                <div className={style.makeInLiner}><span className={style.prBestSkinModel}>{`${props.gunModel}`}&nbsp;&nbsp;|</span><span className={style.prBestSkinStyle}>&nbsp;{`${props.gunStyle}`}</span></div>
             </div>
             <div className={style.prBestSkinImgCnt}>
                 <Image className={style.prBestSkinImg} fill src={props.imgPath} alt={`${props.gunModel}, ${props.gunStyle}`}></Image>

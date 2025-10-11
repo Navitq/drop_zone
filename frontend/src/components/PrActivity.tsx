@@ -14,7 +14,7 @@ function PrActivity(props: PrActivityInt): React.ReactNode {
     return (
         <div className={style.prActivity}>
             <div className={style.prActivityImageCnt}>
-                <Image alt={`${props.activityName}`} src={props.activityPath} width={60} height={60} className={style.prActivityImage}></Image>
+                <Image alt={`${props.activityName}`} src={props.activityPath} fill className={style.prActivityImage}></Image>
             </div>
             <div className={style.prActivityData}>
                 <div className={style.prActivityName}>{props.activityName}</div>
