@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 
 import style from '@/styles/profile.module.scss'
 import CaseBtnText from '@/components/CaseBtnText'
@@ -17,6 +17,7 @@ function PrTradeLinkBlock(): React.ReactNode {
     const t = useTranslations('profile')
     const [link, setLink] = useState<string>('')
     const dispatch = useAppDispatch()
+    const saveTimer = useRef<NodeJS.Timeout | null>(null)
 
     function sanitizeLink(value: string) {
         return value.replace(/[^A-Za-z0-9/:.?=&_%\-]/g, '')
@@ -27,25 +28,32 @@ function PrTradeLinkBlock(): React.ReactNode {
     }
 
     async function saveTradeLink() {
-        try {
-            await api.post(BACKEND_PATHS.setTradeLink, {
-                tradeLink: link
-            });
-            dispatch(showRafflesStateModal({ title: t("success"), sub_title: `${t("successfully_added")}` }))
-            setLink("")
-        } catch (err) {
-            const error = err as AxiosError;
-            console.log(error.status)
-            if (error.response?.status === 401) {
-                dispatch(showUnAuthModal())
-            } else if (error.response?.status === 402) {
-                dispatch(showNoMoneyModal())
-            } else if (error.response?.status === 409) {
-                dispatch(showRafflesStateModal({ title: t("err"), sub_title: t("err_bad_link") }))
-            } else {
-                console.error("Неизвестная ошибка", error);
+        // Очистить предыдущий таймер (если пользователь нажимает снова)
+        if (saveTimer.current) clearTimeout(saveTimer.current)
+
+        // Устанавливаем новый
+        saveTimer.current = setTimeout(async () => {
+            try {
+                await api.post(BACKEND_PATHS.setTradeLink, {
+                    tradeLink: link,
+                })
+                dispatch(showRafflesStateModal({ title: t('success'), sub_title: t('successfully_added') }))
+                setLink('')
+            } catch (err) {
+                const error = err as AxiosError
+                const status = error.response?.status
+
+                if (status === 401) {
+                    dispatch(showUnAuthModal())
+                } else if (status === 402) {
+                    dispatch(showNoMoneyModal())
+                } else if (status === 409) {
+                    dispatch(showRafflesStateModal({ title: t('err'), sub_title: t('err_bad_link') }))
+                } else {
+                    console.error('Неизвестная ошибка', error)
+                }
             }
-        }
+        }, 1000) // ⏱ задержка 1 секунда после последнего нажатия
     }
 
     return (
