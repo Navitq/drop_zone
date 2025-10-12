@@ -52,4 +52,6 @@ urlpatterns = [
          views.get_battle_info_view, name='get_battle_info_view'),
     path('profile-info/',
          views.profile_info_view, name='profile_info_view'),
+    path('set-trade-link/',
+         views.set_trade_link_view, name='set_trade_link_view'),
 ]

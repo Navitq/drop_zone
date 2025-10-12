@@ -194,6 +194,10 @@
     "add_good": "add"
   },
   "profile": {
+    "err_bad_link": "Bad link",
+    "err": "Warning! Error",
+    "successfully_added": "Link successfully added",
+    "success":"Success!",
     "user_image": "Images by user ",
     "account": "account",
     "balance": "Balance",

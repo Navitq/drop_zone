@@ -28,6 +28,7 @@ from django.utils import timezone as timezone_utils
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
+from urllib.parse import urlparse
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -1486,6 +1487,42 @@ async def get_battle_info_view(request, battle_id):
     except Exception as e:
         print("Ошибка в active_battles_info_view:", e)
         return JsonResponse({"error": "Internal Server Error"}, status=500)
+
+
+@require_http_methods(["POST"])
+def set_trade_link_view(request):
+    try:
+        body = json.loads(request.body)
+        link = body.get("tradeLink", "").strip()
+
+        # Проверка на длину
+        if len(link) == 0 or len(link) > 200:
+            return JsonResponse({"error": "Invalid link length"}, status=409)
+
+        # Проверка, что это URL
+        parsed = urlparse(link)
+        if not parsed.scheme or not parsed.netloc:
+            return JsonResponse({"error": "Invalid URL format"}, status=409)
+
+        # Проверка, что это ссылка Steam Trade Offer
+        if not link.startswith("https://steamcommunity.com/tradeoffer/new/?partner="):
+            return JsonResponse({"error": "Invalid Steam trade URL"}, status=409)
+
+        # Извлечение пользователя
+        user = User.objects.get(id=request.token_data.get("id"))
+
+        user.trade_link = link
+        user.save()
+
+        return JsonResponse({"success": True}, status=200)
+
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    except Exception as e:
+        print("Error in set_trade_link_view:", e)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @async_require_methods(['POST'])
