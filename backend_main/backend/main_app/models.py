@@ -45,9 +45,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
-    trade_link = models.URLField(null=True, blank=False, default='')
-    best_case = models.JSONField(default=dict)
-    best_skin = models.JSONField(default=dict)
+    trade_link = models.URLField(null=True, blank=True, default='')
+    best_case = models.JSONField(default=dict, blank=True)
+    best_skin = models.JSONField(default=dict, blank=True)
     total_case_opened = models.PositiveIntegerField(
         default=0, null=False, blank=False)
     total_upgrades = models.PositiveIntegerField(

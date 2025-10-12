@@ -6,6 +6,9 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useAppSelector } from '@/lib/hooks'
+import { useDispatch } from 'react-redux'
+import { showPaymentModal } from '@/redux/modalReducer'
+
 
 interface PrOwnerInfoInt {
     imgPath?: string,
@@ -17,6 +20,12 @@ interface PrOwnerInfoInt {
 
 function PrOwnerInfo(props: PrOwnerInfoInt): React.ReactNode {
     const t = useTranslations('profile');
+    const dispatch = useDispatch()
+
+    function openPaymentModal() {
+        dispatch(showPaymentModal())
+    }
+
     const { avatar, username, id, provider } = useAppSelector(state => state.user.userData)
     return (
         <div className={style.prOwnerInfo}>
@@ -35,7 +44,7 @@ function PrOwnerInfo(props: PrOwnerInfoInt): React.ReactNode {
                         <div className={style.prAccountBalance}>{`${t('balance')}:`}</div>
                         <div className={style.prCurrentBalanceCnt}>
                             <div className={style.prCurrentBalance}>{`${props.balance} Dc`}</div>
-                            <button className={style.prTopUpBalance}>{`${t('top_up')}`}</button>
+                            <button className={style.prTopUpBalance} onClick={() => { openPaymentModal() }}>{`${t('top_up')}`}</button>
                         </div>
                     </div>
                 </div>

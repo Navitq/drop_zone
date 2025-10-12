@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
 import { number } from 'motion';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type items_state = 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'
 type items_type = "usuall" | "rare" | "elite" | "epic" | "classified"
@@ -25,6 +25,8 @@ interface ProfileData {
     },
     best_case: { id: string, imgPath: string, name: CaseName } | "" | string,
     best_skin: { id: string, imgPath: string, name: CaseName, gunPrice: number, gunModel: string, gunStyle: string, state?: items_state, type: items_type } | "" | string,
+    totalItems: number,
+    totalPrice: number,
 }
 
 
@@ -45,6 +47,8 @@ export const initialState: ProfileData = {
     },
     best_case: "",
     best_skin: "",
+    totalItems: 0,
+    totalPrice: 0,
 };
 
 export const userSlice = createSlice({
@@ -89,6 +93,10 @@ export const userSlice = createSlice({
                 ...initialState,
                 stats: { ...initialState.stats } // новый объект, копия значений
             };
+        },
+        setAmountAndPriseItems: (state, action: PayloadAction<{ totalItems: number, totalPrice: number }>) => {
+            state.totalItems = action.payload.totalItems;
+            state.totalPrice = action.payload.totalPrice;
         }
     }
 });
@@ -96,6 +104,6 @@ export const userSlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-export const { setProfileData, clearProfileData } = userSlice.actions;
+export const { setProfileData, clearProfileData, setAmountAndPriseItems } = userSlice.actions;
 
 export default userSlice.reducer;

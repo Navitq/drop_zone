@@ -224,6 +224,7 @@
 .prUserMainInfo {
     @extend %flexStart;
     align-items: center;
+    min-width: 0;
 }
 
 .prUserAccountType {
@@ -553,6 +554,7 @@
 }
 
 .prStaffTitle {
+    @extend %flexCenter;
     font-family: var(--font-headRegular);
     font-size: 36px;
     line-height: 100%;
@@ -602,7 +604,63 @@
     margin-bottom: 40px;
 }
 
+.prMgLThrtyMobile {
+    display:none;
+}
+
+.noWonDataItem {
+    @extend %flexCenter;
+    height: 100%;
+    width: 100%;
+    flex: 1;
+}
+
+.noWonDataItemCnt {
+    @extend %flexCenter;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 135px;
+}
+
+.noWonDataItemType, .noWonDataItemAbsent {
+    font-family: var(--font-headRegular);
+    font-size: 36px;
+    line-height: 100%;
+    color: rgba(223, 223, 223, 1);
+}
+
+.noWonDataItemAbsent {
+    font-size: 24px;
+}
+
 @media (max-width: 1439px) {
+    .prOwnerDataTopHead {
+        .prStuffCntInfo {
+            flex-direction: column;
+        }
+        .prStuffAmount {
+            margin-right: 0px;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+        }
+        .prMgLThrtyPc {
+            display:none;
+        }
+        .prMgLThrtyMobile {
+            display:flex;
+        }
+        .prSortStuffBlock {
+            display: flex;
+            align-items: center;
+        }
+        .prOwnerStaffTitleMobile {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+    }
+
     .mainUserInfoCnt {
         flex-direction: column;
         gap: 20px;
@@ -616,6 +674,17 @@
 }
 
 @media (max-width: 1200px) {
+    .noWonDataItemCnt {
+        height: 125px;
+    }
+
+    .noWonDataItemType, .noWonDataItemAbsent {
+        font-size: 24px;
+    }
+
+    .noWonDataItemAbsent {
+        font-size: 18px;
+    }
 
     .prBestObject {
         &:first-child {
@@ -700,9 +769,26 @@
         flex-direction: row;
         order: 2;
     }
+    .prOwnerDataTopHead {
+        .prStuffCntInfo {
+            font-size: 15px;
+        }
+        .prStuffAmount {
+            margin-bottom: 4px;
+        }
+        .prStaffTitle {
+            font-size: 24px;
+        }
+    }
+    .prStuffsCnt {
+        padding: 15px;
+    }
 }
 
 @media (max-width: 768px) {
+    .profile {
+        padding: 0 15px;
+    }
     .prTradeInput {
         font-size: 14px;
         &::placeholder {
@@ -711,7 +797,10 @@
     }
     .prUserInfo {
         width: 343px;
+        min-width: 343px;
+        max-width: 343px;
         height: 115px;
+        border-radius: 5px;
     }
     .prTradeLinkBlock {
         height: 39px;
@@ -867,5 +956,41 @@
             margin-right: 0px;
             margin-bottom: 4px;
         }
+    }
+    .prOwnerDataTopHead {
+        .prStuffCntInfo {
+            font-size: 10px;
+        }
+        .prStuffAmount{
+            margin-bottom: 3px;
+        }
+        .prStaffTitle {
+            font-size: 13px;
+        }
+        .prSettingsData {
+            margin-top: 5px;
+        }
+    }
+    .prStuffsCnt {
+        padding: 10px;
+        border-radius: 5px;
+    }
+    .prSettingsData {
+        margin-bottom: 20px;
+    }
+    .noWonDataItemCnt {
+        height: 72px;
+    }
+
+    .noWonDataItemType, .noWonDataItemAbsent {
+        font-size: 15px;
+    }
+
+    .noWonDataItemAbsent {
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+    .prStuffsCnt {
+        max-height: 343px;
     }
 }

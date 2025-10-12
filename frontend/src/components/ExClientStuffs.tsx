@@ -35,7 +35,8 @@ interface ExClientStuffsInt {
     deleteTxt?: string,
     isContracts?: boolean,
     isActiveProfile?: boolean,
-    activeBtlText?: string
+    activeBtlText?: string,
+    itemPriceAndAmount?: (value: gunItemModel[]) => void
 }
 
 
@@ -64,6 +65,12 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const dispatch = useAppDispatch()
 
     useEffect(() => {
+        if (props.itemPriceAndAmount) {
+            props.itemPriceAndAmount(items)
+        }
+    }, [items])
+
+    useEffect(() => {
         if (!props.addPrize) return;
 
         addedItemsListRef.current = addedItemsListRef.current.filter((item) => {
@@ -77,7 +84,6 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
         });
 
 
-        console.log(addedItemsListRef.current)
 
         setItems((state) => {
             let newState = [...state];
@@ -137,7 +143,6 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     }, [page]);
 
     useEffect(() => {
-        console.log(props.body.startPrice, 4444444555555)
         if (!props.body.startPrice) {
             return
         }
@@ -166,7 +171,6 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
             (entries) => {
 
                 if (entries[0].isIntersecting && !loadingRef.current && hasMoreRef.current) {
-                    console.log("cision")
                     setPage(prev => prev + 1);
                 }
             },
@@ -188,12 +192,10 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
     async function getInventory(page: number = 1) {
         try {
-            console.log(hasMoreRef.current, page,)
             if (!props.targetUrl || !hasMoreRef.current) {
                 return
             }
             setLoading(true);
-            console.log(props.body.startPrice)
             let filteredDeletedLength = 0;
             if (totalDeletedRef.current.length > 0) {
                 const filteredDeletedIds = totalDeletedRef.current.filter(
@@ -209,14 +211,12 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                 body: props.body,
                 filteredDeletedLength
             });
-            console.log(111111, response.data.items.length)
             if (response?.status == 204) {
                 setHasMore(false)
                 return;
             } else if (response.data.items.length < props.body.limit) {
                 setHasMore(false)
             }
-            console.log(response.data.items.length)
             setItems((state) => {
                 const filteredItems = response.data.items.filter(
                     (item: gunItemModel) => !addedItemsListRef.current.includes(item.id)
