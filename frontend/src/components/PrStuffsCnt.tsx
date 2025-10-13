@@ -24,8 +24,8 @@ interface gunItemModel {
 function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.ReactNode {
     const t = useTranslations("upgrades")
     const dispatch = useAppDispatch()
+
     function itemPriceAndAmount(items: gunItemModel[]) {
-        console.log(items, 454545)
         const totalItems = items.length
         const totalPrice = items.reduce((acc, item) => acc + Number(item.gunPrice), 0)
         dispatch(setAmountAndPriseItems({ totalItems, totalPrice: Number(totalPrice.toFixed(2)) }))
@@ -42,7 +42,7 @@ function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.React
     return (
         <div className={`${style.prStuffsCnt} prStuffsCnt`}>
             {props.client_id === props.ownerId && props.ownerId != undefined ? <PrOwnerStaffHeader></PrOwnerStaffHeader> : <PrUserStaffHeader ></PrUserStaffHeader>}
-            <ExClientStuffs itemPriceAndAmount={(items) => { itemPriceAndAmount(items) }} activeBtlText={t('sell_good')} isActiveProfile={true} titleText={t("open_return")} removeItem={(item) => { getItemFromServer(item) }} btnText={t("go_to_case")} deleteTxt={t('get_item')} activateBtn={(value) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id: props.client_id, limit: 25 }}></ExClientStuffs>
+            <ExClientStuffs itemPriceAndAmount={(items) => { itemPriceAndAmount(items) }} activeBtlText={t('sell_good')} isActiveProfile={props.client_id === props.ownerId} titleText={t("open_return")} removeItem={(item) => { getItemFromServer(item) }} btnText={t("go_to_case")} deleteTxt={t('get_item')} activateBtn={(value) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id: props.client_id, limit: 25 }}></ExClientStuffs>
         </div>
     )
 }

@@ -270,6 +270,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
                         return (
                             <ItemSm
+                                isActiveProfile={props.isActiveProfile}
                                 key={value.id}
                                 id={value.id}
                                 imgPath={value.imgPath}

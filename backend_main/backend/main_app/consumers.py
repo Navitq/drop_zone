@@ -313,20 +313,19 @@ def sync_create_order(item_state: str, item, user):
     Создаёт InventoryItem для пользователя и сохраняет в БД.
     """
     try:
-        steam_item = SteamItemCs.objects.get(id=item['id'])
+        steam_item = SteamItemCs.objects.get(id=item["id"])
         if (
             "price" not in user.best_skin
             or float(user.best_skin.get("gunPrice", 0)) <= float(item.price)
         ):
             user.best_skin = {
-                "id": str(item.id),
-                "imgPath": item.icon_url,
-                "name": item.name,
-                "gunPrice": float(item.price or 0),
-                "gunModel": item.item_model,
-                "gunStyle": item.item_style,
+                "id": str(item['id']),
+                "imgPath": item['icon_url'],
+                "gunPrice": float(item['price'] or 0),
+                "gunModel": item['item_model'],
+                "gunStyle": item['item_style'],
                 "state": item_state,
-                "type": item.rarity,
+                "type": item['rarity'],
             }
             user.save()
         return InventoryItem.objects.create(

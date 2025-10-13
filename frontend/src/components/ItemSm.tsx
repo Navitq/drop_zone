@@ -17,7 +17,8 @@ interface ItemSmInt {
     activateBtn: () => void,
     deleteBtn?: () => void,
     deleteTxt?: string,
-    activeBtlText?: string
+    activeBtlText?: string,
+    isActiveProfile?: boolean,
 }
 
 function ItemSm(props: ItemSmInt): React.ReactNode {
@@ -54,11 +55,21 @@ function ItemSm(props: ItemSmInt): React.ReactNode {
                     <div className={style.smItemGunStyle}>{props.gunStyle}</div>
                 </div>
                 <div className={style.smItemGunPrice}>{`${props.gunPrice} Dc`}</div>
-                <ItemBtn
-                    isActive={props.activateBtnColor} // чётко булево
-                    activateBtn={handleActivate}
-                    price={props.activeBtlText ? props.activeBtlText : t('add_good')}
-                />
+                {props.isActiveProfile == undefined || props.isActiveProfile == null ? (
+                    <ItemBtn
+                        isActive={props.activateBtnColor} // четко булево значение
+                        activateBtn={handleActivate}      // функция нажатия
+                        price={props.activeBtlText ? props.activeBtlText : t('add_good')} // текст на кнопке
+                    />
+                ) : (
+                    props.isActiveProfile == false
+                ) ? null : (
+                    <ItemBtn
+                        isActive={props.activateBtnColor} // четко булево значение
+                        activateBtn={handleActivate}      // функция нажатия
+                        price={props.activeBtlText ? props.activeBtlText : t('add_good')} // текст на кнопке
+                    />
+                )}
                 {props.deleteTxt && props.activateBtnColor ? (
                     <div className={style.smRemoveBtn}>
                         <ContractsModalBtn
