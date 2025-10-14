@@ -877,7 +877,20 @@ async def get_csrf_view(request):
 async def me_view(request):
     if not request.token_data:
         return JsonResponse({"error": "Unauthorized"}, status=401)
-    return JsonResponse(request.token_data)
+
+    try:
+        user = await sync_to_async(User.objects.get)(id=request.token_data.get("id"))
+        money_amount = round(float(user.money_amount),
+                             2)  # округляем до 2 знаков
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+    # добавляем поле к данным токена
+    token_data = {**request.token_data, "money_amount": money_amount}
+
+    return JsonResponse(token_data)
 
 
 @async_require_methods(["GET"])
@@ -1535,11 +1548,10 @@ def sell_inventory_item_view(request):
             # Блокируем пользователя и предмет для безопасной транзакции
             user = User.objects.select_for_update().get(id=user_id)
             item = InventoryItem.objects.select_for_update().get(owner=user, id=item_id)
-            user.money_amount += item.price
+            user.money_amount += item.steam_item.price
             user.save(update_fields=['money_amount'])
             item.delete()
-
-        return JsonResponse({'success': True, 'new_balance': user.money_amount})
+            return JsonResponse({'success': True, 'new_balance': user.money_amount})
 
     except InventoryItem.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Item not found'}, status=404)

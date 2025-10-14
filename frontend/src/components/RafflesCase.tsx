@@ -12,6 +12,7 @@ import { AxiosError } from "axios";
 import { BACKEND_PATHS } from '@/utilites/urls'
 
 import api from "@/lib/api";
+import { deductMoney } from '@/redux/userReducer';
 
 interface RafflesCaseInt {
     id: string,
@@ -37,6 +38,7 @@ function RafflesCase(props: RafflesCaseInt): React.ReactNode {
             });
             setYourVoice(1)
             dispatch(showRafflesStateModal({ title: t("ok"), sub_title: `${t("successfully_added")}: ${props.gunModel}| ${props.gunStyle} ` }))
+            dispatch(deductMoney(Number(props.participationPrice)))
         } catch (err) {
             const error = err as AxiosError;
             console.log(error.status)
@@ -81,7 +83,7 @@ function RafflesCase(props: RafflesCaseInt): React.ReactNode {
             <div className={style.weaponGameInfo}>
                 <div className={style.priceInfoCnt}>
                     <div className={style.priceInfoTitle}>{t('activity_price')}</div>
-                    <div className={style.priceInfo}>{`${props.participationPrice} Dc`}</div>
+                    <div className={style.priceInfo}>{`${Number(Number(props.participationPrice).toFixed(2))} Dc`}</div>
                 </div>
                 <div className={style.rafflesDuration}>
                     <div className={`${style.durationImgCnt} ${style.pc_visible}`}>

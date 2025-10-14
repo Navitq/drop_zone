@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 
 import style from '@/styles/profile.module.scss'
 
@@ -10,7 +10,8 @@ import { useTranslations } from 'next-intl'
 import { BACKEND_PATHS } from '@/utilites/urls'
 import { setAmountAndPriseItems } from '@/redux/profileReducer'
 import { useAppDispatch } from '@/lib/hooks'
-import { showNoMoneyModal, showUnAuthModal, showRafflesStateModal } from '@/redux/modalReducer'
+import { showUnAuthModal } from '@/redux/modalReducer'
+import { setUserMoney } from '@/redux/userReducer'
 import { AxiosError } from "axios";
 
 import api from "@/lib/api";
@@ -28,15 +29,36 @@ interface gunItemModel {
 function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.ReactNode {
     const t = useTranslations("upgrades")
     const dispatch = useAppDispatch()
+    const [detetedItems, setDeletedItems] = useState<string[]>([])
     const isRemoveActiveRef = useRef<boolean>(false)
+    const isGetSteamActiveRef = useRef<boolean>(false)
+
     function itemPriceAndAmount(items: gunItemModel[]) {
         const totalItems = items.length
         const totalPrice = items.reduce((acc, item) => acc + Number(item.gunPrice), 0)
         dispatch(setAmountAndPriseItems({ totalItems, totalPrice: Number(totalPrice.toFixed(2)) }))
     }
 
-    function activateBtn(item: gunItemModel) {
-        console.log(item)
+    async function activateBtn(item: gunItemModel) {
+        if (isGetSteamActiveRef.current) {
+            return
+        }
+        try {
+            isGetSteamActiveRef.current = true
+            const response = await api.post(BACKEND_PATHS.makeBooking, {
+                itemId: item.id
+            });
+            isGetSteamActiveRef.current = false
+            setDeletedItems(state => [item.id])
+        } catch (err) {
+            const error = err as AxiosError;
+            isGetSteamActiveRef.current = false
+            if (error.response?.status === 401) {
+                dispatch(showUnAuthModal())
+            } else {
+                console.error("Неизвестная ошибка", error);
+            }
+        }
     }
 
     async function sellItem(item: gunItemModel) {
@@ -45,10 +67,12 @@ function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.React
         }
         try {
             isRemoveActiveRef.current = true
-            await api.post(BACKEND_PATHS.sellItem, {
+            const response = await api.post(BACKEND_PATHS.sellItem, {
                 itemId: item.id
             });
+            dispatch(setUserMoney(response.data.new_balance))
             isRemoveActiveRef.current = false
+            setDeletedItems(state => [item.id])
         } catch (err) {
             const error = err as AxiosError;
             isRemoveActiveRef.current = false
@@ -63,7 +87,7 @@ function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.React
     return (
         <div className={`${style.prStuffsCnt} prStuffsCnt`}>
             {props.client_id === props.ownerId && props.ownerId != undefined ? <PrOwnerStaffHeader></PrOwnerStaffHeader> : <PrUserStaffHeader ></PrUserStaffHeader>}
-            <ExClientStuffs itemPriceAndAmount={(items) => { itemPriceAndAmount(items) }} activeBtlText={t('sell_good')} isActiveProfile={props.client_id === props.ownerId} titleText={t("open_return")} removeItem={(item) => { sellItem(item) }} btnText={t("go_to_case")} deleteTxt={t('get_item')} activateBtn={(value) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id: props.client_id, limit: 25 }}></ExClientStuffs>
+            <ExClientStuffs deleteProfileItem={detetedItems} itemPriceAndAmount={(items) => { itemPriceAndAmount(items) }} activeBtlText={t('sell_good')} isActiveProfile={props.client_id === props.ownerId} titleText={t("open_return")} removeItem={(value) => { activateBtn(value) }} btnText={t("go_to_case")} deleteTxt={t('get_item')} activateBtn={(value) => { sellItem(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id: props.client_id, limit: 25 }}></ExClientStuffs>
         </div>
     )
 }

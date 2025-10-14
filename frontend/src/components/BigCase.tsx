@@ -12,6 +12,7 @@ import { showStCaseModal, showRulletCaseModal, showNoMoneyModal, showUnAuthModal
 
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
+import { deductMoney } from '@/redux/userReducer'
 
 interface caseInt {
     caseName: string,
@@ -28,6 +29,7 @@ function BigCase(props: caseInt): React.ReactNode {
         try {
             const response = await api.post(BACKEND_PATHS.playCaseGame(props.caseId));
             dispatch(showRulletCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.case_items, prize_item: response.data.prize_item }))
+            dispatch(deductMoney(props.price))
         } catch (err) {
             const error = err as AxiosError;
             console.log(error.status)

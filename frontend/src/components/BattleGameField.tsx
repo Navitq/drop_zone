@@ -12,7 +12,7 @@ import useWebSocket from 'react-use-websocket';
 import { setPlayers, setStartGameData, setActiveCaseData, cleanBattleData } from '@/redux/activeBattleReducer'
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
-
+import { setUserMoney } from '@/redux/userReducer'
 interface PlayersInfo {
     id: string;           // UUID
     imgpath: string;      // Ссылка на изображение
@@ -91,6 +91,16 @@ function BattleGameField(): React.ReactNode {
         });
         console.log(data.game_data)
         dispatch(setStartGameData(data.game_data))
+        try {
+            api.get(BACKEND_PATHS.me)
+                .then(response => {
+                    const userAmount = response.data.money_amount;
+                    console.log(userAmount);
+                })
+                .catch(err => console.log(err));
+        } catch (err) {
+            console.log(err)
+        }
     }
 
 
@@ -114,7 +124,18 @@ function BattleGameField(): React.ReactNode {
                 return true; // иначе переподключаемся
             },  // авто-переподключение
             onOpen: () => console.log("WS connected"),
-            onClose: () => console.log("WS closed"),
+            onClose: () => {
+                try {
+                    api.get(BACKEND_PATHS.me)
+                        .then(response => {
+                            const userAmount = response.data.money_amount;
+                            console.log(userAmount);
+                        })
+                        .catch(err => console.log(err));
+                } catch (err) {
+                    console.log(err)
+                }
+            },
             onError: (event: WebSocketEventMap['error']) => console.log(event),
             onMessage: (event) => {
                 const data = JSON.parse(event.data) as { event: keyof BattleEventMap; payload: any };
@@ -184,7 +205,6 @@ function BattleGameField(): React.ReactNode {
                         id={value.id}
                         userName={value.username}
                         imgPath={value.imgpath}
-                        money_amount={value.money_amount}
                     />
                 )
             })}

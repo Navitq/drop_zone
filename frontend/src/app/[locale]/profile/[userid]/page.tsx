@@ -30,6 +30,7 @@ interface CaseName {
 export default function ProfilePage(): React.ReactNode {
 
   const ownerId = useAppSelector(state => state.user.userData.id)
+  const money_amount_owner = useAppSelector(state => state.user.userData.money_amount)
   const { money_amount, username, avatar_url, provider, best_case, best_skin } = useAppSelector(state => state.profile)
   const dispatch = useAppDispatch()
   const params = useParams()
@@ -88,7 +89,7 @@ export default function ProfilePage(): React.ReactNode {
       </div>
       <div className={style.mainUserInfoCnt}>
         {ownerId == userId ?
-          <PrOwnerInfo link={capitalizeFirstLetter(provider) == 'Steam' ? `https://steamcommunity.com/profiles/${removeSteamPrefix(username)}` : capitalizeFirstLetter(provider) == 'Vk' ? `https://vk.com/id${username}` : `${FRONTEND_PATHS.profile}/${userId}`} imgPath={avatar_url} nickName={username} balance={money_amount} accountType={capitalizeFirstLetter(provider)}></PrOwnerInfo> :
+          <PrOwnerInfo link={capitalizeFirstLetter(provider) == 'Steam' ? `https://steamcommunity.com/profiles/${removeSteamPrefix(username)}` : capitalizeFirstLetter(provider) == 'Vk' ? `https://vk.com/id${username}` : `${FRONTEND_PATHS.profile}/${userId}`} imgPath={avatar_url} nickName={username} balance={Number(money_amount_owner.toFixed(2))} accountType={capitalizeFirstLetter(provider)}></PrOwnerInfo> :
           <PrUserInfo link={capitalizeFirstLetter(provider) == 'Steam' ? `https://steamcommunity.com/profiles/${removeSteamPrefix(username)}` : capitalizeFirstLetter(provider) == 'Vk' ? `https://vk.com/id${username}` : `${FRONTEND_PATHS.profile}/${userId}`} imgPath={avatar_url} nickName={username} accountType={capitalizeFirstLetter(provider)}></PrUserInfo>}
         <div className={style.siteUserInfoCnt}>
           {ownerId == userId ? <PrTradeLinkBlock></PrTradeLinkBlock> : null}

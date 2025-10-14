@@ -51,6 +51,9 @@ export const userSlice = createSlice({
         setError: (state, action) => {
             state.error = action.payload;
         },
+        setUserMoney: (state, actions: PayloadAction<number>) => {
+            state.userData.money_amount = actions.payload;
+        },
         deductMoney: (state, actions: PayloadAction<number>) => {
             state.userData.money_amount -= actions.payload;
         },
@@ -60,6 +63,6 @@ export const userSlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-export const { deductMoney } = userSlice.actions;
+export const { deductMoney, setUserMoney, setUserData, clearUserData, setError } = userSlice.actions;
 
 export default userSlice.reducer;

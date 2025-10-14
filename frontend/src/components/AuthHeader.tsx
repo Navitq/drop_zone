@@ -12,6 +12,7 @@ import { closeUserModal, showUserModal, showPaymentModal } from '@/redux/modalRe
 
 function AuthHeader(): React.ReactNode {
     const t = useTranslations('header');
+    const money_amount = useAppSelector(state => state.user.userData.money_amount)
     const dispatch = useAppDispatch()
     const { isVisible } = useAppSelector(state => state.modal.userModal)
     const avatar = useAppSelector(state => state.user.userData.avatar)
@@ -40,7 +41,7 @@ function AuthHeader(): React.ReactNode {
                     <Image priority={true} src="/images/add_tockens.svg" height={20} width={20} alt={t("get_more_tokens")}></Image>
                 </div>
                 <span className={style.userTokensText}>
-                    {`${720} Dc`}
+                    {`${Number(money_amount).toFixed(2)} Dc`}
                 </span>
             </div>
             <div className={style.userIconBlock} onClick={() => { showModal() }}>

@@ -192,7 +192,7 @@ class InventoryItem(models.Model):
     tradable = models.BooleanField(default=True)
     marketable = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    
     class Meta:
         verbose_name = "Inventory Item"
         verbose_name_plural = "Inventory Items"

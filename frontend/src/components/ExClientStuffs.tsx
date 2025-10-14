@@ -35,6 +35,7 @@ interface ExClientStuffsInt {
     deleteTxt?: string,
     isContracts?: boolean,
     isActiveProfile?: boolean,
+    deleteProfileItem?: string[],
     activeBtlText?: string,
     itemPriceAndAmount?: (value: gunItemModel[]) => void
 }
@@ -63,6 +64,26 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const addedItemsListRef = useRef<string[]>([])
     const [couldObserve, setCouldObserve] = useState<boolean>(false)
     const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        console.log(props.isActiveProfile, props.deleteProfileItem, props.deleteProfileItem?.length == 0)
+        if (!props.isActiveProfile || !props.deleteProfileItem || props.deleteProfileItem.length == 0) {
+            return;
+        }
+
+        console.log(676869656461626366)
+        setItems(prevItems => {
+            const newItems = prevItems.filter(
+                item => !props.deleteProfileItem!.includes(item.id)
+            );
+
+            if (newItems.length === prevItems.length) {
+                return prevItems;
+            }
+            return newItems;
+        });
+
+    }, [props.deleteProfileItem])
 
     useEffect(() => {
         if (props.itemPriceAndAmount) {

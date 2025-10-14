@@ -13,7 +13,6 @@ interface BattlePersonalBoxInt {
     imgPath: string;
     userName: string;
     id: string;
-    money_amount: number
 }
 
 interface GunData {

@@ -9,6 +9,7 @@ import CaseInfoBlock from '@/components/CaseInfoBlock'
 import { useAppDispatch } from '@/lib/hooks'
 
 import { showStCaseModal, showRulletCaseModal, showNoMoneyModal, showUnAuthModal } from '@/redux/modalReducer'
+import { deductMoney } from '@/redux/userReducer'
 
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
@@ -28,6 +29,7 @@ function StandartCase(props: caseInt): React.ReactNode {
         try {
             const response = await api.post(BACKEND_PATHS.playCaseGame(props.caseId));
             dispatch(showRulletCaseModal({ caseId: props.caseId, caseName: props.caseName, items: response.data.case_items, prize_item: response.data.prize_item }))
+            dispatch(deductMoney(props.price))
         } catch (err) {
             const error = err as AxiosError;
             console.log(error.status)
