@@ -1508,11 +1508,10 @@ def set_trade_link_view(request):
         if not link.startswith("https://steamcommunity.com/tradeoffer/new/?partner="):
             return JsonResponse({"error": "Invalid Steam trade URL"}, status=409)
 
-        # Извлечение пользователя
-        user = User.objects.get(id=request.token_data.get("id"))
-
-        user.trade_link = link
-        user.save()
+        with transaction.atomic():
+            user = User.objects.select_for_update().get(id=request.token_data.get("id"))
+            user.trade_link = link
+            user.save()
 
         return JsonResponse({"success": True}, status=200)
 
@@ -1523,6 +1522,31 @@ def set_trade_link_view(request):
     except Exception as e:
         print("Error in set_trade_link_view:", e)
         return JsonResponse({"error": str(e)}, status=500)
+
+
+@require_http_methods(["POST"])
+def sell_inventory_item_view(request):
+    try:
+        body = json.loads(request.body)
+        item_id = body.get('itemId')
+        user_id = request.token_data.get('id')
+
+        with transaction.atomic():
+            # Блокируем пользователя и предмет для безопасной транзакции
+            user = User.objects.select_for_update().get(id=user_id)
+            item = InventoryItem.objects.select_for_update().get(owner=user, id=item_id)
+            user.money_amount += item.price
+            user.save(update_fields=['money_amount'])
+            item.delete()
+
+        return JsonResponse({'success': True, 'new_balance': user.money_amount})
+
+    except InventoryItem.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Item not found'}, status=404)
+    except User.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'User not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
 @async_require_methods(['POST'])

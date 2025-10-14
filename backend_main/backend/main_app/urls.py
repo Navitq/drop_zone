@@ -54,4 +54,6 @@ urlpatterns = [
          views.profile_info_view, name='profile_info_view'),
     path('set-trade-link/',
          views.set_trade_link_view, name='set_trade_link_view'),
+    path('sell-inventory-item/',
+         views.sell_inventory_item_view, name='sell_inventory_item_view'),
 ]

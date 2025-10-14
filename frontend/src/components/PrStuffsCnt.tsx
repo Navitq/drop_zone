@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useRef } from 'react'
 
 import style from '@/styles/profile.module.scss'
 
@@ -10,6 +10,10 @@ import { useTranslations } from 'next-intl'
 import { BACKEND_PATHS } from '@/utilites/urls'
 import { setAmountAndPriseItems } from '@/redux/profileReducer'
 import { useAppDispatch } from '@/lib/hooks'
+import { showNoMoneyModal, showUnAuthModal, showRafflesStateModal } from '@/redux/modalReducer'
+import { AxiosError } from "axios";
+
+import api from "@/lib/api";
 
 interface gunItemModel {
     id: string,
@@ -24,7 +28,7 @@ interface gunItemModel {
 function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.ReactNode {
     const t = useTranslations("upgrades")
     const dispatch = useAppDispatch()
-
+    const isRemoveActiveRef = useRef<boolean>(false)
     function itemPriceAndAmount(items: gunItemModel[]) {
         const totalItems = items.length
         const totalPrice = items.reduce((acc, item) => acc + Number(item.gunPrice), 0)
@@ -35,14 +39,31 @@ function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.React
         console.log(item)
     }
 
-    function getItemFromServer(item: gunItemModel) {
-        console.log(item)
+    async function sellItem(item: gunItemModel) {
+        if (isRemoveActiveRef.current) {
+            return
+        }
+        try {
+            isRemoveActiveRef.current = true
+            await api.post(BACKEND_PATHS.sellItem, {
+                itemId: item.id
+            });
+            isRemoveActiveRef.current = false
+        } catch (err) {
+            const error = err as AxiosError;
+            isRemoveActiveRef.current = false
+            if (error.response?.status === 401) {
+                dispatch(showUnAuthModal())
+            } else {
+                console.error("Неизвестная ошибка", error);
+            }
+        }
     }
 
     return (
         <div className={`${style.prStuffsCnt} prStuffsCnt`}>
             {props.client_id === props.ownerId && props.ownerId != undefined ? <PrOwnerStaffHeader></PrOwnerStaffHeader> : <PrUserStaffHeader ></PrUserStaffHeader>}
-            <ExClientStuffs itemPriceAndAmount={(items) => { itemPriceAndAmount(items) }} activeBtlText={t('sell_good')} isActiveProfile={props.client_id === props.ownerId} titleText={t("open_return")} removeItem={(item) => { getItemFromServer(item) }} btnText={t("go_to_case")} deleteTxt={t('get_item')} activateBtn={(value) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id: props.client_id, limit: 25 }}></ExClientStuffs>
+            <ExClientStuffs itemPriceAndAmount={(items) => { itemPriceAndAmount(items) }} activeBtlText={t('sell_good')} isActiveProfile={props.client_id === props.ownerId} titleText={t("open_return")} removeItem={(item) => { sellItem(item) }} btnText={t("go_to_case")} deleteTxt={t('get_item')} activateBtn={(value) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id: props.client_id, limit: 25 }}></ExClientStuffs>
         </div>
     )
 }
