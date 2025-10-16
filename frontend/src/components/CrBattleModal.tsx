@@ -39,9 +39,25 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
     const [cases, setCases] = useState<caseMainDataIncome[]>([])
     const dataRef = useRef<caseMainDataIncome[]>([]);
     const [sortType, setSortType] = useState<number>(1)
+    const [inputValue, setInputValue] = useState<string>("")
     const locale = useLocale(); // например 'en' или 'ru'
 
+    const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.currentTarget.value;
+        setInputValue(value);
 
+        // Приводим к нижнему регистру для нечувствительного поиска
+        const filteredList = dataRef.current.filter((item) =>
+            item.name.toLowerCase().includes(value.toLowerCase())
+        );
+
+        // Если поле ввода пустое — возвращаем исходный список
+        if (value.trim() === "") {
+            setCases([...dataRef.current]);
+        } else {
+            setCases(filteredList);
+        }
+    };
 
     const changeFunc = (value: string) => {
         const data = Number(value)
@@ -67,6 +83,7 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
                 break;
         }
         setCases(sortedList)
+        setInputValue('');
     }
 
     useEffect(() => {
@@ -112,7 +129,7 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
                         </div>
                     </div>
                     <div className={style.crModalFilter}>
-                        <SearchCaseBtl placeHolderText={t('search')}></SearchCaseBtl>
+                        <SearchCaseBtl inputValue={inputValue} onChangeName={(e: React.ChangeEvent<HTMLInputElement>) => { onChangeName(e) }} placeHolderText={t('search')}></SearchCaseBtl>
                         <div className={style.crModalSort}>
                             <CtStaffSort changeFunc={(value: string) => { changeFunc(value) }}></CtStaffSort>
                         </div>
