@@ -13,6 +13,7 @@ import { useAppDispatch } from '@/lib/hooks'
 import { showUnAuthModal } from '@/redux/modalReducer'
 import { setUserMoney } from '@/redux/userReducer'
 import { AxiosError } from "axios";
+import { showRafflesStateModal } from '@/redux/modalReducer'
 
 import api from "@/lib/api";
 
@@ -28,10 +29,12 @@ interface gunItemModel {
 
 function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.ReactNode {
     const t = useTranslations("upgrades")
+    const t_prof = useTranslations("profile")
     const dispatch = useAppDispatch()
     const [detetedItems, setDeletedItems] = useState<string[]>([])
     const isRemoveActiveRef = useRef<boolean>(false)
     const isGetSteamActiveRef = useRef<boolean>(false)
+    const [sortType, setSortType] = useState<number>(1)
 
     function itemPriceAndAmount(items: gunItemModel[]) {
         const totalItems = items.length
@@ -49,16 +52,23 @@ function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.React
                 itemId: item.id
             });
             isGetSteamActiveRef.current = false
-            setDeletedItems(state => [item.id])
+            dispatch(showRafflesStateModal({ title: t_prof("success"), sub_title: `${t_prof("success_order_created")} ${response.data.order_id}` }))
+            setDeletedItems(() => [item.id])
         } catch (err) {
             const error = err as AxiosError;
             isGetSteamActiveRef.current = false
-            if (error.response?.status === 401) {
-                dispatch(showUnAuthModal())
+            if (error.response?.status === 415) {
+                dispatch(showRafflesStateModal({ title: t_prof("err"), sub_title: `${t_prof("trade_error_text")}` }))
+            } else if (error.response?.status === 416) {
+                dispatch(showRafflesStateModal({ title: t_prof("err"), sub_title: `${t_prof("marketable_error_text")}` }))
             } else {
                 console.error("Неизвестная ошибка", error);
             }
         }
+    }
+
+    const changeFunc = (value: string) => {
+        setSortType(Number(value))
     }
 
     async function sellItem(item: gunItemModel) {
@@ -72,12 +82,14 @@ function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.React
             });
             dispatch(setUserMoney(response.data.new_balance))
             isRemoveActiveRef.current = false
-            setDeletedItems(state => [item.id])
+            setDeletedItems(() => [item.id])
         } catch (err) {
             const error = err as AxiosError;
             isRemoveActiveRef.current = false
             if (error.response?.status === 401) {
                 dispatch(showUnAuthModal())
+            } else if (error.response?.status === 416) {
+                dispatch(showRafflesStateModal({ title: t_prof("err"), sub_title: `${t_prof("marketable_error_text")}` }))
             } else {
                 console.error("Неизвестная ошибка", error);
             }
@@ -86,8 +98,8 @@ function PrStuffsCnt(props: { client_id: string, ownerId: string }): React.React
 
     return (
         <div className={`${style.prStuffsCnt} prStuffsCnt`}>
-            {props.client_id === props.ownerId && props.ownerId != undefined ? <PrOwnerStaffHeader></PrOwnerStaffHeader> : <PrUserStaffHeader ></PrUserStaffHeader>}
-            <ExClientStuffs deleteProfileItem={detetedItems} itemPriceAndAmount={(items) => { itemPriceAndAmount(items) }} activeBtlText={t('sell_good')} isActiveProfile={props.client_id === props.ownerId} titleText={t("open_return")} removeItem={(value) => { activateBtn(value) }} btnText={t("go_to_case")} deleteTxt={t('get_item')} activateBtn={(value) => { sellItem(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id: props.client_id, limit: 25 }}></ExClientStuffs>
+            {props.client_id === props.ownerId && props.ownerId != undefined ? <PrOwnerStaffHeader changeFunc={(value: string) => { changeFunc(value) }}></PrOwnerStaffHeader> : <PrUserStaffHeader ></PrUserStaffHeader>}
+            <ExClientStuffs sortType={sortType} profileDeletedItems={detetedItems[0]} deleteProfileItem={detetedItems} itemPriceAndAmount={(items) => { itemPriceAndAmount(items) }} activeBtlText={t('sell_good')} isActiveProfile={props.client_id === props.ownerId} titleText={t("open_return")} removeItem={(value) => { activateBtn(value) }} btnText={t("go_to_case")} deleteTxt={t('get_item')} activateBtn={(value) => { sellItem(value) }} targetUrl={BACKEND_PATHS.getInventoryStaff} body={{ client_id: props.client_id, limit: 25 }}></ExClientStuffs>
         </div>
     )
 }

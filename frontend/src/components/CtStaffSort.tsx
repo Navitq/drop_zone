@@ -13,22 +13,22 @@ interface OptionType {
     label: string,
 };
 
-function CtStaffSort(): React.ReactNode {
+function CtStaffSort(props: { changeFunc: (value: string) => void, }): React.ReactNode {
 
     const t = useTranslations("homePage");
     const [options, setOptions] = useState<OptionType[] | null>(null);
 
     useEffect(() => {
         setOptions([
-            { value: 'srt_popularity', label: t('srt_popularity') },
-            { value: 'srt_price_up', label: t('srt_price_up') },
-            { value: 'srt_price_down', label: t('srt_price_down') },
-            { value: 'srt_name', label: t('srt_name') }
+            { value: '1', label: t('srt_created_data') },
+            { value: '2', label: t('srt_name') },
+            { value: '3', label: t('srt_price_up') },
+            { value: '4', label: t('srt_price_down') },
         ]);
     }, [t]);
     return (
         <div className={style.exClientCnt}>
-            {options ? <SortMenuAct options={options}></SortMenuAct> : null}
+            {options ? <SortMenuAct callBack={(value: string)=>{props.changeFunc(value)}} options={options}></SortMenuAct> : null}
         </div>
     )
 }

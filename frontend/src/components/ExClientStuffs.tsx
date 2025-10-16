@@ -37,6 +37,8 @@ interface ExClientStuffsInt {
     isActiveProfile?: boolean,
     deleteProfileItem?: string[],
     activeBtlText?: string,
+    profileDeletedItems?: string,
+    sortType?: number,
     itemPriceAndAmount?: (value: gunItemModel[]) => void
 }
 
@@ -62,8 +64,26 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const hasMoreRef = useRef<boolean>(hasMore);
     const multiplyRef = useRef<boolean>(true)
     const addedItemsListRef = useRef<string[]>([])
+    const currentSortValue = useRef<number>(0)
     const [couldObserve, setCouldObserve] = useState<boolean>(false)
     const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        if (!props.sortType || (props.sortType == 1 && currentSortValue.current == 0)) return;
+        currentSortValue.current = props.sortType;
+        hasMoreRef.current = true;
+        loadingRef.current = false;
+        multiplyRef.current = false;
+        totalDeletedRef.current = [];
+        addedItemsListRef.current = [];
+        setItems([]);
+        setPage(1);
+        setHasMore(true);
+
+
+        // Загружаем первую страницу заново
+        getInventory(1);
+    }, [props.sortType]);
 
     useEffect(() => {
         console.log(props.isActiveProfile, props.deleteProfileItem, props.deleteProfileItem?.length == 0)
@@ -90,6 +110,14 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
             props.itemPriceAndAmount(items)
         }
     }, [items])
+
+    useEffect(() => {
+        if (!props.profileDeletedItems) {
+            return
+        }
+        totalDeletedRef.current.push(props.profileDeletedItems)
+        console.log(totalDeletedRef.current)
+    }, [props.profileDeletedItems])
 
     useEffect(() => {
         if (!props.addPrize) return;
@@ -218,6 +246,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
             }
             setLoading(true);
             let filteredDeletedLength = 0;
+            console.log(totalDeletedRef.current, addedItemsListRef)
             if (totalDeletedRef.current.length > 0) {
                 const filteredDeletedIds = totalDeletedRef.current.filter(
                     id => !addedItemsListRef.current.includes(id)
@@ -227,11 +256,14 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                 }
                 totalDeletedRef.current = []
             }
+            console.log(222222222222222222222222)
             const response = await api.post(props.targetUrl, {
                 page,
                 body: props.body,
-                filteredDeletedLength
+                filteredDeletedLength,
+                sort_by: props.sortType || 1
             });
+            console.log(response.data)
             if (response?.status == 204) {
                 setHasMore(false)
                 return;
@@ -278,9 +310,9 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
     return (
         (
-            items.length > 0 ? (<div className={`${style.ExClientStuffs} ${'ExClientStuffs'}`}>
+            items.length > 0 ? (<div key={props.sortType} className={`${style.ExClientStuffs} ${'ExClientStuffs'}`}>
                 {
-                    items.map((value) => {
+                    items.map((value, index) => {
                         const isActive = props.client_id
                             ? Array.isArray(props.client_id)
                                 ? props.client_id.includes(value.id)
@@ -292,7 +324,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                         return (
                             <ItemSm
                                 isActiveProfile={props.isActiveProfile}
-                                key={value.id}
+                                key={value.id + index + props.sortType}
                                 id={value.id}
                                 imgPath={value.imgPath}
                                 gunModel={value.gunModel}

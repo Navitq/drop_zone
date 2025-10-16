@@ -13,25 +13,26 @@ interface OptionType {
     label: string,
 };
 
-function ExClientPropierty(): React.ReactNode {
+function ExClientPropierty(props: { changeFunc: (value: string) => void, }): React.ReactNode {
 
     const t = useTranslations("homePage");
     const [options, setOptions] = useState<OptionType[] | null>(null);
 
     useEffect(() => {
         setOptions([
-            { value: 'srt_popularity', label: t('srt_popularity') },
-            { value: 'srt_price_up', label: t('srt_price_up') },
-            { value: 'srt_price_down', label: t('srt_price_down') },
-            { value: 'srt_name', label: t('srt_name') }
+            { value: '1', label: t('srt_created_data') },
+            { value: '2', label: t('srt_name') },
+            { value: '3', label: t('srt_price_up') },
+            { value: '4', label: t('srt_price_down') },
         ]);
     }, [t]);
+
     const tx = useTranslations("upgrades")
     return (
         <div className={style.exClientCnt}>
             <div className={style.exClientBlock}>
                 <ExBlockTitle title={tx('your_skins')}></ExBlockTitle>
-                {options ? <div className={style.exClSort}><SortMenuAct options={options}></SortMenuAct></div> : null}
+                {options ? <div className={style.exClSort}><SortMenuAct callBack={(value: string) => { props.changeFunc(value) }} options={options}></SortMenuAct></div> : null}
             </div>
         </div>
     )

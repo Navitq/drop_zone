@@ -16,15 +16,21 @@ interface OptionType {
 function ActualCases(): React.ReactNode {
     const t = useTranslations("homePage");
     const [options, setOptions] = useState<OptionType[] | null>(null);
+    const [sortType, setSortType] = useState<number>(1)
 
     useEffect(() => {
         setOptions([
-            { value: 'srt_popularity', label: t('srt_popularity') },
-            { value: 'srt_price_up', label: t('srt_price_up') },
-            { value: 'srt_price_down', label: t('srt_price_down') },
-            { value: 'srt_name', label: t('srt_name') }
+            { value: '1', label: t('srt_created_data') },
+            { value: '2', label: t('srt_name') },
+            { value: '3', label: t('srt_price_up') },
+            { value: '4', label: t('srt_price_down') },
         ]);
     }, [t]);
+
+    function changeFunc(value: string) {
+        const data: number = Number(value);
+        setSortType(data)
+    }
 
     if (options === null) return null;
 
@@ -33,9 +39,9 @@ function ActualCases(): React.ReactNode {
             <div className={style.actTitleCnt}>
                 <TitleHomePage textKey="actual_case_title"></TitleHomePage>
                 {/* <SortMenuAct typeKey={'sort'} pointsKey={['popularity', 'price_up', 'price_down', 'name']}></SortMenuAct> */}
-                <SortMenuAct options={options}></SortMenuAct>
+                <SortMenuAct callBack={(value: string) => { changeFunc(value) }} options={options}></SortMenuAct>
             </div>
-            <CaseShelf caseUrl={'standart_case'}></CaseShelf>
+            <CaseShelf sortType={sortType} caseUrl={'standart_case'}></CaseShelf>
         </div>
     )
 }

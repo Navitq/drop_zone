@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import style from '@/styles/battles.module.scss'
 import { useTranslations } from 'next-intl';
 import { useAppSelector } from '@/lib/hooks';
@@ -37,8 +37,37 @@ interface caseMainDataServer {
 function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
     const t = useTranslations('battles')
     const [cases, setCases] = useState<caseMainDataIncome[]>([])
+    const dataRef = useRef<caseMainDataIncome[]>([]);
+    const [sortType, setSortType] = useState<number>(1)
     const locale = useLocale(); // например 'en' или 'ru'
 
+
+
+    const changeFunc = (value: string) => {
+        const data = Number(value)
+        if (sortType === data) {
+            return;
+        }
+        setSortType(data)
+        const sortedList = [...dataRef.current];
+        switch (data) {
+            case 1: // по новизне (исходный порядок)
+                // ничего не делаем, оставляем как есть
+                break;
+            case 2: // по имени
+                sortedList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                break;
+            case 3: // по цене вверх
+                sortedList.sort((a, b) => a.price - b.price);
+                break;
+            case 4: // по цене вниз
+                sortedList.sort((a, b) => b.price - a.price);
+                break;
+            default:
+                break;
+        }
+        setCases(sortedList)
+    }
 
     useEffect(() => {
         fetchAllCases();
@@ -56,6 +85,14 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
                         price: value.price
                     }
                 })
+            })
+            dataRef.current = response.data.map((value: caseMainDataServer) => {
+                return {
+                    name: value.name[locale as 'en' | 'ru'],
+                    imgUrl: value.icon_url,
+                    id: value.id,
+                    price: value.price
+                }
             })
         } catch (error) {
             console.error("Ошибка при запросе блогерских кейсов:", error);
@@ -77,7 +114,7 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
                     <div className={style.crModalFilter}>
                         <SearchCaseBtl placeHolderText={t('search')}></SearchCaseBtl>
                         <div className={style.crModalSort}>
-                            <CtStaffSort></CtStaffSort>
+                            <CtStaffSort changeFunc={(value: string) => { changeFunc(value) }}></CtStaffSort>
                         </div>
                     </div>
                 </div>

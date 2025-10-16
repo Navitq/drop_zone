@@ -12,7 +12,7 @@ from redis_om.model.model import NotFoundError
 from rest_framework_simplejwt.tokens import RefreshToken
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
-from .models import SocialAccount, User, Battle, Advertisement, BattleCase, Case, InventoryItem, SteamItemCs, Raffles
+from .models import SocialAccount, ItemsOrders, User, Battle, Advertisement, BattleCase, Case, InventoryItem, SteamItemCs, Raffles
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -458,7 +458,7 @@ def check_user_money_upgrades(request, server_item_id, client_item_id, price):
         server_item = SteamItemCs.objects.get(id=server_item_id)
         if client_item_id:
             client_item = InventoryItem.objects.select_for_update().select_related(
-                'steam_item').get(owner_id=user.id, id=client_item_id)
+                'steam_item').get(owner_id=user.id, id=client_item_id, marketable=True, tradable=True)
             if not client_item or not server_item:
                 return JsonResponse({"detail": "Item not found"}, status=404)
 
@@ -595,7 +595,7 @@ def sync_get_user_inventory_items(user, ids: list[str]):
         def fetch_items():
             return list(
                 InventoryItem.objects.select_for_update().select_related('steam_item')
-                .filter(owner=user, id__in=ids)
+                .filter(owner=user, id__in=ids, marketable=True, tradable=True)
             )
 
         # Асинхронный вызов
@@ -627,7 +627,7 @@ async def get_user_inventory_items(user, ids: list[str]):
         def fetch_items():
             return list(
                 InventoryItem.objects.select_related('steam_item')
-                .filter(owner=user, id__in=ids)
+                .filter(owner=user, id__in=ids, tradable=True, marketable=True)
             )
 
         # Асинхронный вызов
@@ -1219,60 +1219,71 @@ async def raffles_list_view(request):
 
 @async_require_methods(["POST"])
 async def get_inventory_items_view(request):
-    try:
-        data = json.loads(request.body)
+    # try:
+    data = json.loads(request.body)
 
-        page = int(data.get("page", 1))
-        body = data.get("body", {})
-        deleted_length = data.get("filteredDeletedLength", 0)
-        client_id = body.get("client_id")
-        limit = int(body.get("limit", 25))
+    page = int(data.get("page", 1))
+    ordered_by = int(data.get("sort_by", 1))  # исправил опечатку
+    body = data.get("body", {})
+    deleted_length = data.get("filteredDeletedLength", 0)
+    client_id = body.get("client_id")
+    limit = int(body.get("limit", 25))
 
-        if not client_id:
-            return JsonResponse({"error": "client_id is required"}, status=404)
+    if not client_id:
+        return JsonResponse({"error": "client_id is required"}, status=404)
 
-        offset = (page - 1) * limit
+    offset = (page - 1) * limit
 
-        # считаем общее количество у клиента
+    # считаем общее количество у клиента
+    if ordered_by == 1:
+        ordering = "created_at"                # по умолчанию по дате создания
+    elif ordered_by == 2:
+        ordering = "steam_item__item_model"    # по названию
+    elif ordered_by == 3:
+        ordering = "steam_item__price"         # по возрастанию цены
+    elif ordered_by == 4:
+        ordering = "-steam_item__price"        # по убыванию цены
+    else:
+        ordering = "created_at"
+    # достаём нужный кусок данных
+    start_index = max(offset - deleted_length, 0)
+    end_index = offset + limit
+    print(ordering, 484848)
+    items_qs = (
+        InventoryItem.objects
+        .filter(owner_id=client_id,
+                tradable=True,
+                marketable=True)
+        .select_related("steam_item")
+        .order_by(ordering)[start_index:end_index]
+    )
 
-        # достаём нужный кусок данных
-        start_index = max(offset - deleted_length, 0)
-        end_index = offset + limit
+    items = await sync_to_async(list)(items_qs)
 
-        items_qs = (
-            InventoryItem.objects
-            .filter(owner_id=client_id)
-            .select_related("steam_item")
-            .order_by("created_at")[start_index:end_index]
-        )
-
-        items = await sync_to_async(list)(items_qs)
-
-        result = []
-        for item in items:
-            result.append({
-                "id": str(item.id),
-                "gunModel": item.steam_item.item_model,
-                "gunStyle": item.steam_item.item_style,
-                "gunPrice": float(item.steam_item.price),
-                "type": item.steam_item.rarity,
-                "imgPath": item.steam_item.icon_url,
-                "fullName": item.full_name,
-                "shortName": item.short_name,
-                "tradable": item.tradable,
-                "marketable": item.marketable,
-                "state":  item.exterior_wear,
-            })
-
-        # есть ли ещё страницы?
-
-        return JsonResponse({
-            "items": result,
+    result = []
+    for item in items:
+        result.append({
+            "id": str(item.id),
+            "gunModel": item.steam_item.item_model,
+            "gunStyle": item.steam_item.item_style,
+            "gunPrice": float(item.steam_item.price),
+            "type": item.steam_item.rarity,
+            "imgPath": item.steam_item.icon_url,
+            "fullName": item.full_name,
+            "shortName": item.short_name,
+            "tradable": item.tradable,
+            "marketable": item.marketable,
+            "state":  item.exterior_wear,
         })
 
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-    # raffle_id = body.get("id")  # или
+    # есть ли ещё страницы?
+
+    return JsonResponse({
+        "items": result,
+    })
+
+    # except Exception as e:
+    #     return JsonResponse({"error": str(e)}, status=500)
 
 
 @async_require_methods(["POST"])
@@ -1548,6 +1559,8 @@ def sell_inventory_item_view(request):
             # Блокируем пользователя и предмет для безопасной транзакции
             user = User.objects.select_for_update().get(id=user_id)
             item = InventoryItem.objects.select_for_update().get(owner=user, id=item_id)
+            if not item.tradable or not item.marketable:
+                return JsonResponse({'error': 'Предмет уже забронирован или недоступен для торговли'}, status=416)
             user.money_amount += item.steam_item.price
             user.save(update_fields=['money_amount'])
             item.delete()
@@ -1559,6 +1572,69 @@ def sell_inventory_item_view(request):
         return JsonResponse({'success': False, 'error': 'User not found'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@require_http_methods(['POST'])
+def book_inventory_item_view(request):
+    try:
+        # Получаем user_id из токена
+        user_id = request.token_data.get('id')
+        if not user_id:
+            return JsonResponse({'error': 'Не удалось определить пользователя'}, status=401)
+
+        # Получаем тело запроса
+        body = json.loads(request.body)
+        item_id = body.get('itemId')
+
+        if not item_id:
+            return JsonResponse({'error': 'Не указан itemId'}, status=400)
+
+        # Проверяем, существует ли пользователь
+        with transaction.atomic():
+            try:
+                user = User.objects.select_for_update().get(id=user_id)
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'Пользователь не найден'}, status=404)
+
+            # Проверяем наличие trade_link у пользователя
+            if not user.trade_link:
+                return JsonResponse({'error': 'Отсутствует trade_link у пользователя'}, status=415)
+
+            # Проверяем, существует ли предмет и принадлежит ли пользователю
+            try:
+                item = InventoryItem.objects.select_for_update().get(id=item_id, owner=user)
+            except InventoryItem.DoesNotExist:
+                return JsonResponse({'error': 'Предмет не найден или не принадлежит пользователю'}, status=404)
+
+            # Проверяем, не забронирован ли уже предмет
+            if not item.tradable or not item.marketable:
+                return JsonResponse({'error': 'Предмет уже забронирован или недоступен для торговли'}, status=416)
+
+            # Обновляем состояние предмета
+            item.tradable = False
+            item.marketable = False
+            item.save()
+
+            # Создаём запись в ItemsOrders
+            order = ItemsOrders.objects.create(
+                inventory_item=item,
+                trade_link=user.trade_link,
+                order_date=timezone_utils.now()
+            )
+
+            return JsonResponse({
+                'success': True,
+                'message': 'Предмет успешно забронирован',
+                'order_id': order.id,
+                'item_id': str(item.id),
+                'market_hash_name': item.market_hash_name,
+                'trade_link': user.trade_link
+            }, status=201)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Некорректный JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 @async_require_methods(['POST'])

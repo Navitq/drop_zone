@@ -192,7 +192,7 @@ class InventoryItem(models.Model):
     tradable = models.BooleanField(default=True)
     marketable = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         verbose_name = "Inventory Item"
         verbose_name_plural = "Inventory Items"
@@ -246,6 +246,12 @@ class ItemsOrders(models.Model):
         """Возвращает market_hash_name предмета для админки и UI."""
         return self.inventory_item.market_hash_name
 
+    def delete(self, *args, **kwargs):
+        """Удаляем связанный InventoryItem при удалении заказа."""
+        if self.inventory_item:
+            self.inventory_item.delete()
+        super().delete(*args, **kwargs)
+
 
 class Case(models.Model):
     CASE_TYPE_CHOICES = [
@@ -272,6 +278,7 @@ class Case(models.Model):
     class Meta:
         verbose_name = "Case"
         verbose_name_plural = "Cases"
+        ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
         """Автоматически формируем name_json из name_ru и name_en."""

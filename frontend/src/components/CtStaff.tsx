@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 
 import style from '@/styles/contracts.module.scss'
 import { useTranslations } from 'next-intl'
@@ -10,7 +10,7 @@ import ExClientStuffs from '@/components/ExClientStuffs'
 import ShouldAuthStaff from '@/components/ShouldAuthStaff'
 import { BACKEND_PATHS, FRONTEND_PATHS } from '@/utilites/urls'
 import { useAppSelector, useAppDispatch } from '@/lib/hooks'
-import { setClientItemData, removeClientItemData } from '@/redux/contractsReducer'
+import { setClientItemData, removeClientItemData, removeWonItem } from '@/redux/contractsReducer'
 interface gunItemModel {
     id: string,
     imgPath: string,
@@ -28,7 +28,7 @@ function CtStaff(): React.ReactNode {
     const client_items_id = useAppSelector(state => state.contracts.itemClientData)
     const clientItemIds: string[] = client_items_id.map(item => item.id);
     const contractsFinished = useAppSelector(state => state.contracts.contractsFinished)
-
+    const [sortType, setSortType] = useState<number>(1)
     const dispatch = useAppDispatch()
 
     function activateBtn(value: gunItemModel) {
@@ -40,17 +40,26 @@ function CtStaff(): React.ReactNode {
         dispatch(removeClientItemData(value.id))
     }
 
+    function changeFunc(value: string) {
+        const data = Number(value)
+        if (data == sortType) {
+            return;
+        }
+        // dispatch(removeWonItem())
+        setSortType(data)
+    }
+
     return (
         <div className={style.ctStaffCnt}>
             <div className={style.ctStaffTxtCnt}>
                 <div className={style.ctStaffTitle}>{t('accessible_objects')}</div>
                 <div className={style.ctStaffSortCnt}>
-                    <CtStaffSort></CtStaffSort>
+                    <CtStaffSort changeFunc={(value: string) => changeFunc(value)}></CtStaffSort>
                 </div>
             </div>
             <div className={style.sasContracts}>
                 {isAuth ? (
-                    <ExClientStuffs addPrize={contractsFinished} isContracts={true} removeItem={(value) => { removeItem(value) }} deleteTxt={t('remove_item')} client_id={clientItemIds} activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25, client_id }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
+                    <ExClientStuffs sortType={sortType} addPrize={contractsFinished} isContracts={true} removeItem={(value) => { removeItem(value) }} deleteTxt={t('remove_item')} client_id={clientItemIds} activateBtn={(value) => { activateBtn(value) }} body={{ limit: 25, client_id }} btnText={t('go_to_case')} titleText={t('open_return')} linkTo={FRONTEND_PATHS.home} targetUrl={BACKEND_PATHS.getInventoryStaff} ></ExClientStuffs>) : (
                     <ShouldAuthStaff btnText={t('auth_upgrade')} titleText={t('unauth_upgrade_sub_title')}></ShouldAuthStaff>
                 )}
             </div>

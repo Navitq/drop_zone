@@ -1,23 +1,23 @@
 'use client'
 
 import dynamic from 'next/dynamic';
-import { components, DropdownIndicatorProps } from 'react-select';
-
+import { components, DropdownIndicatorProps, SingleValue } from 'react-select';
 import '@/styles/sortStyles.scss';
 import { useTranslations } from 'next-intl';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
+import type { Props as ReactSelectProps } from 'react-select';
 
-// Динамический импорт, чтобы отключить SSR
-const Select = dynamic(() => import('react-select'), { ssr: false });
-
-
+// Динамический импорт, отключаем SSR
+const Select = dynamic(() => import('react-select'), { ssr: false }) as React.ComponentType<
+    ReactSelectProps<Options, false>
+>;
 interface Options {
-    value: string,
-    label: string
+    value: string;
+    label: string;
 }
 
-const DropdownIndicator = (props: DropdownIndicatorProps) => {
+const DropdownIndicator = (props: DropdownIndicatorProps<Options, false>) => {
     const { menuIsOpen } = props.selectProps;
 
     return (
@@ -35,8 +35,17 @@ const DropdownIndicator = (props: DropdownIndicatorProps) => {
     );
 };
 
-export default function SortMenuAct(props: { options: Options[] }) {
+export default function SortMenuAct(props: { options: Options[], callBack: (value: string) => void }) {
     const t = useTranslations("homePage");
+
+    useEffect(() => {
+        props.callBack('1');
+    }, []);
+
+    const handleChange = (newValue: SingleValue<Options>) => {
+        props.callBack(newValue?.value || '1');
+    };
+
     return (
         <Select
             className="sort-select-cnt"
@@ -44,6 +53,8 @@ export default function SortMenuAct(props: { options: Options[] }) {
             placeholder={t('sort')}
             components={{ DropdownIndicator }}
             options={props.options}
+            onChange={handleChange}
+            isClearable={false}
         />
     );
 }

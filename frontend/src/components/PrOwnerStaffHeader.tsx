@@ -10,7 +10,7 @@ import { useAppSelector } from '@/lib/hooks'
 
 
 
-function PrOwnerStaffHeader(): React.ReactNode {
+function PrOwnerStaffHeader(props: { changeFunc: (value: string) => void, }): React.ReactNode {
     const t = useTranslations("profile")
     const totalItems = useAppSelector(state => state.profile.totalItems)
     const totalPrice = useAppSelector(state => state.profile.totalPrice)
@@ -25,7 +25,7 @@ function PrOwnerStaffHeader(): React.ReactNode {
             </div>
             <div className={style.prSettingsData}>
                 <div className={style.prSortStuffBlock}>
-                    <CtStaffSort></CtStaffSort>
+                    <CtStaffSort changeFunc={(value: string) => props.changeFunc(value)}></CtStaffSort>
                     <div className={`${style.prSaveBtCnt}  ${style.prMgLThrty} ${style.prMgLThrtyPc}`}>
                         <CaseBtnText text={t('sell_all')}></CaseBtnText>
                     </div>
