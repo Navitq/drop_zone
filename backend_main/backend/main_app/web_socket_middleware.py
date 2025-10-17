@@ -2,7 +2,7 @@ import json
 from channels.middleware import BaseMiddleware
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
-
+from .serializers import MyRefreshToken
 
 
 class JWTAuthMiddlewareCustom(BaseMiddleware):
@@ -49,15 +49,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
                 # Попытка через refresh_token
                 if refresh_token:
                     try:
-                        refresh = RefreshToken(refresh_token)
-                        new_access = AccessToken()
-                        new_access["id"] = refresh.get("id")
-                        new_access["username"] = refresh.get("username")
-                        new_access["avatar"] = refresh.get("avatar")
-                        new_access["provider"] = refresh.get("provider")
-                        new_access["token_version"] = refresh.get(
-                            "token_version")
-                        scope["_new_access_token"] = str(new_access)
+                        refresh = MyRefreshToken(refresh_token)
                         scope["token_data"] = {
                             "id": refresh.get("id"),
                             "username": refresh.get("username"),
@@ -72,14 +64,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
             # Нет access, есть refresh?
             if refresh_token:
                 try:
-                    refresh = RefreshToken(refresh_token)
-                    new_access = AccessToken()
-                    new_access["id"] = refresh.get("id")
-                    new_access["username"] = refresh.get("username")
-                    new_access["avatar"] = refresh.get("avatar")
-                    new_access["provider"] = refresh.get("provider")
-                    new_access["token_version"] = refresh.get("token_version")
-                    scope["_new_access_token"] = str(new_access)
+                    refresh = MyRefreshToken(refresh_token)
                     scope["token_data"] = {
                         "id": refresh.get("id"),
                         "username": refresh.get("username"),

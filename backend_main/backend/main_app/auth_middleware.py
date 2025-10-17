@@ -3,8 +3,11 @@ from django.http import JsonResponse
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from django.contrib.auth import get_user_model
-
-User = get_user_model()
+import time
+from uuid import UUID
+# User = get_user_model()
+from .models import User
+from .serializers import MyRefreshToken
 
 
 class JWTAuthenticationMiddleware:
@@ -51,14 +54,16 @@ class JWTAuthenticationMiddleware:
             except TokenError:
                 if refresh_token:
                     try:
-                        refresh = RefreshToken(refresh_token)
-                        new_access = AccessToken()
-                        new_access["id"] = refresh.get("id")
-                        new_access["username"] = refresh.get("username")
-                        new_access["avatar"] = refresh.get("avatar")
-                        new_access["provider"] = refresh.get("provider")
-                        new_access["token_version"] = refresh.get(
-                            "token_version")
+
+                        refresh = MyRefreshToken(refresh_token)
+                        exp_timestamp = refresh.payload['exp']
+                        hours_left = (exp_timestamp - int(time.time())) / 3600
+                        if 0 < hours_left <= 3:
+                            user_id = refresh.get("id")
+                            refresh = MyRefreshToken.for_user(
+                                User.objects.get(id=str(user_id), is_active=True))
+                            request._new_refresh_token = str(refresh)
+                        new_access = refresh.access_token
                         request._new_access_token = str(new_access)
                         request.token_data = {
                             "id": refresh.get("id"),
@@ -73,14 +78,16 @@ class JWTAuthenticationMiddleware:
         else:
             if refresh_token:
                 try:
-                    refresh = RefreshToken(refresh_token)
-                    new_access = AccessToken()
-                    new_access["id"] = refresh.get("id")
-                    new_access["username"] = refresh.get("username")
-                    new_access["avatar"] = refresh.get("avatar")
-                    new_access["provider"] = refresh.get("provider")
-                    new_access["token_version"] = refresh.get(
-                        "token_version")
+                    refresh = MyRefreshToken(refresh_token)
+                    exp_timestamp = refresh.payload['exp']
+                    hours_left = (exp_timestamp - int(time.time())) / 3600
+
+                    if 0 < hours_left <= 3:
+                        user_id = refresh.get("id")
+                        refresh = MyRefreshToken.for_user(
+                            User.objects.get(id=str(user_id), is_active=True))
+                        request._new_refresh_token = str(refresh)
+                    new_access = refresh.access_token
                     request._new_access_token = str(new_access)
                     request.token_data = {
                         "id": refresh.get("id"),
@@ -88,7 +95,7 @@ class JWTAuthenticationMiddleware:
                         "avatar": refresh.get("avatar"),
                         "provider": refresh.get("provider"),
                     }
-                except TokenError:
+                except (TokenError, User.DoesNotExist):
                     request._clear_cookies = True
             else:
                 request._clear_cookies = True
@@ -110,7 +117,19 @@ class JWTAuthenticationMiddleware:
                 httponly=True,
                 secure=True,
                 samesite="Lax",
-                max_age=5 * 60,
+                max_age=5 * 60,  # 5 минут
             )
+
+            # 🔸 обновляем refresh-токен, если у тебя он был пересоздан
+            if hasattr(request, "_new_refresh_token"):
+                response.delete_cookie("refresh_token")
+                response.set_cookie(
+                    "refresh_token",
+                    request._new_refresh_token,
+                    httponly=True,
+                    secure=True,
+                    samesite="Lax",
+                    max_age=7 * 24 * 3600,  # 7 дней
+                )
 
         return response
