@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useRef, useState, useCallback, useEffect } from 'react'
 
 import style from '@/styles/upgrades.module.scss'
 import { useTranslations } from 'next-intl'
@@ -12,6 +12,7 @@ import { BACKEND_PATHS } from '@/utilites/urls'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { setServerItemToUpgrade } from '@/redux/upgradeReducer'
 import ShouldAuthStaff from '@/components/ShouldAuthStaff'
+import { number } from 'motion'
 
 interface gunItemModel {
     id: string,
@@ -30,6 +31,25 @@ function ExchangeServerPropierty(): React.ReactNode {
     const isAuth = useAppSelector(state => state.user.isAuth)
     const price = useAppSelector(state => state.upgrade.price)
     const priceСoefficient = useAppSelector(state => state.upgrade.priceСoefficient)
+    const [sortPrice, setSortPrice] = useState<number>(0)
+    const sortPriceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const [valueInput, setValueInput] = useState('');
+
+    useEffect(() => {
+        setValueInput('')
+        setSortPrice(0)
+    }, [priceСoefficient])
+
+    const sortByRealPrice = useCallback((value: string) => {
+        setValueInput(value)
+        if (sortPriceRef.current) clearTimeout(sortPriceRef.current);
+        if (value === '') return
+
+        sortPriceRef.current = setTimeout(() => {
+            setSortPrice(Number(value) || 0);
+        }, 300);
+    }, []);
+
     function activateBtn(value: gunItemModel) {
         dispatch(setServerItemToUpgrade(value))
     }
@@ -42,10 +62,10 @@ function ExchangeServerPropierty(): React.ReactNode {
                 </div>
                 <div className={style.exServerSearch}>
                     <SearchEx placeHolderText={t('search_by_data')}></SearchEx>
-                    <SearchByPrice placeHolderText={t('search_by_price')}></SearchByPrice>
+                    <SearchByPrice value={valueInput} getDataByPrice={(value: string) => { sortByRealPrice(value) }} placeHolderText={t('search_by_price')}></SearchByPrice>
                 </div>
             </div>
-            {isAuth ? <ExClientStuffs titleText={t('wait_for_items')} btnText={t('go_to_case')} server_id={server_item} body={{ limit: 25, startPrice: price * priceСoefficient }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs> : (
+            {isAuth ? <ExClientStuffs titleText={t('wait_for_items')} btnText={t('go_to_case')} server_id={server_item} body={{ limit: 25, startPrice: sortPrice === 0 ? price * priceСoefficient : sortPrice }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs> : (
                 <ShouldAuthStaff btnText={t('auth_upgrade')} subTitleText={t('unauth_upgrade_sub_title')} titleText={t('unauth_upgrade')}></ShouldAuthStaff>
             )}
         </div>
