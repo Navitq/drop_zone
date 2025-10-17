@@ -39,6 +39,7 @@ interface ExClientStuffsInt {
     activeBtlText?: string,
     profileDeletedItems?: string,
     sortType?: number,
+    textSortValue?: string,
     itemPriceAndAmount?: (value: gunItemModel[]) => void
 }
 
@@ -84,6 +85,22 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
         // Загружаем первую страницу заново
         getInventory(1);
     }, [props.sortType]);
+
+    useEffect(() => {
+        if (!props.textSortValue && props.textSortValue !== '') return;
+        hasMoreRef.current = true;
+        loadingRef.current = false;
+        multiplyRef.current = false;
+        totalDeletedRef.current = [];
+        addedItemsListRef.current = [];
+        setItems([]);
+        setPage(1);
+        setHasMore(true);
+
+
+        // Загружаем первую страницу заново
+        getInventory(1);
+    }, [props.textSortValue]);
 
     useEffect(() => {
         console.log(props.isActiveProfile, props.deleteProfileItem, props.deleteProfileItem?.length == 0)
@@ -241,6 +258,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
     async function getInventory(page: number = 1) {
         try {
+            console.log(props.targetUrl, hasMoreRef.current)
             if (!props.targetUrl || !hasMoreRef.current) {
                 return
             }
@@ -261,7 +279,8 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                 page,
                 body: props.body,
                 filteredDeletedLength,
-                sort_by: props.sortType || 1
+                sort_by: props.sortType || 1,
+                textSortValue: props.textSortValue || ''
             });
             console.log(response.data)
             if (response?.status == 204) {

@@ -33,18 +33,34 @@ function ExchangeServerPropierty(): React.ReactNode {
     const priceСoefficient = useAppSelector(state => state.upgrade.priceСoefficient)
     const [sortPrice, setSortPrice] = useState<number>(0)
     const sortPriceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const sortTextRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
     const [valueInput, setValueInput] = useState('');
+    const [textSortValue, setTextSortValue] = useState<string>('')
+    const [dataTextSortValue, setDataTextSortValue] = useState<string>('')
 
     useEffect(() => {
         setValueInput('')
         setSortPrice(0)
     }, [priceСoefficient])
 
+    const sortByText = useCallback((value: string) => {
+        setTextSortValue(value)
+        if (sortTextRef.current) clearTimeout(sortTextRef.current);
+        sortTextRef.current = setTimeout(() => {
+            setDataTextSortValue(value)
+        }, 300);
+    }, [])
+
     const sortByRealPrice = useCallback((value: string) => {
         setValueInput(value)
         if (sortPriceRef.current) clearTimeout(sortPriceRef.current);
-        if (value === '') return
-
+        if (value === '') {
+            sortPriceRef.current = setTimeout(() => {
+                setSortPrice(0);
+            }, 300);
+            return
+        }
         sortPriceRef.current = setTimeout(() => {
             setSortPrice(Number(value) || 0);
         }, 300);
@@ -61,11 +77,11 @@ function ExchangeServerPropierty(): React.ReactNode {
                     <ExBlockTitle title={t('get_our_skins')}></ExBlockTitle>
                 </div>
                 <div className={style.exServerSearch}>
-                    <SearchEx placeHolderText={t('search_by_data')}></SearchEx>
+                    <SearchEx searchDara={textSortValue} handler={(value: string) => { sortByText(value) }} placeHolderText={t('search_by_data')}></SearchEx>
                     <SearchByPrice value={valueInput} getDataByPrice={(value: string) => { sortByRealPrice(value) }} placeHolderText={t('search_by_price')}></SearchByPrice>
                 </div>
             </div>
-            {isAuth ? <ExClientStuffs titleText={t('wait_for_items')} btnText={t('go_to_case')} server_id={server_item} body={{ limit: 25, startPrice: sortPrice === 0 ? price * priceСoefficient : sortPrice }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs> : (
+            {isAuth ? <ExClientStuffs textSortValue={dataTextSortValue} titleText={t('wait_for_items')} btnText={t('go_to_case')} server_id={server_item} body={{ limit: 25, startPrice: sortPrice !== 0 ? sortPrice : price * priceСoefficient }} activateBtn={(value: gunItemModel) => { activateBtn(value) }} targetUrl={BACKEND_PATHS.getServerInventoryStaff}></ExClientStuffs> : (
                 <ShouldAuthStaff btnText={t('auth_upgrade')} subTitleText={t('unauth_upgrade_sub_title')} titleText={t('unauth_upgrade')}></ShouldAuthStaff>
             )}
         </div>

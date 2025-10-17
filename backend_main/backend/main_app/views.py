@@ -29,6 +29,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from urllib.parse import urlparse
+from django.db.models import Q
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -1293,6 +1294,7 @@ async def get_inventory_server_items_view(request):
         data = json.loads(request.body)
         page = int(data.get("page", 1))
         body = data.get("body", {})
+        text_sort_value = data.get("textSortValue", "").strip()
         limit = int(body.get("limit", 25))
         offset = (page - 1) * limit
         start_price = body.get("startPrice", None)
@@ -1317,12 +1319,17 @@ async def get_inventory_server_items_view(request):
 
         def fetch():
             qs = SteamItemCs.objects
-            if start_price is not None:
+            if start_price is not None and float(start_price) > 0:
                 qs = qs.filter(price__gte=float(start_price))
+            if text_sort_value:
+                qs = qs.filter(
+                    Q(item_model__icontains=text_sort_value) |
+                    Q(item_style__icontains=text_sort_value)
+                )
             qs = qs.order_by("price")
             qs_page = qs[offset:offset + limit]
-            return list(qs_page)
 
+            return list(qs_page)
         qs = await sync_to_async(fetch)()
         result = [
             {
