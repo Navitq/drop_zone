@@ -7,7 +7,6 @@ import UserModalPoint from '@/components/UserModalPoint'
 import UserModalPointLink from '@/components/UserModalPointLink'
 import UserModalLanguageSettings from '@/components/UserModalLanguageSettings'
 import { motion } from "motion/react"
-import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl'
 import { FRONTEND_PATHS, BACKEND_PATHS } from '@/utilites/urls'
 import { useAppSelector } from '@/lib/hooks'
@@ -18,7 +17,6 @@ import api from "@/lib/api";
 function HeadModalUserSetting({ close }: { close: () => void }): React.ReactNode {
     const t = useTranslations("homePage")
     const profileLink = useAppSelector(state => state.user.userData.id)
-    const router = useRouter();
 
     const logout = useCallback(async () => {
         try {
