@@ -1,8 +1,8 @@
 
 from django.db.utils import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
-from .models import Case, Battle, Raffles, GlobalStateCoeff, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
-from .redis_models import CaseRedisStandart, GlobalStateCoeffRedis, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
+from .models import User, Case, Battle, Raffles, GlobalStateCoeff, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
+from .redis_models import BlockedUserRedis, CaseRedisStandart, GlobalStateCoeffRedis, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
 from django.utils import timezone
 from redis.exceptions import RedisError
 from redis_om.model.model import NotFoundError
@@ -31,6 +31,34 @@ def load_advertisement():
         ).save()
 
         print("✅ Redis синхронизирован: сохранена последняя запись Advertisement")
+
+    except RedisConnectionError:
+        raise
+    except OperationalError:
+        print("❌ Postgres ещё не готов — ждём…")
+
+
+def load_blocked_users():
+    try:
+        # Проверяем доступность Redis
+        BlockedUserRedis.db().ping()
+        
+        # Получаем всех неактивных пользователей
+        inactive_users = User.objects.filter(is_active=False)
+        if not inactive_users.exists():
+            return
+
+        # Удаляем все старые записи в Redis
+        all_blocked = BlockedUserRedis.find().all()
+        for b in all_blocked:
+            BlockedUserRedis.delete(b.pk)  # удаляем через класс и pk
+
+        # Сохраняем всех неактивных пользователей в Redis
+        for user in inactive_users:
+            BlockedUserRedis(user_id=str(user.id)).save()
+
+        print(
+            f"✅ BlockedUserRedis синхронизирован: сохранены все неактивные пользователи {inactive_users.count()}")
 
     except RedisConnectionError:
         raise

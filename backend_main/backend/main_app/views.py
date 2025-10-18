@@ -17,7 +17,7 @@ from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart, ActiveBattleRedis, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
+from .redis_models import CaseRedisStandart, BlockedTokenRedis, ActiveBattleRedis, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
 from django.db import DatabaseError
 from django.views.decorators.csrf import ensure_csrf_cookie
 from datetime import datetime, timezone, timedelta
@@ -30,6 +30,8 @@ from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from urllib.parse import urlparse
 from django.db.models import Q
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import UntypedToken
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -1798,6 +1800,42 @@ def upgrade_item_view(request):
     except Exception as e:
         print(e)
         return JsonResponse({"error": str(e)}, status=500)
+
+
+@async_require_methods(["POST"])
+async def logout_view(request):
+    access_token = request.COOKIES.get("access_token")
+    refresh_token = request.COOKIES.get("refresh_token")
+
+    # Функция для блокировки токена
+    async def block(token_str, token_type):
+        if not token_str:
+            return
+        try:
+            token = UntypedToken(token_str)
+            jti = token.get("jti")
+            user_id = token.get("id")
+            exp = token.get("exp")
+            if jti and user_id and exp:
+                BlockedTokenRedis.block_token(
+                    jti=jti,
+                    token_type=token_type,
+                    user_id=user_id,
+                    exp=exp
+                )
+        except TokenError:
+            pass  # токен уже недействителен, игнорируем
+
+    # Блокируем оба токена
+    await block(access_token, "access")
+    await block(refresh_token, "refresh")
+
+    # Удаляем куки
+    response = JsonResponse({"detail": "Logged out successfully"})
+    # response.delete_cookie("access_token")
+    # response.delete_cookie("refresh_token")
+
+    return response
 
 
 @async_require_methods(["GET"])

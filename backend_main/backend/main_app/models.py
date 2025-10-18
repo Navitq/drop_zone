@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.utils import timezone
 from django.db.models.deletion import CASCADE
 from django.core.exceptions import ValidationError
+from .redis_models import BlockedUserRedis
+from redis.exceptions import RedisError
+from redis_om.model.model import NotFoundError
 
 # ----------------------------
 # Менеджер пользователя (минимальный)
@@ -48,6 +51,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     trade_link = models.URLField(null=True, blank=True, default='')
     best_case = models.JSONField(default=dict, blank=True)
     best_skin = models.JSONField(default=dict, blank=True)
+    blocked_at = models.DateField(null=True, blank=True, default=None)
+    blocked_reason = models.TextField(default='', blank=True, null=True)
     total_case_opened = models.PositiveIntegerField(
         default=0, null=False, blank=False)
     total_upgrades = models.PositiveIntegerField(
@@ -83,6 +88,42 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = []
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+
+        # Получаем старый объект, если это обновление
+        old = None
+        if not is_new:
+            old = User.objects.filter(pk=self.pk).first()
+        if old:
+            # Пользователь был активным, стал неактивным
+            if old.is_active and not self.is_active:
+                self.blocked_at = timezone.now().date()
+                try:
+                    BlockedUserRedis(user_id=str(self.id)).save()
+                except RedisError:
+                    pass  # игнорируем ошибки Redis
+            elif not old.is_active and self.is_active:
+                self.blocked_at = None
+                self.blocked_reason = ""
+                try:
+                    blocked = BlockedUserRedis.find(
+                        BlockedUserRedis.user_id == str(self.id)).first()
+                    if blocked:
+                        BlockedUserRedis.delete(blocked.pk)
+                except (RedisError, NotFoundError):
+                    pass
+
+        # Новый пользователь
+        elif is_new and not self.is_active:
+            self.blocked_at = timezone.now().date()
+            try:
+                BlockedUserRedis(user_id=str(self.id)).save()
+            except RedisError:
+                pass
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username or str(self.id)

@@ -1,10 +1,13 @@
+from redis_om import HashModel
+# импорт твоего Redis клиента
+from datetime import datetime, timedelta, timezone
 from redis_om import HashModel,  JsonModel,  Field, get_redis_connection, Migrator
 # Подключение к Redis
 from django.utils import timezone
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 import json
 from decimal import Decimal
@@ -194,6 +197,58 @@ class ActiveBattleRedis(JsonModel):
     class Meta:
         global_key_prefix = "items"
         model_key_prefix = "battle"
+        database = redis
+
+
+class BlockedTokenRedis(HashModel):
+    jti: str = Field(index=True)  # уникальный идентификатор токена
+    token_type: str  # access или refresh
+    user_id: str
+    exp: int  # timestamp истечения токена
+
+    class Meta:
+        database = redis
+
+    @classmethod
+    def block_token(cls, jti: str, token_type: str, user_id: str, exp: int):
+        """Блокируем токен и ставим TTL"""
+
+        ttl = max(exp - int(datetime.now(timezone.utc).timestamp()), 0)
+        token = cls(
+            jti=jti,
+            token_type=token_type,
+            user_id=user_id,
+            exp=exp
+        )
+        token.save()
+        redis.expire(token.key(), ttl)
+
+
+class BlockedTokeVersionRedis(HashModel):
+    token_version: str  # access или refresh
+    user_id: str
+    exp: int            # timestamp истечения токена
+
+    class Meta:
+        database = redis
+
+    @classmethod
+    def block_token(cls, token_version: str, user_id: str, exp: int):
+        """Блокируем токен и ставим TTL"""
+        ttl = max(exp - int(datetime.now(timezone.utc).timestamp()), 0)
+        token = cls(
+            token_version=token_version,
+            user_id=user_id,
+            exp=exp
+        )
+        token.save()
+        redis.expire(token.key(), ttl)
+
+
+class BlockedUserRedis(HashModel):
+    user_id: str = Field(index=True)
+
+    class Meta:
         database = redis
 
 
