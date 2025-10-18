@@ -5,10 +5,10 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.utils import timezone
 from django.db.models.deletion import CASCADE
 from django.core.exceptions import ValidationError
-from .redis_models import BlockedUserRedis
+from .redis_models import BlockedUserRedis, BlockedTokeVersionRedis
 from redis.exceptions import RedisError
 from redis_om.model.model import NotFoundError
-
+from datetime import datetime, timedelta, timezone as dt_timezone
 # ----------------------------
 # Менеджер пользователя (минимальный)
 # ----------------------------
@@ -97,7 +97,22 @@ class User(AbstractBaseUser, PermissionsMixin):
         if not is_new:
             old = User.objects.filter(pk=self.pk).first()
         if old:
-            # Пользователь был активным, стал неактивным
+            print(old.token_version, self.token_version, 4141414)
+            if old.token_version != self.token_version:
+                try:
+                    exp = int((datetime.now(dt_timezone.utc) +
+                              timedelta(days=7)).timestamp())
+                    print(5555555)
+                    # 💥 вызываем твой метод block_token
+                    BlockedTokeVersionRedis.block_token(
+                        token_version=int(self.token_version),
+                        user_id=str(self.id),
+                        exp=exp
+                    )
+                    print(7777777)
+
+                except RedisError:
+                    pass
             if old.is_active and not self.is_active:
                 self.blocked_at = timezone.now().date()
                 try:

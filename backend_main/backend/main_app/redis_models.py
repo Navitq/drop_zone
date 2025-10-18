@@ -225,24 +225,47 @@ class BlockedTokenRedis(HashModel):
 
 
 class BlockedTokeVersionRedis(HashModel):
-    token_version: str  # access или refresh
-    user_id: str
-    exp: int            # timestamp истечения токена
+    token_version: int  # access или refresh
+    user_id: str = Field(index=True)
+    exp: int  # timestamp истечения токена
 
     class Meta:
         database = redis
 
     @classmethod
-    def block_token(cls, token_version: str, user_id: str, exp: int):
-        """Блокируем токен и ставим TTL"""
-        ttl = max(exp - int(datetime.now(timezone.utc).timestamp()), 0)
-        token = cls(
-            token_version=token_version,
+    def block_token(cls, token_version: int, user_id: str, exp: int):
+        """
+        Блокирует токен (version), удаляет все предыдущие токены пользователя
+        и ставит TTL на новый.
+        """
+        now_ts = int(datetime.now(timezone.utc).timestamp())
+        ttl = max(exp - now_ts, 0)
+
+        # 🧹 Удаляем все старые токены, связанные с этим user_id
+        old_tokens = []
+
+        try:
+            old_tokens = BlockedTokeVersionRedis.find(
+                BlockedTokeVersionRedis.user_id == user_id).all()
+        except Exception:
+            pass
+        for token in old_tokens:
+            try:
+                redis.delete(token.key())
+            except Exception:
+                pass
+
+        new_token = cls(
+            token_version=int(token_version),
             user_id=user_id,
             exp=exp
         )
-        token.save()
-        redis.expire(token.key(), ttl)
+        new_token.save()
+
+        # 🕒 Ставим TTL, чтобы Redis сам удалил запись после истечения срока
+        redis.expire(new_token.key(), ttl)
+
+        return new_token
 
 
 class BlockedUserRedis(HashModel):

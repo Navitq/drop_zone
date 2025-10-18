@@ -90,6 +90,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'main_app.blocked_user_middleware.BlockedUserMiddleware',
+    'main_app.blocked_token_version_middleware.BlockedTokenVersionMiddleware',
     'main_app.blocked_token_middleware.BlockedTokenMiddleware',
     'main_app.auth_middleware.JWTAuthenticationMiddleware',
     'django.middleware.security.SecurityMiddleware',
