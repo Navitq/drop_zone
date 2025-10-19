@@ -175,7 +175,13 @@ class SocialAccount(models.Model):
 
 class SteamItemCs(models.Model):
     """Базовое описание предмета CS:GO / CS2 (тип предмета без уникальных характеристик)."""
-
+    EXTERIOR_CHOICES = [
+        ("factory_new", "Factory New"),
+        ("minimal_wear", "Minimal Wear"),
+        ("field_tested", "Field-Tested"),
+        ("well_worn", "Well-Worn"),
+        ("battle_scarred", "Battle-Scarred"),
+    ]
     RARITY_CHOICES = [
         ("usuall", "Usual"),
         ("rare", "Rare"),
@@ -192,7 +198,41 @@ class SteamItemCs(models.Model):
     item_model = models.CharField(max_length=50, null=False, blank=True)
     item_style = models.CharField(max_length=50, null=False, blank=True)
     name = models.CharField(max_length=70, null=False, blank=True)
-
+    price_factory_new = models.DecimalField(
+        max_digits=10,       # всего цифр
+        decimal_places=2,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=10
+    )
+    price_minimal_wear = models.DecimalField(
+        max_digits=10,       # всего цифр
+        decimal_places=2,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=10
+    )
+    price_field_tested = models.DecimalField(
+        max_digits=10,       # всего цифр
+        decimal_places=2,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=10
+    )
+    price_well_worn = models.DecimalField(
+        max_digits=10,       # всего цифр
+        decimal_places=2,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=10
+    )
+    price_battle_scarred = models.DecimalField(
+        max_digits=10,       # всего цифр
+        decimal_places=2,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=10
+    )
     price = models.DecimalField(
         max_digits=10,       # всего цифр
         decimal_places=2,    # знаков после запятой
@@ -263,6 +303,21 @@ class InventoryItem(models.Model):
 
     def __str__(self):
         return f"{self.market_hash_name} - {self.owner}"
+
+    @property
+    def price(self):
+        """Динамически возвращает цену в зависимости от состояния"""
+        wear_to_field = {
+            "factory_new": "price_factory_new",
+            "minimal_wear": "price_minimal_wear",
+            "field_tested": "price_field_tested",
+            "well_worn": "price_well_worn",
+            "battle_scarred": "price_battle_scarred",
+        }
+        field_name = wear_to_field.get(self.exterior_wear)
+        if field_name:
+            return getattr(self.steam_item, field_name)
+        return 0
 
     @property
     def rarity(self):
