@@ -5,7 +5,7 @@ import json
 from urllib.parse import parse_qs
 from asgiref.sync import sync_to_async
 from .models import User, Battle, BattleCase, SteamItemCs, InventoryItem
-from .redis_models import ActiveBattleRedis, PlayerInfo, ItemRedisStandart
+from .redis_models import ActiveBattleRedis, GlobalStateCoeffRedis, PlayerInfo, ItemRedisStandart
 from django.db import transaction, IntegrityError, DatabaseError
 from django.db.models import F, Sum
 import redis.asyncio as redis
@@ -15,6 +15,8 @@ import os
 import random
 from decimal import Decimal, ROUND_DOWN
 from redis_om.model.model import NotFoundError
+import secrets
+from redis.exceptions import RedisError
 
 load_dotenv()
 
@@ -292,20 +294,50 @@ def generate_lose_items(battle, players_count):
 
 
 def sync_spin_state_wheel():
-    # случайное число 0-99, умножаем на шанс пользователя
-    rand_num = int(random.randint(0, 99))
-    if rand_num > 99:
-        return EXTERIOR_CHOICES[-1][0]
-    # ограничиваем максимум 99
-    rand_num = min(rand_num, 99)
+    """Синхронная версия: определяет состояние предмета на основе коэффициентов из Redis и шанса пользователя"""
+    try:
+        # 🧠 Получаем коэффициенты из Redis (синхронно)
+        coeff = GlobalStateCoeffRedis.find().first()
+        print(coeff)
+        if not coeff:
+            raise ValueError("❌ GlobalStateCoeffRedis не найден!")
 
-    range_size = 100 // len(EXTERIOR_CHOICES)
-    index = rand_num // range_size
+        # 🧩 Сортируем коэффициенты от большего к меньшему
+        sorted_coeffs = sorted(
+            [
+                ("battle_scarred", float(coeff.battle_scarred)),
+                ("well_worn", float(coeff.well_worn)),
+                ("field_tested", float(coeff.field_tested)),
+                ("minimal_wear", float(coeff.minimal_wear)),
+                ("factory_new", float(coeff.factory_new)),
+            ],
+            key=lambda x: x[1],
+            reverse=True
+        )
 
-    if index >= len(EXTERIOR_CHOICES):
-        index = len(EXTERIOR_CHOICES) - 1
+        # 🎲 Генерируем случайное число от 0 до 100
+        rand_num = secrets.randbelow(
+            10000) / 100.0
+        rand_num = min(rand_num, 100)
 
-    return EXTERIOR_CHOICES[int(round(index))][0]
+        # 💡 Проверяем, в какой интервал попало число
+        cumulative = 0
+        for name, value in sorted_coeffs:
+            cumulative += value
+            if rand_num <= cumulative:
+                print(name)
+                return name
+
+        # Если число больше всех интервалов (на случай некорректных коэффициентов)
+        return sorted_coeffs[0][0]
+
+    except RedisError as e:
+        print(f"❌ Ошибка Redis при получении коэффициентов: {e}")
+        return "well_worn"
+
+    except Exception as e:
+        print(f"⚠️ Ошибка в spin_state_wheel_sync: {e}")
+        return "well_worn"
 
 
 def sync_create_order(item_state: str, item, user):

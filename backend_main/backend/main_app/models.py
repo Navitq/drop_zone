@@ -635,9 +635,9 @@ class GlobalStateCoeff(models.Model):
         # Проверка на диапазон 0-100
         for field in ['factory_new', 'minimal_wear', 'field_tested', 'well_worn', 'battle_scarred']:
             value = getattr(self, field)
-            if not (0 <= value <= 100):
+            if not (0 <= value <= 100 and value != 100):
                 raise ValidationError(
-                    {field: "Значение должно быть от 0 до 100"})
+                    {field: "Суммареое значение должно быть 100"})
 
         # Проверка суммы
         total = (

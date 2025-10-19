@@ -7,10 +7,11 @@ from django.utils import timezone
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from datetime import datetime, timezone
+from datetime import datetime, timezone as timezone_datatime
 from typing import Optional
 import json
 from decimal import Decimal
+
 load_dotenv()
 
 REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
@@ -213,7 +214,7 @@ class BlockedTokenRedis(HashModel):
     def block_token(cls, jti: str, token_type: str, user_id: str, exp: int):
         """Блокируем токен и ставим TTL"""
 
-        ttl = max(exp - int(datetime.now(timezone.utc).timestamp()), 0)
+        ttl = max(exp - int(datetime.now(timezone_datatime.utc).timestamp()), 0)
         token = cls(
             jti=jti,
             token_type=token_type,
@@ -238,7 +239,7 @@ class BlockedTokeVersionRedis(HashModel):
         Блокирует токен (version), удаляет все предыдущие токены пользователя
         и ставит TTL на новый.
         """
-        now_ts = int(datetime.now(timezone.utc).timestamp())
+        now_ts = int(datetime.now(timezone_datatime.utc).timestamp())
         ttl = max(exp - now_ts, 0)
 
         # 🧹 Удаляем все старые токены, связанные с этим user_id

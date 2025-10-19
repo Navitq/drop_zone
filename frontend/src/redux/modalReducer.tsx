@@ -148,6 +148,8 @@ export const modalSlice = createSlice({
         showRulletCaseModal: (state, actions: PayloadAction<{ caseId: string, caseName: string, items: GunData[], prize_item: GunData }>) => {
             console.log(actions.payload)
             const index: number = actions.payload.items.findIndex(item => item.id === actions.payload.prize_item.id);
+            state.rulletCaseModal.items = actions.payload.items;
+            console.log(index, state.rulletCaseModal.items[index], actions.payload.prize_item, 454545454)
             if (index !== -1) {
                 state.rulletCaseModal.items[index] = actions.payload.prize_item;
                 state.rulletCaseModal.prize_index = index;
@@ -157,7 +159,6 @@ export const modalSlice = createSlice({
             state.rulletCaseModal.isVisible = true;
             state.rulletCaseModal.caseId = actions.payload.caseId;
             state.rulletCaseModal.caseName = actions.payload.caseName;
-            state.rulletCaseModal.items = actions.payload.items;
             state.rulletCaseModal.prize_item = actions.payload.prize_item;
         },
         closeRulletCaseModal: (state) => {
