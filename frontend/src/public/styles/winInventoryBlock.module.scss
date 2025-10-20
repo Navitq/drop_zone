@@ -1,0 +1,152 @@
+%flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%flexStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.wibBlock {
+    @extend %flexStart;
+    align-items: center;
+    max-width: 1920px;
+    width: 100%;
+    height: 107px;
+    margin-left: 16px;
+    margin-top: 2px;
+    margin-bottom: 10px;
+}
+
+.wolSliderTypeBtn {
+    font-family: var(--font-textBold);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.wibManager {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 30px;
+    height: 100%;
+    width: 173px;
+}
+.wolLiveBlock {
+    @extend %flexStart;
+    align-items: center;
+    height: 100%;
+    width: 99px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: rgba(34, 34, 40, 1);
+}
+.wolSliderTypeBtn {
+    height: 100%;
+    width: 67px;
+}
+.wibSliderCntBlock {
+    flex: 1;
+}
+.wolBlock {
+    @extend %flexCenter;
+    justify-content: space-between;
+    height: 49px;
+    width: 100%;
+}
+
+.wolOnlineAmount {
+    font-family: var(--font-headBold);
+    font-size: 15px;
+    line-height: 15px;
+    color: rgba(255, 148, 0, 1);
+}
+
+.wolOnlineTxt {
+    margin-top: 1px;
+    font-family: var(--font-headBold);
+    font-size: 10px;
+    line-height: 10px;
+    color: rgba(141, 141, 141, 1);
+}
+
+.wolLiveInfoData {
+    @extend %flexCenter;
+    flex-direction: column;
+    height: 100%;
+}
+
+.wolSliderTypeBtn {
+    @extend %flexCenter;
+    cursor: pointer;
+    height: 100%;
+    width: 67px;
+    background-color: rgba(34, 34, 40, 1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px
+}
+
+.wolLiveImgCnt {
+    @extend %flexCenter;
+    height: 100%;
+    width: 57px;
+    position: relative;
+    img {
+        object-fit: contain;
+    }
+}
+
+.crownImageCnt {
+    position: relative;
+    width: 16px;
+    height: 13px;
+    margin-right: 6px;
+    margin-bottom: 3px;
+    img {
+        object-fit: contain;
+    }
+}
+
+.wolSliderTypeBtnCrown {
+    @extend %flexCenter;
+}
+
+.topSliderType {
+    font-family: var(--font-textBold);
+    font-size: 14px;
+    line-height: 14px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.wolStartBlock.wolLiveBlock {
+    @extend %flexCenter;
+    border: none;
+    background-color: rgba(255, 148, 0, 1);
+    cursor: pointer;
+}
+
+.wolSliderStateIcon {
+    position: relative;
+    width: 20px;
+    height: 21px;
+    margin-right: 10px;
+    img {
+        object-fit: contain;
+    }
+}
+
+.wolSliderStateText {
+    font-family: var(--font-textBold);
+    font-size: 14px;
+    line-height: 100%;
+    color: rgba(255, 255, 255, 1);
+}
+
+.wolSliderTypeBtnActive {
+    border: none;
+    border-bottom: 3px solid rgba(255, 148, 0, 1);
+    padding-top: 3px;
+}

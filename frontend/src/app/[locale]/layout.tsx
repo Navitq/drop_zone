@@ -10,6 +10,7 @@ import { cookies } from 'next/headers'
 import StoreProvider from '@/app/StoreProvider'
 import { getUser } from '@/lib/getUser';
 import RafflesModal from '@/components/RafflesModal';
+import WonInventoryBlock from '@/components/WonInventoryBlock'
 
 export default async function LocaleLayout({
   children,
@@ -47,6 +48,7 @@ export default async function LocaleLayout({
         <StoreProvider preloadedState={preloadedState}>
           <div className='global-container'>
             <NextIntlClientProvider>
+              <WonInventoryBlock></WonInventoryBlock>
               <BackGround></BackGround>
               <Header></Header>
               <main className='global-content'>
