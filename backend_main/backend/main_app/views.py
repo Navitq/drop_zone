@@ -13,12 +13,12 @@ from redis_om.model.model import NotFoundError
 from rest_framework_simplejwt.tokens import RefreshToken
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
-from .models import SocialAccount, ItemsOrders, User, Battle, Advertisement, BattleCase, Case, InventoryItem, SteamItemCs, Raffles
+from .models import SocialAccount, ItemsOrders, User, Battle, Advertisement, TotalActionAmount, BattleCase, Case, InventoryItem, SteamItemCs, Raffles
 from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart, BlockedTokenRedis, GlobalStateCoeffRedis, ActiveBattleRedis, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
+from .redis_models import CaseRedisStandart, BlockedTokenRedis, TotalActionAmountRedis, GlobalStateCoeffRedis, ActiveBattleRedis, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
 from django.db import DatabaseError
 from django.views.decorators.csrf import ensure_csrf_cookie
 from datetime import datetime, timezone, timedelta
@@ -864,6 +864,7 @@ def play_upgrade_game(user, server_item, client_item=None, price=None):
         price=upgrade_price
     )
     user.total_upgrades += 1
+    TotalActionAmount.increment_total_upgrades()
     user.save()
     if spin_state is True:
         item_state = sync_spin_state_wheel(user)
@@ -1180,6 +1181,7 @@ def get_open_case_view(request, case_id):
                         money_check["case"], money_check["user"])
                     item_state = sync_spin_state_wheel(money_check["user"])
                     money_check["user"].total_case_opened += 1
+                    TotalActionAmount.increment_total_opened_cases()
                     print(money_check["user"].best_case.get(
                         "price", 0),  money_check["case"].price, 67676767)
                     if (
@@ -1497,6 +1499,7 @@ def make_contract_view(request):
             state = sync_spin_state_wheel(user_item)
             print(6666666666666666666666666666666666666666666)
             user_item.total_contracts += 1
+            TotalActionAmount.increment_total_contracts()
             user_item.save()
             order = sync_create_order(
                 item_state=state, item=won_item, user=user_item)
@@ -1930,6 +1933,28 @@ async def logout_view(request):
     # response.delete_cookie("refresh_token")
 
     return response
+
+
+@async_require_methods(["GET"])
+async def total_activities_view(request):
+    # Redis OM не async, поэтому используем sync_to_async
+    @sync_to_async
+    def get_total_data():
+        obj = TotalActionAmountRedis.find().first()  # единственная запись
+        if not obj:
+            return None
+        return {
+            "upgrades": obj.total_upgrades,
+            "cases": obj.total_opened_cases,
+            "contracts": obj.total_contracts,
+            "battles": obj.total_battles,
+        }
+
+    data = await get_total_data()
+    if not data:
+        return JsonResponse({"error": "No data in Redis"}, status=404)
+
+    return JsonResponse(data)
 
 
 @async_require_methods(["GET"])

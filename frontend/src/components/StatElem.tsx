@@ -13,7 +13,7 @@ interface StatElemProps {
     imgAltKey: string
 }
 
-export default function StatElem(props: StatElemProps): React.ReactNode {
+function StatElem(props: StatElemProps): React.ReactNode {
     function addCommas(num: number): string {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -26,8 +26,10 @@ export default function StatElem(props: StatElemProps): React.ReactNode {
             </div>
             <div className={styles.statElemTextCnt}>
                 <FooterText text={t(props.titleKey) + ":"} sizeClass={'fifteen_sz'}></FooterText>
-                <div className={styles.statElemAmount}>{props.message || addCommas(1523)}</div>
+                <div className={styles.statElemAmount}>{props.message ? addCommas(props.message) : addCommas(0)}</div>
             </div>
         </div>
     )
 }
+
+export default React.memo(StatElem)

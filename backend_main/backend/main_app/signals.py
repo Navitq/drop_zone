@@ -4,8 +4,8 @@ from django.db.backends.signals import connection_created
 from django.dispatch import receiver
 from redis.exceptions import ConnectionError as RedisConnectionError
 from django.db.models.signals import post_save, post_delete
-from .utils import load_to_redis, load_advertisement, sync_update_battle_in_redis, load_global_state_coeff, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
-from .models import Case, Battle, BattleCase, GlobalStateCoeff, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
+from .utils import load_to_redis, load_advertisement, sync_update_battle_in_redis, load_total_data, load_global_state_coeff, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
+from .models import Case, Battle, BattleCase, TotalActionAmount, GlobalStateCoeff, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
@@ -118,8 +118,14 @@ def battle_saved(sender, instance, created, **kwargs):
     """
     sync_update_battle_in_redis(str(instance.id), {
         "is_active": instance.is_active})
+    load_total_data()
     # queue_battle_update(str(instance.id), {
     #     "is_active": instance.is_active})
+
+
+@receiver(post_save, sender=TotalActionAmount)
+def total_action_saved(sender, instance, created, **kwargs):
+    load_total_data()
 
 
 @receiver(m2m_changed, sender=Battle.players.through)

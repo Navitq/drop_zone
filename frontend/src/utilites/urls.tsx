@@ -1,6 +1,7 @@
 type caseType = "bloger_case" | "season_case" | "standart_case" | "all"
 
 interface BackendPaths {
+    totalActivities: string,
     logout: string,
     getCases: string,
     vkAuth: string,
@@ -33,6 +34,7 @@ interface BackendPaths {
 
 
 export const BACKEND_PATHS: BackendPaths = {
+    totalActivities: "total-activities/",
     logout: '/logout/',
     getCases: '/cases/<str:case_type>/',
     vkAuth: '/oauth2/vk/login/',

@@ -1,8 +1,8 @@
 
 from django.db.utils import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
-from .models import User, Case, Battle, Raffles, GlobalStateCoeff, CaseItem, Advertisement, BackgroundMainPage, GlobalCoefficient
-from .redis_models import BlockedUserRedis, CaseRedisStandart, GlobalStateCoeffRedis, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
+from .models import User, Case, Battle, Raffles, GlobalStateCoeff, CaseItem, TotalActionAmount, Advertisement, BackgroundMainPage, GlobalCoefficient
+from .redis_models import BlockedUserRedis, CaseRedisStandart, TotalActionAmountRedis, GlobalStateCoeffRedis, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
 from django.utils import timezone
 from redis.exceptions import RedisError
 from redis_om.model.model import NotFoundError
@@ -42,7 +42,7 @@ def load_blocked_users():
     try:
         # Проверяем доступность Redis
         BlockedUserRedis.db().ping()
-        
+
         # Получаем всех неактивных пользователей
         inactive_users = User.objects.filter(is_active=False)
         if not inactive_users.exists():
@@ -398,3 +398,37 @@ def sync_update_battle_in_redis(battle_id: str, fields: dict):
 
     except RedisError:
         print(f"❌ Ошибка Redis при обновлении battle {battle_id}")
+
+
+def load_total_data():
+    try:
+        # проверка доступности Redis
+        TotalActionAmountRedis.db().ping()
+
+        # очищаем старые записи в Redis
+        for obj in TotalActionAmountRedis.find():
+            obj_pk = obj.pk  # берём pk объекта
+            TotalActionAmountRedis.delete(obj_pk)
+
+        # забираем единственную запись из базы
+        try:
+            coeff_obj = TotalActionAmount.objects.get()
+        except TotalActionAmount.DoesNotExist:
+            print("❌ В базе нет TotalActionAmount")
+            return
+
+        # создаём объект для Redis и сохраняем
+        redis_obj = TotalActionAmountRedis(
+            total_upgrades=coeff_obj.total_upgrades,
+            total_opened_cases=coeff_obj.total_opened_cases,
+            total_contracts=coeff_obj.total_contracts,
+            total_battles=coeff_obj.total_battles
+        )
+        redis_obj.save()  # обязательно сохраняем в Redis
+
+        print("✅ Redis синхронизирован: TotalActionAmount сохранён")
+
+    except RedisError:
+        print("❌ Redis недоступен")
+    except OperationalError:
+        print("❌ Postgres ещё не готов — ждём…")

@@ -1,4 +1,5 @@
 # backend_main/backend/users/models.py
+from django.db.models import F
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
@@ -9,6 +10,7 @@ from .redis_models import BlockedUserRedis, BlockedTokeVersionRedis
 from redis.exceptions import RedisError
 from redis_om.model.model import NotFoundError
 from datetime import datetime, timedelta, timezone as dt_timezone
+from django.db.models.signals import post_save
 # ----------------------------
 # Менеджер пользователя (минимальный)
 # ----------------------------
@@ -720,12 +722,52 @@ class GlobalStateCoeff(models.Model):
 
 class TotalActionAmount(models.Model):
     total_upgrades = models.PositiveIntegerField(
-        default=0, null=False, blank=False)
+        default=0, verbose_name='Суммарно апгрейдов')
     total_opened_cases = models.PositiveIntegerField(
-        default=0, null=False, blank=False)
+        default=0, verbose_name='Суммарно откртых кейсов')
     total_contracts = models.PositiveIntegerField(
-        default=0, null=False, blank=False)
+        default=0, verbose_name='Суммарно контрактов')
+
+    class Meta:
+        verbose_name = "Общее количество действий на сайте"
+        verbose_name_plural = "Общее количество действий на сайте"
+
+    def save(self, *args, **kwargs):
+        # Запрет на создание новых записей, если уже есть
+        if self.pk is None and TotalActionAmount.objects.exists():
+            raise ValueError("Only one TotalActionAmount instance allowed")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValueError(
+            "Deletion of TotalActionAmount instance is not allowed")
+
+    @classmethod
+    def get_solo(cls):
+        """Возвращает единственную запись или создаёт её, если нет."""
+        instance, created = cls.objects.get_or_create(pk=1)
+        return instance
 
     @property
     def total_battles(self):
+        """Возвращает общее количество всех баттлов."""
         return Battle.objects.count()
+
+    # Методы для эффективного увеличения
+    @classmethod
+    def increment_total_upgrades(cls, amount=1):
+        cls.objects.filter(pk=1).update(
+            total_upgrades=F('total_upgrades') + amount)
+        post_save.send(sender=cls, instance=None, created=False)
+
+    @classmethod
+    def increment_total_opened_cases(cls, amount=1):
+        cls.objects.filter(pk=1).update(
+            total_opened_cases=F('total_opened_cases') + amount)
+        post_save.send(sender=cls, instance=None, created=False)
+
+    @classmethod
+    def increment_total_contracts(cls, amount=1):
+        cls.objects.filter(pk=1).update(
+            total_contracts=F('total_contracts') + amount)
+        post_save.send(sender=cls, instance=None, created=False)

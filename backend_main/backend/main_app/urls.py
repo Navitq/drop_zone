@@ -60,4 +60,6 @@ urlpatterns = [
          name='book_inventory_item_view'),
     path('logout/', views.logout_view,
          name='logout_view'),
+    path('total-activities/', views.total_activities_view,
+         name='total_activities'),
 ]
