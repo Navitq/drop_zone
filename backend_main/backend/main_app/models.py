@@ -716,3 +716,16 @@ class GlobalStateCoeff(models.Model):
     class Meta:
         verbose_name = "Глобальные коэффициенты состояния"
         verbose_name_plural = "Глобальные коэффициенты состояния"
+
+
+class TotalActionAmount(models.Model):
+    total_upgrades = models.PositiveIntegerField(
+        default=0, null=False, blank=False)
+    total_opened_cases = models.PositiveIntegerField(
+        default=0, null=False, blank=False)
+    total_contracts = models.PositiveIntegerField(
+        default=0, null=False, blank=False)
+
+    @property
+    def total_battles(self):
+        return Battle.objects.count()

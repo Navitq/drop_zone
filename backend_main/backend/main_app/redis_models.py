@@ -276,4 +276,14 @@ class BlockedUserRedis(HashModel):
         database = redis
 
 
+class TotalActionAmountRedis(HashModel):
+    total_upgrades: int = Field(default=0)
+    total_opened_cases: int = Field(default=0)
+    total_contracts: int = Field(default=0)
+    total_battles: int = Field(default=0)  # будем хранить в Redis
+
+    class Meta:
+        database = redis
+
+
 Migrator().run()
