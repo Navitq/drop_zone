@@ -13,7 +13,7 @@ type DropSliderMap = {
 };
 
 function WibSliderBlockCnt(): React.ReactNode {
-    const timerRef = useRef(undefined);
+    const timerRef = useRef<boolean>(false);
     const wsOpened = useRef<boolean>(false)
     const isTopActive = useAppSelector(state => state.dropSlider.isTopActive)
 
@@ -21,7 +21,9 @@ function WibSliderBlockCnt(): React.ReactNode {
         if (isTopActive === false && !timerRef.current || !wsOpened.current) {
             return
         }
+        timerRef.current = true;
         const timer = setTimeout(() => {
+            console.log(12312321)
 
             sendMessage(JSON.stringify(
                 {

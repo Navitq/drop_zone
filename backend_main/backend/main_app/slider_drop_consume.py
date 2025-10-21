@@ -17,7 +17,8 @@ redis_opened = redis.Redis(
     decode_responses=True
 )
 
-SLIDER_GROUP_NAME = "drop_slider_group"
+SLIDER_GROUP_NAME_LIVE = "drop_slider_group_live"
+SLIDER_GROUP_NAME_TOP = "drop_slider_group_top"
 
 
 async def get_last_items():
@@ -39,9 +40,9 @@ class SliderDropConsumer(AsyncWebsocketConsumer):
             await redis_opened.set(self.slider_counter_name, 0)
         if self.is_auth:
             await redis_opened.incr(self.slider_counter_name)
-        await self.channel_layer.group_add(SLIDER_GROUP_NAME, self.channel_name)
+        await self.channel_layer.group_add(SLIDER_GROUP_NAME_LIVE, self.channel_name)
         await self.channel_layer.group_send(
-            SLIDER_GROUP_NAME,  # имя группы
+            SLIDER_GROUP_NAME_LIVE,  # имя группы
             {
                 "type": "start_data",  # имя обработчика
                 "data": {"items": await get_last_items(), "clientsAmount": await redis_opened.get(self.slider_counter_name)},
@@ -75,7 +76,7 @@ class SliderDropConsumer(AsyncWebsocketConsumer):
         if self.is_auth:
             await redis_opened.decr(self.slider_counter_name)
         # ##### удаляем из группы
-        await self.channel_layer.group_discard(SLIDER_GROUP_NAME, self.channel_name)
+        await self.channel_layer.group_discard(SLIDER_GROUP_NAME_LIVE, self.channel_name)
 
     async def send_item(self, event):
         await self.send(text_data=json.dumps({
@@ -93,3 +94,9 @@ class SliderDropConsumer(AsyncWebsocketConsumer):
         if self.slider_type == slider_type:
             return
         self.slider_type = slider_type
+        if slider_type == "top":
+            await self.channel_layer.group_discard(SLIDER_GROUP_NAME_LIVE, self.channel_name)
+            await self.channel_layer.group_add(SLIDER_GROUP_NAME_TOP, self.channel_name)
+        else:
+            await self.channel_layer.group_discard(SLIDER_GROUP_NAME_TOP, self.channel_name)
+            await self.channel_layer.group_add(SLIDER_GROUP_NAME_LIVE, self.channel_name)

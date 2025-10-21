@@ -340,4 +340,13 @@ def push_last_20_items_to_redis():
         add_last_item(payload)
 
 
+class CrownFilterDataRedis(JsonModel):
+    rarity: list[str]
+    exterior_wear: list[str]
+    price: Decimal
+
+    class Meta:
+        database = redis
+
+
 Migrator().run()

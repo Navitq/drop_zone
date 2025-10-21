@@ -786,15 +786,15 @@ class CrownFilterData(models.Model):
     RARITY_CHOICES = [
         ("usuall", "Usual"),
         ("rare", "Rare"),
+        ("classified", "Classified"),
         ("elite", "Elite"),
         ("epic", "Epic"),
-        ("classified", "Classified"),
     ]
 
     rarity = MultiSelectField(
         choices=RARITY_CHOICES,
         max_length=100,
-        default=["elite", "epic"],  # ← можно задать несколько дефолтных
+        default=["elite", "epic"],
     )
 
     exterior_wear = MultiSelectField(
@@ -813,8 +813,24 @@ class CrownFilterData(models.Model):
         max_digits=10,
         decimal_places=2,
         null=False,
-        blank=False
+        blank=False,
+        default=0.00
     )
+
+    def clean(self):
+        """Не даём создать больше одной записи"""
+        if not self.pk and CrownFilterData.objects.exists():
+            raise ValidationError(
+                "Можно создать только одну запись CrownFilterData.")
+
+    def delete(self, *args, **kwargs):
+        """Запрещаем удаление"""
+        raise ValidationError(
+            "Нельзя удалить CrownFilterData — запись должна существовать всегда.")
 
     def __str__(self):
         return "CrownFilterData"
+
+    class Meta:
+        verbose_name = "Фильтр Crown"
+        verbose_name_plural = "Фильтр Crown"

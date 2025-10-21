@@ -4,16 +4,18 @@ from django.db.backends.signals import connection_created
 from django.dispatch import receiver
 from redis.exceptions import ConnectionError as RedisConnectionError
 from django.db.models.signals import post_save, post_delete
-from .utils import load_to_redis, load_advertisement, sync_update_battle_in_redis, load_total_data, load_global_state_coeff, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
-from .models import Case, Battle, BattleCase, TotalActionAmount, InventoryItem, GlobalStateCoeff, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
+from .utils import load_to_redis, load_crown_filter, load_advertisement, sync_update_battle_in_redis, load_total_data, load_global_state_coeff, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
+from .models import Case, Battle, BattleCase, CrownFilterData, TotalActionAmount, InventoryItem, GlobalStateCoeff, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
-from main_app.redis_models import CaseInfo, PlayerInfo
+from main_app.redis_models import CaseInfo, PlayerInfo, CrownFilterDataRedis
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from redis.exceptions import RedisError
 
-SLIDER_GROUP_NAME = "drop_slider_group"
+SLIDER_GROUP_NAME_LIVE = "drop_slider_group_live"
+SLIDER_GROUP_NAME_TOP = "drop_slider_group_top"
 
 
 @receiver(post_save, sender=Case)
@@ -130,6 +132,11 @@ def battle_saved(sender, instance, created, **kwargs):
 @receiver(post_save, sender=TotalActionAmount)
 def total_action_saved(sender, instance, created, **kwargs):
     load_total_data()
+
+
+@receiver(post_save, sender=CrownFilterData)
+def save_crown_filterData(sender, instance, created, **kwargs):
+    load_crown_filter()
 
 
 @receiver(m2m_changed, sender=Battle.players.through)
@@ -257,10 +264,27 @@ def inventory_item_created(sender, instance, created, **kwargs):
         "username": username,
         "caseImg": case_img
     }
+    filter_obj = False
+    if filter_obj:
+        return False
+    try:
+        filter_obj = CrownFilterDataRedis.find().first()
+    except RedisError as e:
+        print(f"Ошибка доступа к Redis: {e}")
+    if filter_obj:
+        return False  # или True по умолчанию, если фильтр отсутствует
 
-    # Отправляем в группу
+    if instance.steam_item.price >= filter_obj.price and instance.rarity in filter_obj.rarity and instance.exterior_wear in filter_obj.exterior_wear:
+        async_to_sync(channel_layer.group_send)(
+            SLIDER_GROUP_NAME_TOP,
+            {
+                "type": "send_item",  # вызывает метод send_item в consumer
+                "item": payload
+            }
+        )
+
     async_to_sync(channel_layer.group_send)(
-        SLIDER_GROUP_NAME,
+        SLIDER_GROUP_NAME_LIVE,
         {
             "type": "send_item",  # вызывает метод send_item в consumer
             "item": payload
