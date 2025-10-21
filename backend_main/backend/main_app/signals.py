@@ -265,13 +265,11 @@ def inventory_item_created(sender, instance, created, **kwargs):
         "caseImg": case_img
     }
     filter_obj = False
-    if filter_obj:
-        return False
     try:
         filter_obj = CrownFilterDataRedis.find().first()
     except RedisError as e:
         print(f"Ошибка доступа к Redis: {e}")
-    if filter_obj:
+    if not filter_obj:
         return False  # или True по умолчанию, если фильтр отсутствует
 
     if instance.steam_item.price >= filter_obj.price and instance.rarity in filter_obj.rarity and instance.exterior_wear in filter_obj.exterior_wear:
