@@ -1,7 +1,7 @@
 import React from 'react'
 import style from '@/styles/winInventoryBlock.module.scss'
 import WibManagerBlock from '@/components/WibManagerBlock'
-import WibSliderBlock from '@/components/WibSliderBlock'
+import WibSliderBlockCnt from '@/components/WibSliderBlockCnt'
 
 function WonInventoryBlock(): React.ReactNode {
     return (
@@ -10,7 +10,7 @@ function WonInventoryBlock(): React.ReactNode {
                 <WibManagerBlock></WibManagerBlock>
             </div>
             <div className={style.wibSliderCntBlock}>
-                <WibSliderBlock></WibSliderBlock>
+                <WibSliderBlockCnt></WibSliderBlockCnt>
             </div>
         </div>
     )

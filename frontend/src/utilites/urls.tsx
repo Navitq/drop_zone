@@ -29,11 +29,13 @@ interface BackendPaths {
     getCaseItems: (typed: string) => string,
     getCase: (typed: caseType) => string,
     battleGameWSS: (typed: string, guest: boolean) => string,
+    dropSliderWSS: () => string,
 }
 
 
 
 export const BACKEND_PATHS: BackendPaths = {
+
     totalActivities: "total-activities/",
     logout: '/logout/',
     getCases: '/cases/<str:case_type>/',
@@ -62,6 +64,7 @@ export const BACKEND_PATHS: BackendPaths = {
     getCaseItems: (typed: string) => `/cases/get_case_content/${typed}/`,
     getCase: (typed: caseType) => `/cases/${typed}/`,
     battleGameWSS: (typed: string, guest: boolean) => `${process.env.NEXT_PUBLIC_API_WSS_BASE_URL}battle/${typed}/?guest=${guest}`,
+    dropSliderWSS: () => `${process.env.NEXT_PUBLIC_API_WSS_BASE_URL}drop-slider/`,
 }
 
 interface FrontendPaths {

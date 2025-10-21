@@ -1,15 +1,19 @@
 'use client'
-import React, { useState } from 'react'
+import React from 'react'
 import style from '@/styles/winInventoryBlock.module.scss'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { setSliderRunState } from '@/redux/dropSliderReducer'
 
 function WibStartTop(props: { isActive?: boolean, changeState: () => void }): React.ReactNode {
-    const [sliderState, setSliderState] = useState<boolean>(false)
+    const dispatch = useAppDispatch()
+    const isSliderRun = useAppSelector(state => state.dropSlider.isSliderRun)
     const t = useTranslations("wibBlock")
 
     const changeSliderState = () => {
-        setSliderState(state => !state)
+        console.log(1123)
+        dispatch(setSliderRunState(!isSliderRun))
     }
 
     const setNewState = () => {
@@ -22,7 +26,7 @@ function WibStartTop(props: { isActive?: boolean, changeState: () => void }): Re
         <div className={style.wolBlock}>
             <div onClick={changeSliderState} className={`${style.wolLiveBlock} ${style.wolStartBlock}`}>
                 <div className={style.wolSliderStateIcon}>
-                    <Image src={sliderState ? "/images/stop.svg" : "/images/play.svg"} alt={sliderState ? t('stop_alt') : t('play_alt')} fill></Image>
+                    <Image src={isSliderRun ? "/images/stop.svg" : "/images/play.svg"} alt={isSliderRun ? t('stop_alt') : t('play_alt')} fill></Image>
                 </div>
                 <div className={style.wolSliderStateText}>
                     {

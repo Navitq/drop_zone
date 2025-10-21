@@ -427,7 +427,7 @@ async def spin_state_wheel(user):
 #     return EXTERIOR_CHOICES[int(round(index))][0]
 
 
-def sync_create_order(item_state: str, item, user):
+def sync_create_order(item_state: str, item, user, case=None):
     """
     Создаёт InventoryItem для пользователя и сохраняет в БД.
     """
@@ -447,11 +447,19 @@ def sync_create_order(item_state: str, item, user):
                 "type": item.rarity,
             }
             user.save()
-        return InventoryItem.objects.create(
-            steam_item=steam_item,
-            owner=user,
-            exterior_wear=item_state,
-        )
+        if case:
+            return InventoryItem.objects.create(
+                steam_item=steam_item,
+                owner=user,
+                exterior_wear=item_state,
+                case_id=case.id
+            )
+        else:
+            return InventoryItem.objects.create(
+                steam_item=steam_item,
+                owner=user,
+                exterior_wear=item_state,
+            )
     except DatabaseError as e:
         print(f"Ошибка при создании InventoryItem: {e}")
 
@@ -1196,7 +1204,7 @@ def get_open_case_view(request, case_id):
                         }
                     money_check["user"].save()
                     sync_create_order(item_state, prize_item,
-                                      money_check["user"])
+                                      money_check["user"], money_check["case"])
                     prize_dict = {
                         "id": prize_item.id,
                         "gunModel": prize_item.item_model,

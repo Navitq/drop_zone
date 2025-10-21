@@ -11,6 +11,7 @@ from redis.exceptions import RedisError
 from redis_om.model.model import NotFoundError
 from datetime import datetime, timedelta, timezone as dt_timezone
 from django.db.models.signals import post_save
+from multiselectfield import MultiSelectField
 # ----------------------------
 # Менеджер пользователя (минимальный)
 # ----------------------------
@@ -279,7 +280,7 @@ class InventoryItem(models.Model):
     steam_item = models.ForeignKey(
         SteamItemCs, on_delete=models.CASCADE, related_name="instances")
     # assetid = models.CharField(max_length=100, unique=True)  # Уникальный ID предмета в Steam
-
+    case_id = models.CharField(max_length=128, null=True, blank=True)
     exterior_wear = models.CharField(
         max_length=20, choices=EXTERIOR_CHOICES, null=False, blank=False)
 
@@ -771,3 +772,49 @@ class TotalActionAmount(models.Model):
         cls.objects.filter(pk=1).update(
             total_contracts=F('total_contracts') + amount)
         post_save.send(sender=cls, instance=None, created=False)
+
+
+class CrownFilterData(models.Model):
+    EXTERIOR_CHOICES = [
+        ("factory_new", "Factory New"),
+        ("minimal_wear", "Minimal Wear"),
+        ("field_tested", "Field-Tested"),
+        ("well_worn", "Well-Worn"),
+        ("battle_scarred", "Battle-Scarred"),
+    ]
+
+    RARITY_CHOICES = [
+        ("usuall", "Usual"),
+        ("rare", "Rare"),
+        ("elite", "Elite"),
+        ("epic", "Epic"),
+        ("classified", "Classified"),
+    ]
+
+    rarity = MultiSelectField(
+        choices=RARITY_CHOICES,
+        max_length=100,
+        default=["elite", "epic"],  # ← можно задать несколько дефолтных
+    )
+
+    exterior_wear = MultiSelectField(
+        choices=EXTERIOR_CHOICES,
+        max_length=100,
+        default=[
+            "factory_new",
+            "minimal_wear",
+            "field_tested",
+            "well_worn",
+            "battle_scarred",
+        ],
+    )
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=False,
+        blank=False
+    )
+
+    def __str__(self):
+        return "CrownFilterData"

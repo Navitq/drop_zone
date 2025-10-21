@@ -11,12 +11,13 @@ from datetime import datetime, timezone as timezone_datatime
 from typing import Optional
 import json
 from decimal import Decimal
+from django.apps import apps
 
 load_dotenv()
 
 REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
 REDIS_DOCKER_PORT = os.getenv("REDIS_DOCKER_PORT")
-print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP)
+
 
 redis = get_redis_connection(
     host=REDIS_DOCKER_IP,
@@ -284,6 +285,59 @@ class TotalActionAmountRedis(HashModel):
 
     class Meta:
         database = redis
+
+
+LAST_ITEMS_LIST_KEY = "last_items_live_list"
+MAX_ITEMS = 20
+
+
+def add_last_item(payload: dict):
+    item_json = json.dumps(payload)
+    redis.lpush(LAST_ITEMS_LIST_KEY, item_json)
+    redis.ltrim(LAST_ITEMS_LIST_KEY, 0, MAX_ITEMS - 1)
+
+
+def push_last_20_items_to_redis():
+    """
+    Берёт последние 20 InventoryItem и добавляет их в Redis список
+    """
+    InventoryItem = apps.get_model("main_app", "InventoryItem")
+    Case = apps.get_model("main_app", "Case")
+    last_items = InventoryItem.objects.select_related(
+        "steam_item", "owner").order_by("-created_at")[:MAX_ITEMS]
+
+    # Чтобы добавились в правильном порядке (от старого к новому), переворачиваем
+    for instance in reversed(last_items):
+        # Данные кейса
+        case_id = getattr(instance, 'case_id', None)
+        case_img = None
+        if case_id:
+            try:
+                case = Case.objects.get(id=case_id)
+                case_img = case.icon_url
+            except Case.DoesNotExist:
+                case_img = None
+
+        # Данные пользователя
+        user = instance.owner
+        user_id = str(user.id)
+        user_img = user.avatar_url or ""
+        username = user.username
+
+        payload = {
+            "case_id": case_id,
+            "id": str(instance.id),
+            "imgPath": instance.steam_item.icon_url or "",
+            "gunModel": instance.steam_item.item_model or "",
+            "gunStyle": instance.steam_item.item_style or "",
+            "rarity": instance.rarity,
+            "userId": user_id,
+            "userImg": user_img,
+            "username": username,
+            "caseImg": case_img
+        }
+
+        add_last_item(payload)
 
 
 Migrator().run()

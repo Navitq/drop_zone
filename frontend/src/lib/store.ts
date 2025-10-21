@@ -7,6 +7,7 @@ import advertisementReducer from '@/redux/advertisementReducer'
 import upgradeReducer from '@/redux/upgradeReducer'
 import contractsReducer from '@/redux/contractsReducer'
 import profileReducer from '@/redux/profileReducer'
+import dropSliderReducer from '@/redux/dropSliderReducer'
 
 import { merge } from 'lodash'
 import { profile } from 'console'
@@ -50,6 +51,7 @@ export const makeStore = (preloadedState: Partial<AuthState> = {} ) => configure
     upgrade: upgradeReducer,
     contracts: contractsReducer,
     profile: profileReducer,
+    dropSlider: dropSliderReducer
   },
   preloadedState:  {
     user: merge({}, userInitialState, preloadedState),

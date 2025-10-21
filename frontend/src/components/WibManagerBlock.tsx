@@ -1,19 +1,22 @@
 'use client'
-import React, { useState } from 'react'
+import React from 'react'
 import WibOnlineLive from '@/components/WibOnlineLive'
 import WibStartTop from '@/components/WibStartTop'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { setTopActiveState } from '@/redux/dropSliderReducer'
 
 function WibManagerBlock(): React.ReactNode {
-    const [isActive, setIsActive] = useState<boolean>(false)
+    const dispatch = useAppDispatch()
+    const isTopActive = useAppSelector(state => state.dropSlider.isTopActive)
 
     const changeSlider = () => {
-        setIsActive(state => !state)
+        dispatch(setTopActiveState(!isTopActive))
     }
 
     return (
         <>
-            <WibOnlineLive changeState={changeSlider} onlineUserAmount={0} isActive={isActive}></WibOnlineLive>
-            <WibStartTop changeState={changeSlider} isActive={isActive}></WibStartTop>
+            <WibOnlineLive changeState={changeSlider} onlineUserAmount={0} isActive={isTopActive}></WibOnlineLive>
+            <WibStartTop changeState={changeSlider} isActive={isTopActive}></WibStartTop>
         </>
     )
 }

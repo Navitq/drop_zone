@@ -5,11 +5,15 @@ from django.dispatch import receiver
 from redis.exceptions import ConnectionError as RedisConnectionError
 from django.db.models.signals import post_save, post_delete
 from .utils import load_to_redis, load_advertisement, sync_update_battle_in_redis, load_total_data, load_global_state_coeff, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
-from .models import Case, Battle, BattleCase, TotalActionAmount, GlobalStateCoeff, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
+from .models import Case, Battle, BattleCase, TotalActionAmount, InventoryItem, GlobalStateCoeff, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
 from main_app.redis_models import CaseInfo, PlayerInfo
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+SLIDER_GROUP_NAME = "drop_slider_group"
 
 
 @receiver(post_save, sender=Case)
@@ -213,3 +217,52 @@ def raffle_players_changed(sender, instance, action, **kwargs):
             pass
         print(
             f"⚡ Игроки изменились у розыгрыша {instance.id}, но post_save не трогаем")
+
+
+@receiver(post_save, sender=InventoryItem)
+def inventory_item_created(sender, instance, created, **kwargs):
+    if not created:
+        return  # ##### только при первом создании
+
+    channel_layer = get_channel_layer()
+
+    # Получаем данные кейса
+    case_id = getattr(instance, 'case_id', None)
+    if not case_id:
+        return
+    case_img = None
+    if case_id:
+        try:
+            case = Case.objects.get(id=case_id)
+            case_img = case.icon_url
+        except Case.DoesNotExist:
+            case_img = None
+
+    # Данные пользователя
+    user = instance.owner
+    user_id = str(user.id)
+    user_img = user.avatar_url or ""
+    username = user.username
+
+    # Формируем payload
+    payload = {
+        "case_id": case_id,
+        "id": str(instance.id),
+        "imgPath": instance.steam_item.icon_url or "",
+        "gunModel": instance.steam_item.item_model or "",
+        "gunStyle": instance.steam_item.item_style or "",
+        "rarity": instance.rarity,
+        "userId": user_id,
+        "userImg": user_img,
+        "username": username,
+        "caseImg": case_img
+    }
+
+    # Отправляем в группу
+    async_to_sync(channel_layer.group_send)(
+        SLIDER_GROUP_NAME,
+        {
+            "type": "send_item",  # вызывает метод send_item в consumer
+            "item": payload
+        }
+    )

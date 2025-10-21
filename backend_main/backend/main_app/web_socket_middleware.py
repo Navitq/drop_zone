@@ -1,6 +1,6 @@
 import json
 from channels.middleware import BaseMiddleware
-from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.exceptions import TokenError
 from .serializers import MyRefreshToken
 
@@ -9,10 +9,13 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
     """
     ASGI middleware для Channels/WebSocket.
     Проверяет JWT из HttpOnly cookie и добавляет данные пользователя в scope.
-    Закрывает соединение, если токен недействителен.
+    Закрывает соединение, если токен недействителен, но для /ws/drop-slider/ всегда пропускает.
     """
 
     async def __call__(self, scope, receive, send):
+        # Получаем путь подключения
+        path = scope.get("path", "")
+
         # Получаем cookie из scope headers
         cookies = {}
         for header in scope.get("headers", []):
@@ -27,6 +30,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
         refresh_token = cookies.get("refresh_token")
 
         scope["token_data"] = None
+        scope["auth"] = False  # ##### добавил ключ auth
         scope["_new_access_token"] = None
 
         async def close_connection(code=401):
@@ -35,7 +39,41 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
                 "code": code
             })
 
-        # Проверка access_token
+        # $$$$$$  # старый код: сразу проверка access_token и закрытие соединения
+
+        # Особый путь: /ws/drop-slider/ — всегда пропускаем
+        if path.startswith("/ws/drop-slider/"):  # ##### новый блок
+            # Проверяем токен, если есть, для данных, но не закрываем соединение
+            if access_token:
+                try:
+                    token = AccessToken(access_token)
+                    scope["token_data"] = {
+                        "id": token.get("id"),
+                        "username": token.get("username"),
+                        "avatar": token.get("avatar"),
+                        "provider": token.get("provider"),
+                    }
+                    # ##### auth True, если токен валидный
+                    scope["auth"] = True
+                except TokenError:
+                    # Попытка через refresh_token
+                    if refresh_token:
+                        try:
+                            refresh = MyRefreshToken(refresh_token)
+                            scope["token_data"] = {
+                                "id": refresh.get("id"),
+                                "username": refresh.get("username"),
+                                "avatar": refresh.get("avatar"),
+                                "provider": refresh.get("provider"),
+                            }
+                            scope["auth"] = True  # ##### auth True
+                        except TokenError:
+                            scope["auth"] = False  # ##### auth False
+                    else:
+                        scope["auth"] = False  # ##### auth False
+            return await super().__call__(scope, receive, send)  # ##### пропускаем ниже
+
+        # Обычный путь: /ws/battle/... — оставляем проверку токена как раньше
         if access_token:
             try:
                 token = AccessToken(access_token)
@@ -45,6 +83,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
                     "avatar": token.get("avatar"),
                     "provider": token.get("provider"),
                 }
+                scope["auth"] = True  # ##### auth True
             except TokenError:
                 # Попытка через refresh_token
                 if refresh_token:
@@ -56,6 +95,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
                             "avatar": refresh.get("avatar"),
                             "provider": refresh.get("provider"),
                         }
+                        scope["auth"] = True  # ##### auth True
                     except TokenError:
                         return await close_connection(code=4003)
                 else:
@@ -71,6 +111,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
                         "avatar": refresh.get("avatar"),
                         "provider": refresh.get("provider"),
                     }
+                    scope["auth"] = True  # ##### auth True
                 except TokenError:
                     return await close_connection(code=4003)
             else:

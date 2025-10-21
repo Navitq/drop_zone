@@ -2,7 +2,7 @@
 from django.db.utils import OperationalError
 from redis.exceptions import ConnectionError as RedisConnectionError
 from .models import User, Case, Battle, Raffles, GlobalStateCoeff, CaseItem, TotalActionAmount, Advertisement, BackgroundMainPage, GlobalCoefficient
-from .redis_models import BlockedUserRedis, CaseRedisStandart, TotalActionAmountRedis, GlobalStateCoeffRedis, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis
+from .redis_models import BlockedUserRedis, CaseRedisStandart, TotalActionAmountRedis, GlobalStateCoeffRedis, PlayerInfo, CaseInfo, RafflesRedis, ActiveBattleRedis, GlobalCoefficientRedis, ItemRedisStandart, AdvertisementRedis, BackgroundMainPageRedis, push_last_20_items_to_redis
 from django.utils import timezone
 from redis.exceptions import RedisError
 from redis_om.model.model import NotFoundError
@@ -398,6 +398,16 @@ def sync_update_battle_in_redis(battle_id: str, fields: dict):
 
     except RedisError:
         print(f"❌ Ошибка Redis при обновлении battle {battle_id}")
+
+
+def load_live_slider_drop():
+    try:
+        push_last_20_items_to_redis()
+        print('✅ Redis синхронизирован: LIVE SLIDER сохранён')
+    except RedisError:
+        print("❌ Redis недоступен")
+    except OperationalError:
+        print("❌ Postgres ещё не готов — ждём…")
 
 
 def load_total_data():
