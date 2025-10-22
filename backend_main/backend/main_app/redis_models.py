@@ -12,6 +12,7 @@ from typing import Optional
 import json
 from decimal import Decimal
 from django.apps import apps
+from redis.exceptions import RedisError
 
 load_dotenv()
 
@@ -24,6 +25,7 @@ redis = get_redis_connection(
     port=int(REDIS_DOCKER_PORT)
 )
 
+redis.delete('drop_zone_drop_slider_counter')
 # Модель для OAuth state
 
 
@@ -288,28 +290,39 @@ class TotalActionAmountRedis(HashModel):
 
 
 LAST_ITEMS_LIST_KEY = "last_items_live_list"
+LAST_ITEMS_LIST_KEY_CROWN = "last_items_crown_list"
 MAX_ITEMS = 20
 
 
-def add_last_item(payload: dict):
+def add_last_item(payload: dict, key=LAST_ITEMS_LIST_KEY):
     item_json = json.dumps(payload)
-    redis.lpush(LAST_ITEMS_LIST_KEY, item_json)
-    redis.ltrim(LAST_ITEMS_LIST_KEY, 0, MAX_ITEMS - 1)
+    redis.lpush(key, item_json)
+    redis.ltrim(key, 0, MAX_ITEMS - 1)
 
 
 def push_last_20_items_to_redis():
     """
-    Берёт последние 20 InventoryItem и добавляет их в Redis список
+    Берёт последние 20 InventoryItem, проверяет без CrownFilterDataRedis,
+    добавляет в Redis список только подходящие элементов.
     """
     InventoryItem = apps.get_model("main_app", "InventoryItem")
     Case = apps.get_model("main_app", "Case")
-    last_items = InventoryItem.objects.select_related(
-        "steam_item", "owner").order_by("-created_at")[:MAX_ITEMS]
 
-    # Чтобы добавились в правильном порядке (от старого к новому), переворачиваем
-    for instance in reversed(last_items):
-        # Данные кейса
+    # Берём последние 100 элементов, чтобы найти хотя бы 20 подходящих
+    last_items = InventoryItem.objects.select_related(
+        "steam_item", "owner"
+    ).order_by("-created_at")[:1000]
+
+    matched_items = []
+
+    for instance in last_items:
         case_id = getattr(instance, 'case_id', None)
+
+        if not (case_id):
+            continue  # пропускаем неподходящие
+
+        # Данные кейса
+
         case_img = None
         if case_id:
             try:
@@ -324,6 +337,7 @@ def push_last_20_items_to_redis():
         user_img = user.avatar_url or ""
         username = user.username
 
+        # Формируем payload
         payload = {
             "case_id": case_id,
             "id": str(instance.id),
@@ -331,13 +345,108 @@ def push_last_20_items_to_redis():
             "gunModel": instance.steam_item.item_model or "",
             "gunStyle": instance.steam_item.item_style or "",
             "rarity": instance.rarity,
+            "exterior_wear": getattr(instance, "exterior_wear", None),
             "userId": user_id,
             "userImg": user_img,
             "username": username,
-            "caseImg": case_img
+            "caseImg": case_img,
+            "price": str(instance.steam_item.price),
         }
 
-        add_last_item(payload)
+        matched_items.append(payload)
+
+        if len(matched_items) >= MAX_ITEMS:
+            break
+
+    if not matched_items:
+        return
+
+    # Очищаем старый список и добавляем новые
+    redis.delete(LAST_ITEMS_LIST_KEY)
+
+    for item in reversed(matched_items):  # чтобы старые были первыми
+        add_last_item(item)
+
+
+def push_last_20_items_to_redis_crown():
+    """
+    Берёт последние 20 InventoryItem, проверяет их по фильтрам CrownFilterDataRedis,
+    и добавляет в Redis список только подходящие элементы.
+    """
+    InventoryItem = apps.get_model("main_app", "InventoryItem")
+    Case = apps.get_model("main_app", "Case")
+    try:
+        filter_obj = CrownFilterDataRedis.find().first()
+    except RedisError as e:
+        return
+    except Exception as e:
+        return
+
+    if not filter_obj:
+        return
+
+    # Берём последние 100 элементов, чтобы найти хотя бы 20 подходящих
+    last_items = InventoryItem.objects.select_related(
+        "steam_item", "owner"
+    ).order_by("-created_at")[:1000]
+
+    matched_items = []
+
+    for instance in last_items:
+        # Проверяем критерии фильтра
+        price_ok = Decimal(instance.steam_item.price) >= filter_obj.price
+        rarity_ok = instance.rarity in filter_obj.rarity
+        exterior_ok = getattr(instance, "exterior_wear",
+                              None) in filter_obj.exterior_wear
+        case_id = getattr(instance, 'case_id', None)
+
+        if not (price_ok and rarity_ok and exterior_ok and case_id):
+            continue  # пропускаем неподходящие
+
+        # Данные кейса
+
+        case_img = None
+        if case_id:
+            try:
+                case = Case.objects.get(id=case_id)
+                case_img = case.icon_url
+            except Case.DoesNotExist:
+                case_img = None
+
+        # Данные пользователя
+        user = instance.owner
+        user_id = str(user.id)
+        user_img = user.avatar_url or ""
+        username = user.username
+
+        # Формируем payload
+        payload = {
+            "case_id": case_id,
+            "id": str(instance.id),
+            "imgPath": instance.steam_item.icon_url or "",
+            "gunModel": instance.steam_item.item_model or "",
+            "gunStyle": instance.steam_item.item_style or "",
+            "rarity": instance.rarity,
+            "exterior_wear": getattr(instance, "exterior_wear", None),
+            "userId": user_id,
+            "userImg": user_img,
+            "username": username,
+            "caseImg": case_img,
+            "price": str(instance.steam_item.price),
+        }
+
+        matched_items.append(payload)
+
+        if len(matched_items) >= MAX_ITEMS:
+            break
+
+    if not matched_items:
+        return
+
+    # Очищаем старый список и добавляем новые
+    redis.delete(LAST_ITEMS_LIST_KEY_CROWN)
+    for item in reversed(matched_items):  # чтобы старые были первыми
+        add_last_item(item, key=LAST_ITEMS_LIST_KEY_CROWN)
 
 
 class CrownFilterDataRedis(JsonModel):

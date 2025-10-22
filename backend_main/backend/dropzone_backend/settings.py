@@ -109,7 +109,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),        # короткий access
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),        # короткий access
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),          # долгий refresh
     # новый refresh при использовании
     "ROTATE_REFRESH_TOKENS": True,

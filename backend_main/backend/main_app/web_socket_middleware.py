@@ -32,6 +32,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
         scope["token_data"] = None
         scope["auth"] = False  # ##### добавил ключ auth
         scope["_new_access_token"] = None
+        print(access_token, refresh_token)
 
         async def close_connection(code=401):
             await send({
@@ -71,8 +72,24 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
                             scope["auth"] = False  # ##### auth False
                     else:
                         scope["auth"] = False  # ##### auth False
-            return await super().__call__(scope, receive, send)  # ##### пропускаем ниже
+            else:
+                # Нет access, есть refresh?
+                if refresh_token:
+                    try:
+                        refresh = MyRefreshToken(refresh_token)
+                        scope["token_data"] = {
+                            "id": refresh.get("id"),
+                            "username": refresh.get("username"),
+                            "avatar": refresh.get("avatar"),
+                            "provider": refresh.get("provider"),
+                        }
+                        scope["auth"] = True  # ##### auth True
+                    except TokenError:
+                        return await close_connection(code=4003)
+                else:
+                    return await close_connection(code=4003)
 
+            return await super().__call__(scope, receive, send)
         # Обычный путь: /ws/battle/... — оставляем проверку токена как раньше
         if access_token:
             try:

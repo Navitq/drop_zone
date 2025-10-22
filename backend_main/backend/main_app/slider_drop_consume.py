@@ -10,7 +10,7 @@ REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
 REDIS_DOCKER_PORT = os.getenv("REDIS_DOCKER_PORT")
 
 LAST_ITEMS_LIST_KEY = "last_items_live_list"
-
+LAST_ITEMS_LIST_KEY_CROWN = "last_items_crown_list"
 redis_opened = redis.Redis(
     host=REDIS_DOCKER_IP,
     port=int(REDIS_DOCKER_PORT),
@@ -21,11 +21,11 @@ SLIDER_GROUP_NAME_LIVE = "drop_slider_group_live"
 SLIDER_GROUP_NAME_TOP = "drop_slider_group_top"
 
 
-async def get_last_items():
+async def get_last_items(key=LAST_ITEMS_LIST_KEY):
     """
         Получаем все последние 20 айтемов из Redis
         """
-    items_json = await redis_opened.lrange(LAST_ITEMS_LIST_KEY, 0, 19)
+    items_json = await redis_opened.lrange(key, 0, 19)
     items = [json.loads(item) for item in items_json]
     return items
 
@@ -33,12 +33,17 @@ async def get_last_items():
 class SliderDropConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.is_auth = self.scope['auth']
+        print(self.scope['auth'], 474747)
         self.slider_type = "live"
+        self.added = False
         self.slider_counter_name = "drop_zone_drop_slider_counter"
         exists_counter = await redis_opened.exists(self.slider_counter_name)
         if not exists_counter:
             await redis_opened.set(self.slider_counter_name, 0)
-        if self.is_auth:
+        print(41231231, self.is_auth)
+        if self.is_auth and not self.added:
+            self.added = True
+            print(1312312132123123)
             await redis_opened.incr(self.slider_counter_name)
         await self.channel_layer.group_add(SLIDER_GROUP_NAME_LIVE, self.channel_name)
         await self.channel_layer.group_send(
@@ -73,15 +78,16 @@ class SliderDropConsumer(AsyncWebsocketConsumer):
         await super().send(text_data=text_data, bytes_data=bytes_data)
 
     async def disconnect(self, close_code):
-        if self.is_auth:
+        if self.is_auth and self.added:
             await redis_opened.decr(self.slider_counter_name)
         # ##### удаляем из группы
         await self.channel_layer.group_discard(SLIDER_GROUP_NAME_LIVE, self.channel_name)
 
     async def send_item(self, event):
+        clients_amount = await redis_opened.get(self.slider_counter_name)
         await self.send(text_data=json.dumps({
             "event": "update_slider_data",   # вот это уйдёт на фронт
-            "item": event["item"]
+            "data": {"item": event["item"], "clientsAmount": clients_amount}
         }))
 
     async def start_data(self, event):
@@ -94,9 +100,23 @@ class SliderDropConsumer(AsyncWebsocketConsumer):
         if self.slider_type == slider_type:
             return
         self.slider_type = slider_type
+        key = ''
         if slider_type == "top":
             await self.channel_layer.group_discard(SLIDER_GROUP_NAME_LIVE, self.channel_name)
             await self.channel_layer.group_add(SLIDER_GROUP_NAME_TOP, self.channel_name)
+            key = LAST_ITEMS_LIST_KEY_CROWN
         else:
             await self.channel_layer.group_discard(SLIDER_GROUP_NAME_TOP, self.channel_name)
             await self.channel_layer.group_add(SLIDER_GROUP_NAME_LIVE, self.channel_name)
+            key = LAST_ITEMS_LIST_KEY
+        items = await get_last_items(key)
+        clients_amount = await redis_opened.get(self.slider_counter_name)
+
+        # Отправляем только текущему пользователю
+        await self.send(text_data=json.dumps({
+            "event": "start_data",  # фронт получит это событие
+            "data": {
+                "items": items,
+                "clientsAmount": clients_amount,
+            }
+        }))
