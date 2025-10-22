@@ -35,9 +35,7 @@ function CaseShelf(props: { caseUrl: caseType, sortType?: number }): React.React
     }, [locale]);
 
     useEffect(() => {
-        console.log(6677)
         if (!props.sortType || props.sortType === 1 && sortTypeRef.current === 0) return;
-        console.log(7766)
 
         sortTypeRef.current = props.sortType
 
@@ -69,7 +67,6 @@ function CaseShelf(props: { caseUrl: caseType, sortType?: number }): React.React
             // const response = { data: [{ id: '123', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '214', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '55', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '41235', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '4', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '44445', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '23123', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '55532', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '1245', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }, { id: '55124', caseName: "example", description: "example", imgUrl: '/images/case_mock.png' }] }
             // setCaseList(response.data)
             // return
-            console.log(response.data, 4545454547777)
             setCaseList(() => {
                 return response.data.map((value: caseBlogerIncome) => {
                     return {

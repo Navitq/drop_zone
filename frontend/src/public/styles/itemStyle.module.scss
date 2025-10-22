@@ -16,8 +16,6 @@
     padding: 10px 8px 8px 8px;
 }
 
-
-
 .smItemCnt {
     @extend %flex-center;
     border-width: 1px;
@@ -122,6 +120,83 @@
 }
 .scmCaseInfoBlck {
     margin-top: 9px;
+}
+.ScmCaseItemSecondary {
+    @extend %flex-center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+.ScmCaseItemTopSlider {
+    & > div:last-child{
+        display: none;
+    }
+}
+.ScmCaseItemTopSlider:hover {
+    & > div {
+        display: none
+    }
+    & > div:last-child{
+        display: flex;
+    }
+}
+
+.stiUserGameData {
+    @extend %flexStart;
+    justify-content: space-between;
+    padding: 0px 10px 10px 10px;
+    width: 100%;
+    height: 100%
+}
+.stiUserData {
+    @extend %flexStart;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 50px;
+    height: 100%;
+}
+.stiUserNameCnt {
+    max-width: inherit;
+}
+.stiUserName {
+    font-family: var(--font-textRegular);
+    font-size: 13px;
+    line-height: 1.2;
+    color: rgba(255, 255, 255, 1);
+    max-width: inherit;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;        /* максимум 2 строки */
+    -webkit-box-orient: vertical; /* ориентация по вертикали */
+    overflow: hidden;             /* скрыть лишнее */
+    text-overflow: ellipsis;      /* добавить "..." */
+    white-space: normal;          /* разрешить перенос */
+    word-wrap: break-word;        /* перенос длинных слов */
+}
+.stiUserImgBlock{
+    @extend %flexStart;
+}
+.stiUserImgCnt {
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    position: relative;
+    img {
+        border-radius: 50%;
+        border: 2px solid rgba(255, 148, 0, 0.5);
+        object-fit: contain
+    }
+}
+.stiCaseData {
+    @extend %flex-center;
+}
+.stiCaseImgCnt {
+    position: relative;
+    height: 81px;
+    width: 81px;
+    img {
+        object-fit: contain;
+    }
 }
 .smItemImgCnt, .scmCaseImgCnt {
     @extend %flex-center;

@@ -4,7 +4,8 @@ import WibSliderBlock from '@/components/WibSliderBlock'
 import style from '@/styles/winInventoryBlock.module.scss'
 import useWebSocket from 'react-use-websocket';
 import { BACKEND_PATHS } from '@/utilites/urls';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { setNewSliderData } from '@/redux/dropSliderReducer'
 
 
 type DropSliderMap = {
@@ -12,10 +13,40 @@ type DropSliderMap = {
     update_slider_data: { data: any },
 };
 
+export type ExteriorWear =
+    | "factory_new"
+    | "minimal_wear"
+    | "field_tested"
+    | "well_worn"
+    | "battle_scarred";
+
+export type Rarity =
+    | "usuall"
+    | "rare"
+    | "classified"
+    | "elite"
+    | "epic";
+
+export interface CardItemInt {
+    case_id: string | null;
+    id: string;
+    price: number,
+    imgPath: string;
+    gunModel: string;
+    gunStyle: string;
+    rarity: Rarity;
+    exterior_wear: ExteriorWear;
+    userId: string;
+    userImg: string;
+    username: string;
+    caseImg: string | null;
+}
+
 function WibSliderBlockCnt(): React.ReactNode {
     const timerRef = useRef<boolean>(false);
     const wsOpened = useRef<boolean>(false)
     const isTopActive = useAppSelector(state => state.dropSlider.isTopActive)
+    const dispatch = useAppDispatch()
 
     useEffect(() => {
         if (isTopActive === false && !timerRef.current || !wsOpened.current) {
@@ -37,8 +68,12 @@ function WibSliderBlockCnt(): React.ReactNode {
         }
     }, [isTopActive])
 
-    const startGameData = (payload: any) => {
-        console.log(payload)
+    const startGameData = (payload: { clientsAmount: number, items: CardItemInt[] }) => {
+        payload.clientsAmount = Number(payload.clientsAmount)
+        for (let i = 0; i < payload.items.length; ++i) {
+            payload.items[i].price = Number(payload.items[i].price)
+        }
+        dispatch(setNewSliderData(payload))
     }
 
     const updateGameData = (payload: any) => {
@@ -47,7 +82,7 @@ function WibSliderBlockCnt(): React.ReactNode {
 
 
     const eventHandlers: Record<keyof DropSliderMap, (payload: any) => void> = {
-        start_data: (payload) => startGameData(payload),
+        start_data: (payload) => startGameData(payload.data),
         update_slider_data: (payload) => updateGameData(payload),
     };
 

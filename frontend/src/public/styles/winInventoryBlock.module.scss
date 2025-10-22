@@ -16,9 +16,10 @@
     max-width: 1920px;
     width: 100%;
     height: 107px;
-    margin-left: 16px;
+    padding-left: 16px;
     margin-top: 2px;
     margin-bottom: 10px;
+    overflow: hidden;
 }
 
 .wolSliderTypeBtn {
@@ -33,7 +34,7 @@
     justify-content: space-between;
     margin-right: 30px;
     height: 100%;
-    width: 173px;
+    min-width: 173px;
 }
 .wolLiveBlock {
     @extend %flexStart;
@@ -151,4 +152,25 @@
     border: none;
     border-bottom: 3px solid rgba(255, 148, 0, 1);
     padding-top: 3px;
+}
+
+.sliderCntBlock {
+    @extend %flexCenter;
+    height: 100%;
+    width: 100%;
+}
+
+.sliderCnt {
+    @extend %flexStart;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    column-gap: 3px,
+}
+
+.slide {
+    @extend %flexCenter;
+    height: "100%";
+    width: fit-content;
 }

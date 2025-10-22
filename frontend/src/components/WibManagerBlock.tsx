@@ -8,14 +8,15 @@ import { setTopActiveState } from '@/redux/dropSliderReducer'
 function WibManagerBlock(): React.ReactNode {
     const dispatch = useAppDispatch()
     const isTopActive = useAppSelector(state => state.dropSlider.isTopActive)
-
+    const userAmount = useAppSelector(state => state.dropSlider.userAmount)
+    console.log(userAmount)
     const changeSlider = () => {
         dispatch(setTopActiveState(!isTopActive))
     }
 
     return (
         <>
-            <WibOnlineLive changeState={changeSlider} onlineUserAmount={0} isActive={isTopActive}></WibOnlineLive>
+            <WibOnlineLive changeState={changeSlider} onlineUserAmount={userAmount} isActive={isTopActive}></WibOnlineLive>
             <WibStartTop changeState={changeSlider} isActive={isTopActive}></WibStartTop>
         </>
     )

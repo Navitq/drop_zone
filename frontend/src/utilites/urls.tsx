@@ -78,6 +78,7 @@ interface FrontendPaths {
     privacyPolicy: string;
     termsOfService: string;
     battlesCreate: string;
+    profileUserPath: (id: string) => string;
     battlesConnect: (id: string) => string;
 }
 
@@ -92,5 +93,6 @@ export const FRONTEND_PATHS: FrontendPaths = {
     privacyPolicy: '/privacy-policy',
     termsOfService: '/terms-of-service',
     battlesCreate: '/battles/create',
+    profileUserPath: (uuid: string) => `/profile/${uuid}`,
     battlesConnect: (id: string) => `/battles/${id}`
 };

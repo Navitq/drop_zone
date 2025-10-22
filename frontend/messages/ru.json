@@ -65,7 +65,8 @@
       "top": "ТОП",
       "play_alt": "Изображение плея",
       "stop_alt": "Изображение стопа",
-      "start": "старт"
+      "start": "старт",
+      "user_icon": "Иконка пользователя"
   },
   "background": {
     "season_background_alt": "Фон сезонных кейсов",

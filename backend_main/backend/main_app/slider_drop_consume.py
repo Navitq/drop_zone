@@ -40,20 +40,18 @@ class SliderDropConsumer(AsyncWebsocketConsumer):
         exists_counter = await redis_opened.exists(self.slider_counter_name)
         if not exists_counter:
             await redis_opened.set(self.slider_counter_name, 0)
-        print(41231231, self.is_auth)
         if self.is_auth and not self.added:
             self.added = True
-            print(1312312132123123)
             await redis_opened.incr(self.slider_counter_name)
-        await self.channel_layer.group_add(SLIDER_GROUP_NAME_LIVE, self.channel_name)
-        await self.channel_layer.group_send(
-            SLIDER_GROUP_NAME_LIVE,  # имя группы
-            {
-                "type": "start_data",  # имя обработчика
-                "data": {"items": await get_last_items(), "clientsAmount": await redis_opened.get(self.slider_counter_name)},
-            }
-        )
         await self.accept()
+        await self.channel_layer.group_add(SLIDER_GROUP_NAME_LIVE, self.channel_name)
+        await self.send(text_data=json.dumps({
+            "event": "start_data",
+            "data": {
+                "items": await get_last_items(),
+                "clientsAmount": await redis_opened.get(self.slider_counter_name),
+            }
+        }))
 
     async def receive(self, text_data=None, bytes_data=None):
         if text_data:

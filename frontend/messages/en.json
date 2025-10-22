@@ -65,7 +65,8 @@
       "top": "TOP",
       "play_alt": "Play image",
       "stop_alt": "Stop image",
-      "start": "start"
+      "start": "start",
+      "user_icon": "User icon"
     },
     "background": {
     "season_background_alt": "Season case background",
