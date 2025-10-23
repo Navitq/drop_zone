@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
     formats: ['image/avif','image/webp'],
     remotePatterns: [
       {
+        protocol: 'https',
+        hostname: 'avatars.steamstatic.com',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
       },

@@ -44,7 +44,7 @@ REDIRECT_OAUTH_CLIENT_PATH = os.getenv("REDIRECT_OAUTH_CLIENT_PATH")
 STEAM_OPENID_URL = os.getenv("STEAM_OPENID_URL")
 STEAM_DOMEN_REALM = os.getenv("STEAM_DOMEN_REALM")
 STEAM_REDIRECT_URI = os.getenv("STEAM_REDIRECT_URI")
-
+STEAM_API_WEB_KEY = os.getenv("STEAM_API_WEB_KEY")
 
 EXTERIOR_CHOICES = [
     ("factory_new", "Factory New"),
@@ -58,7 +58,6 @@ EXTERIOR_CHOICES = [
 def check_state_scrf(state: str) -> bool:
     try:
         obj = OAuthState.find(OAuthState.state == state).first()
-        print(obj, 4444444444)
         return obj is not None
     except Exception as e:
         print("Error checking state:", e)
@@ -125,6 +124,35 @@ async def ask_data_from_google(code: str) -> dict | None:
         except Exception as e:
             print(f"Неожиданная ошибка: {e}")
     # Возвращаем None, если что-то пошло не так
+    return None
+
+
+async def get_steam_player_info(steam_id: str) -> dict | None:
+    url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/"
+    params = {
+        "key": STEAM_API_WEB_KEY,
+        "steamids": steam_id
+    }
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params) as resp:
+                if resp.status != 200:
+                    text = await resp.text()
+                    print(f"Ошибка Steam API ({resp.status}): {text}")
+                    return None
+
+                data = await resp.json()
+                players = data.get("response", {}).get("players", [])
+                if not players:
+                    print(f"SteamID {steam_id} не найден")
+                    return None
+                return players[0]
+
+    except aiohttp.ClientError as e:
+        print(f"Ошибка сети при запросе к Steam API: {e}")
+    except Exception as e:
+        print(f"Неожиданная ошибка в get_steam_player_info: {e}")
+
     return None
 
 
@@ -1016,6 +1044,8 @@ async def vk_login_view(request):
     )
     pass
 
+# OK CHECKED
+
 
 @async_require_methods(["GET"])
 async def steam_login_view(request):
@@ -1034,6 +1064,7 @@ async def steam_login_view(request):
     return JsonResponse({"auth_url": steam_openid_url})
 
 
+# OK CHECKED
 @async_require_methods(["GET"])
 async def google_login_view(request):
     state = await create_state_token()
@@ -1061,6 +1092,8 @@ async def google_login_view(request):
 async def vk_callback_view(request):
     pass
 
+# OK CHECKED
+
 
 @async_require_methods(["GET"])
 async def steam_callback_view(request):
@@ -1077,7 +1110,7 @@ async def steam_callback_view(request):
 
     # Получаем SteamID
     steam_id = request.GET.get("openid.claimed_id").split("/")[-1]
-
+    user_data = await get_steam_player_info(steam_id)
     # Проверяем SocialAccount
     social_account = await sync_to_async(
         lambda: SocialAccount.objects.filter(
@@ -1098,8 +1131,12 @@ async def steam_callback_view(request):
             provider_user_id=steam_id,
         )
 
-    # Логиним пользователя
-
+    if user_data:
+        if user_data.get("personaname", user.username):
+            user.username = user_data.get("personaname", user.username)
+        if user_data.get("avatarfull", user.avatar_url):
+            user.avatar_url = user_data.get("avatarfull", user.avatar_url)
+        await sync_to_async(user.save)()
     # Генерируем JWT
     refresh = MyRefreshToken.for_user(user, social_account)
     access_token = str(refresh.access_token)
@@ -1137,6 +1174,95 @@ async def steam_callback_view(request):
     )
     response["X-User-Data"] = json.dumps(user_data)  # разовый заголовок
 
+    return response
+
+
+# OK CHECKED
+@async_require_methods(["GET"])
+async def google_callback_view(request):
+    state = request.GET.get("state")
+    code = request.GET.get("code")
+    status = await sync_to_async(check_state_scrf)(state)
+    if status is False or code is False:
+        return JsonResponse({"error": "Invalid or expired state"}, status=409)
+
+    await sync_to_async(OAuthState.delete)(state)
+    user_info = await ask_data_from_google(code)
+    if user_info is None:
+        return JsonResponse({"error": "Invalid or expired state"}, status=407)
+    google_id = user_info.get("id")
+    email = user_info.get("email")
+    name = user_info.get("name")
+    verified_email = user_info.get("verified_email")
+    first_name = user_info.get("given_name", "")
+    last_name = user_info.get("family_name", "")
+    avatar_url = user_info.get("picture", "")
+    access_token = user_info.get("access_token")
+    refresh_token = user_info.get("refresh_token")
+    try:
+        social_account = await sync_to_async(
+            lambda: SocialAccount.objects.select_related('user').get(
+                provider='google', provider_user_id=google_id
+            )
+        )()
+        # Обновляем токены и данные
+        social_account.access_token = access_token
+        social_account.refresh_token = refresh_token
+        social_account.verified_email = verified_email
+        social_account.extra_data = user_info  # сохраняем полный user_info для удобства
+        await sync_to_async(social_account.save)()
+
+        user = await sync_to_async(lambda: social_account.user)()
+        # Можно обновить профиль пользователя
+        user.first_name = first_name
+        user.last_name = last_name
+        user.avatar_url = avatar_url
+        await sync_to_async(user.save)()
+
+    except SocialAccount.DoesNotExist:
+        # Создаём нового пользователя
+        user = await sync_to_async(lambda: User.objects.create_user(
+            username=name or email or f"google_{google_id}",
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            avatar_url=avatar_url
+        ))()
+
+        # Создаём социальный аккаунт
+        social_account = await sync_to_async(lambda: SocialAccount.objects.create(
+            user=user,
+            provider='google',
+            provider_user_id=google_id,
+            access_token=access_token,
+            refresh_token=refresh_token,
+            extra_data=user_info
+        ))()
+    # автоматически использует кастомный сериализатор
+    refresh = MyRefreshToken.for_user(user, social_account)
+    access_token = str(refresh.access_token)
+
+    response = HttpResponseRedirect(REDIRECT_OAUTH_CLIENT_PATH)
+
+    # HttpOnly cookie для access_token
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True,    # True на HTTPS
+        samesite="Lax",
+        max_age=3600    # 1 час, например
+    )
+
+    # HttpOnly cookie для refresh_token (если нужен)
+    response.set_cookie(
+        key="refresh_token",
+        value=str(refresh),
+        httponly=True,
+        secure=True,
+        samesite="Lax",
+        max_age=7*24*3600  # 7 дней
+    )
     return response
 
 
@@ -1969,114 +2095,3 @@ async def total_activities_view(request):
         return JsonResponse({"error": "No data in Redis"}, status=404)
 
     return JsonResponse(data)
-
-
-@async_require_methods(["GET"])
-async def google_callback_view(request):
-    state = request.GET.get("state")
-    code = request.GET.get("code")
-    status = check_state_scrf(state)
-    if status is False or code is False:
-        print(status, 123, code, 231, state)
-        return JsonResponse({"error": "Invalid or expired state"}, status=409)
-
-    OAuthState.delete(state)
-    user_info = await ask_data_from_google(code)
-    print(12222222222222222222222222, user_info)
-    if user_info is None:
-        return JsonResponse({"error": "Invalid or expired state"}, status=407)
-    google_id = user_info.get("id")
-    email = user_info.get("email")
-    name = user_info.get("name")
-    verified_email = user_info.get("verified_email")
-    first_name = user_info.get("given_name", "")
-    last_name = user_info.get("family_name", "")
-    avatar_url = user_info.get("picture", "")
-    access_token = user_info.get("access_token")
-    refresh_token = user_info.get("refresh_token")
-    print(133333333333333333333333333333333333333333)
-
-    try:
-        social_account = await sync_to_async(
-            lambda: SocialAccount.objects.select_related('user').get(
-                provider='google', provider_user_id=google_id
-            )
-        )()
-        # Обновляем токены и данные
-        print(144444444444444444444444444444444444444444444)
-        social_account.access_token = access_token
-        social_account.refresh_token = refresh_token
-        social_account.verified_email = verified_email
-        social_account.extra_data = user_info  # сохраняем полный user_info для удобства
-        await sync_to_async(social_account.save)()
-
-        user = await sync_to_async(lambda: social_account.user)()
-        # Можно обновить профиль пользователя
-        user.first_name = first_name
-        user.last_name = last_name
-        user.avatar_url = avatar_url
-        await sync_to_async(user.save)()
-
-    except SocialAccount.DoesNotExist:
-        # Создаём нового пользователя
-        user = await sync_to_async(lambda: User.objects.create_user(
-            username=name or email or f"google_{google_id}",
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            avatar_url=avatar_url
-        ))()
-
-        # Создаём социальный аккаунт
-        social_account = await sync_to_async(lambda: SocialAccount.objects.create(
-            user=user,
-            provider='google',
-            provider_user_id=google_id,
-            access_token=access_token,
-            refresh_token=refresh_token,
-            extra_data=user_info
-        ))()
-    # автоматически использует кастомный сериализатор
-    refresh = MyRefreshToken.for_user(user, social_account)
-    access_token = str(refresh.access_token)
-
-    response = HttpResponseRedirect(REDIRECT_OAUTH_CLIENT_PATH)
-
-    # HttpOnly cookie для access_token
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=True,    # True на HTTPS
-        samesite="Lax",
-        max_age=3600    # 1 час, например
-    )
-
-    # HttpOnly cookie для refresh_token (если нужен)
-    response.set_cookie(
-        key="refresh_token",
-        value=str(refresh),
-        httponly=True,
-        secure=True,
-        samesite="Lax",
-        max_age=7*24*3600  # 7 дней
-    )
-
-    # --- Разовый заголовок / данные пользователя ---
-    # Можно передать через JSON в GET параметре или через заголовок, пример через заголовок:
-    # Устанавливаем custom заголовок с info пользователя (разовый)
-
-    # Django HttpResponse не позволяет напрямую ставить dict в заголовок, поэтому можно сериализовать JSON
-
-    return response
-
-    # return JsonResponse({
-    #     "id": str(user.id),
-    #     "username": user.username,
-    #     "email": user.email,
-    #     "first_name": user.first_name,
-    #     "last_name": user.last_name,
-    #     "avatar_url": user.avatar_url,
-    #     "token": access_token,         # JWT access token
-    #     "refresh": str(refresh)        # refresh token, если нужно
-    # })

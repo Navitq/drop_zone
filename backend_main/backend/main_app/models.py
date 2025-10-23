@@ -41,7 +41,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, null=True, blank=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
-    avatar_url = models.URLField(blank=True, null=True)
+    avatar_url = models.URLField(
+        blank=True, null=True, default="/images/avatar.svg")
     roulet_chance = models.FloatField(default=1, null=False, blank=False)
     upgrade_chance = models.FloatField(default=1, null=False, blank=False)
     case_chance = models.FloatField(default=1, null=False, blank=False)
