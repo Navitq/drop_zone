@@ -45,6 +45,8 @@ STEAM_OPENID_URL = os.getenv("STEAM_OPENID_URL")
 STEAM_DOMEN_REALM = os.getenv("STEAM_DOMEN_REALM")
 STEAM_REDIRECT_URI = os.getenv("STEAM_REDIRECT_URI")
 STEAM_API_WEB_KEY = os.getenv("STEAM_API_WEB_KEY")
+VK_CLIENT_ID = os.getenv("VK_CLIENT_ID")
+
 
 EXTERIOR_CHOICES = [
     ("factory_new", "Factory New"),
@@ -1035,14 +1037,14 @@ async def vk_login_view(request):
     scope = "openid email profile"
     vk_auth_url = (
         "https://id.vk.com/authorize?response_type=code"
-        f"?client_id={client_id}"
+        f"&client_id={VK_CLIENT_ID}"
         f"&redirect_uri={GOOGLE_REDIRECT_URL}"
-        f"&code_challenge={data["code_challenge"]}"
+        f"&code_challenge={data['code_challenge']}"
         f"&code_challenge_method=S256"
         f"&scope={scope}"
         f"&state={state}"
     )
-    pass
+    return JsonResponse({"auth_url": vk_auth_url})
 
 # OK CHECKED
 

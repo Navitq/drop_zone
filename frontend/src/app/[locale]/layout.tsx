@@ -11,6 +11,7 @@ import StoreProvider from '@/app/StoreProvider'
 import { getUser } from '@/lib/getUser';
 import RafflesModal from '@/components/RafflesModal';
 import WonInventoryBlock from '@/components/WonInventoryBlock'
+import TawkTo from '@/components/TawkTo';
 
 export default async function LocaleLayout({
   children,
@@ -45,9 +46,11 @@ export default async function LocaleLayout({
     <html lang={locale} className={fontsClass}>
 
       <body>
+
         <StoreProvider preloadedState={preloadedState}>
           <div className='global-container'>
             <NextIntlClientProvider>
+              <TawkTo></TawkTo>
               <WonInventoryBlock></WonInventoryBlock>
               <BackGround></BackGround>
               <Header></Header>
