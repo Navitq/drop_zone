@@ -62,7 +62,7 @@ function TopSliderItem(props: ItemSmInt): React.ReactNode {
                 </div>
                 <div className={style.stiCaseData}>
                     <div className={style.stiCaseImgCnt}>
-                        <Image alt={t('user_icon')} src={props.caseImg} fill></Image>
+                        <Image alt={t('user_icon')} src={props.caseImg || ""} fill></Image>
                     </div>
                 </div>
             </div>

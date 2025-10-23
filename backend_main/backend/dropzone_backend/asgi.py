@@ -14,6 +14,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from main_app.urls_ws import websocket_urlpatterns  # импортируем список маршрутов
 # Импорт твоего кастомного ASGI JWT middleware
 from main_app.web_socket_middleware import JWTAuthMiddlewareCustom
+from channels.security.websocket import AllowedHostsOriginValidator
 # Импорт WebSocket consumer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dropzone_backend.settings')
@@ -21,7 +22,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dropzone_backend.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": JWTAuthMiddlewareCustom(
+    "websocket": AllowedHostsOriginValidator(JWTAuthMiddlewareCustom(
         URLRouter(websocket_urlpatterns)
-    ),
+    )),
 })
