@@ -9,7 +9,7 @@ function WibManagerBlock(): React.ReactNode {
     const dispatch = useAppDispatch()
     const isTopActive = useAppSelector(state => state.dropSlider.isTopActive)
     const userAmount = useAppSelector(state => state.dropSlider.userAmount)
-    console.log(userAmount)
+
     const changeSlider = () => {
         dispatch(setTopActiveState(!isTopActive))
     }

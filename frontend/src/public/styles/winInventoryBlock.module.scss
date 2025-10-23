@@ -174,3 +174,74 @@
     height: "100%";
     width: fit-content;
 }
+
+.wolSliderTypeBtnMobile {
+    display: none;
+}
+
+@media (max-width: 1439px) {
+
+}
+
+@media (max-width: 1024px) {
+
+}
+
+
+@media (max-width: 768px) {
+    .wolBlock {
+        flex-direction: column;
+        height: 100%;
+    }
+    .wolSliderTypeBtnPc {
+        display: none;
+    }
+    .wolSliderTypeBtnMobile {
+        display: flex;
+    }
+    .wolStart {
+        display: none;
+    }
+    .wibBlock {
+        height: 57px;
+        padding-left: 0px;
+    }
+    .wibManager {
+        min-width: 57px;
+        margin-right: 10px;
+        align-items: spa;
+    }
+    .wolLiveBlock {
+        width: 56px;
+        min-height: 28px;
+        height: 28px;
+        border-radius: 6px;
+    }
+    .wolOnlineAmount {
+        font-size: 9px;
+        line-height: 9px;
+    }
+    .wolOnlineTxt {
+        font-size: 5px;
+        line-height: 5px;
+    }
+    .wolLiveImgCnt {
+        width: 25px;
+    }
+    .wolLiveBlock {
+        justify-content: space-around;
+    }
+    .wolLiveInfoData {
+        margin-right: 5px;
+    }
+    .wolSliderTypeBtn {
+        width: 56px;
+        height: 23px;
+        border-radius: 6px;
+        border-bottom: 1px solid rgba(255, 148, 0, 1);
+        font-size: 7px;
+        line-height: 7px;
+        padding-top: 0px;
+    }
+
+}

@@ -23,7 +23,7 @@ function WibStartTop(props: { isActive?: boolean, changeState: () => void }): Re
     }
 
     return (
-        <div className={style.wolBlock}>
+        <div className={`${style.wolBlock} ${style.wolStart}`}>
             <div onClick={changeSliderState} className={`${style.wolLiveBlock} ${style.wolStartBlock}`}>
                 <div className={style.wolSliderStateIcon}>
                     <Image src={isSliderRun ? "/images/stop.svg" : "/images/play.svg"} alt={isSliderRun ? t('stop_alt') : t('play_alt')} fill></Image>

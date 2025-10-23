@@ -995,4 +995,26 @@
             background-image: url(/images/mobile_gold_item_background.png) !important;
         }
     }
+    .stiUserImgCnt {
+        width: 22px;
+        height: 22px;
+    }
+    .stiUserName {
+        font-size: 7px;
+    }
+    .stiCaseImgCnt {
+        width: 44px;
+        height: 40px;
+    }
+    .stiUserGameData{
+        padding: 0px;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+    .stiUserData {
+        max-width: 25px;
+    }
+    .ScmCaseItemTopSlider {
+        padding-top: 8px !important;
+    }
 }

@@ -1,12 +1,17 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import style from '@/styles/winInventoryBlock.module.scss'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { setTopActiveState } from '@/redux/dropSliderReducer'
 
 function WibOnlineLive(props: { onlineUserAmount?: number, isActive?: boolean, changeState: () => void }): React.ReactNode {
     const [blick, setBlick] = useState<boolean>(true)
     const t = useTranslations("wibBlock")
+    const timerRef = useRef<NodeJS.Timeout | undefined>(undefined)
+    const isTopActive = useAppSelector(state => state.dropSlider.isTopActive)
+    const dispatch = useAppDispatch()
 
     useEffect(() => {
         const intervalData = setInterval(() => {
@@ -20,6 +25,14 @@ function WibOnlineLive(props: { onlineUserAmount?: number, isActive?: boolean, c
             props.changeState()
         }
     }
+    const changeState = () => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current)
+        }
+        timerRef.current = setTimeout(() => {
+            dispatch(setTopActiveState(!isTopActive))
+        }, 200)
+    }
 
     return (
         <div className={style.wolBlock}>
@@ -32,8 +45,11 @@ function WibOnlineLive(props: { onlineUserAmount?: number, isActive?: boolean, c
                     <div className={style.wolOnlineTxt}>online</div>
                 </div>
             </div>
-            <div onClick={setNewState} className={`${style.wolSliderTypeBtn} ${!props.isActive ? style.wolSliderTypeBtnActive : ""}`}>
+            <div onClick={setNewState} className={`${style.wolSliderTypeBtn} ${!props.isActive ? style.wolSliderTypeBtnActive : ""} ${style.wolSliderTypeBtnPc}`}>
                 Live
+            </div>
+            <div onClick={changeState} className={`${style.wolSliderTypeBtn} ${style.wolSliderTypeBtnActive} ${style.wolSliderTypeBtnMobile}`}>
+                {isTopActive ? t('top') : 'Live'}
             </div>
         </div>
     )
