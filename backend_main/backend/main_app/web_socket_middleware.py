@@ -15,7 +15,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
     async def __call__(self, scope, receive, send):
         # Получаем путь подключения
         path = scope.get("path", "")
-
+        print(path)
         # Получаем cookie из scope headers
         cookies = {}
         for header in scope.get("headers", []):
@@ -32,7 +32,6 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
         scope["token_data"] = None
         scope["auth"] = False  # ##### добавил ключ auth
         scope["_new_access_token"] = None
-        print(access_token, refresh_token)
 
         async def close_connection(code=401):
             await send({
@@ -87,7 +86,7 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
                     except TokenError:
                         return await close_connection(code=4003)
                 else:
-                    return await close_connection(code=4003)
+                    scope["auth"] = False
 
             return await super().__call__(scope, receive, send)
         # Обычный путь: /ws/battle/... — оставляем проверку токена как раньше

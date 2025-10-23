@@ -33,6 +33,7 @@ from urllib.parse import urlparse
 from django.db.models import Q
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import UntypedToken
+from urllib.parse import urlencode
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -1035,17 +1036,22 @@ async def steam_login_view(request):
 
 @async_require_methods(["GET"])
 async def google_login_view(request):
-    # Генерация уникального state
     state = await create_state_token()
     scope = "openid email profile"
 
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URL,
+        "response_type": "code",
+        "scope": scope,
+        "state": state,
+        "access_type": "offline",
+        "include_granted_scopes": "true",
+        # "prompt": "consent",  # <- опционально: всегда показывать окно выбора аккаунта
+    }
+
     google_auth_url = (
-        "https://accounts.google.com/o/oauth2/v2/auth"
-        f"?client_id={GOOGLE_CLIENT_ID}"
-        f"&redirect_uri={GOOGLE_REDIRECT_URL}"
-        f"&response_type=code"
-        f"&scope={scope}"
-        f"&state={state}"
+        "https://accounts.google.com/o/oauth2/v2/auth?" + urlencode(params)
     )
 
     return JsonResponse({"auth_url": google_auth_url})
