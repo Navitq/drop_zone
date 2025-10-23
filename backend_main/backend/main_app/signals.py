@@ -9,7 +9,7 @@ from .models import Case, Battle, BattleCase, CrownFilterData, TotalActionAmount
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
-from main_app.redis_models import CaseInfo, PlayerInfo, CrownFilterDataRedis
+from main_app.redis_models import CaseInfo, PlayerInfo, CrownFilterDataRedis, add_last_item
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from redis.exceptions import RedisError
@@ -273,6 +273,7 @@ def inventory_item_created(sender, instance, created, **kwargs):
         return False  # или True по умолчанию, если фильтр отсутствует
 
     if instance.steam_item.price >= filter_obj.price and instance.rarity in filter_obj.rarity and instance.exterior_wear in filter_obj.exterior_wear:
+        add_last_item(payload=payload, key="last_items_crown_list")
         async_to_sync(channel_layer.group_send)(
             SLIDER_GROUP_NAME_TOP,
             {
@@ -280,7 +281,7 @@ def inventory_item_created(sender, instance, created, **kwargs):
                 "item": payload
             }
         )
-
+    add_last_item(payload=payload)
     async_to_sync(channel_layer.group_send)(
         SLIDER_GROUP_NAME_LIVE,
         {

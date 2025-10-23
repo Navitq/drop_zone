@@ -1,9 +1,10 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAppSelector } from "@/lib/hooks";
 import style from '@/styles/winInventoryBlock.module.scss'
 import TopSliderItem from '@/components/TopSliderItem'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { getFromQueue } from "@/redux/dropSliderReducer"
 
 export type ExteriorWear =
     | "factory_new"
@@ -38,17 +39,8 @@ export interface CardItemInt {
 export default function WibSliderBlock(): React.ReactNode {
     const [slides, setSlides] = useState<CardItemInt[]>([]);
     const sliderItems = useAppSelector(state => state.dropSlider.sliderItems)
-
-    const existingIds = new Set<number>();
-
-    const generateSlide = (): Slide => {
-        let id;
-        do {
-            id = Math.floor(Math.random() * 100000);
-        } while (existingIds.has(id));
-        existingIds.add(id);
-        return { id, color: `hsl(${Math.random() * 360}, 70%, 60%)` };
-    };
+    const queueItems = useAppSelector(state => state.dropSlider.queue.items);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
 
@@ -60,26 +52,24 @@ export default function WibSliderBlock(): React.ReactNode {
 
     // 🔁 Имитация прихода новых слайдов в произвольный момент
     useEffect(() => {
-        const interval = setInterval(() => {
-            const newSlide = generateSlide();
-            setSlides(prev => [newSlide, ...prev]);
+        if (queueItems.length === 0) return;
 
-            // Оставляем максимум 20 слайдов
-            setSlides(prev => prev.slice(0, 20));
-        }, Math.random() * 40000000 + 1000);
+        const interval = setInterval(() => {
+
+            const last = queueItems[queueItems.length - 1];
+            if (!last) return;
+
+            setSlides(prev => [last, ...prev].slice(0, 20));
+            dispatch(getFromQueue());
+        }, Math.random() * 3000 + 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [queueItems, dispatch]);
 
 
     if (sliderItems.length <= 0) {
         return null;
     }
-
-    // 🎲 Генерация уникального слайда
-
-
-    // 🧩 Инициализация первых 5 слайдов
 
     return (
         <div className={style.sliderCntBlock}>

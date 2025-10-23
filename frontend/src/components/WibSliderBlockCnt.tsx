@@ -5,7 +5,7 @@ import style from '@/styles/winInventoryBlock.module.scss'
 import useWebSocket from 'react-use-websocket';
 import { BACKEND_PATHS } from '@/utilites/urls';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { setNewSliderData } from '@/redux/dropSliderReducer'
+import { setNewSliderData, setUserAmount, addToQueue, clearQueue } from '@/redux/dropSliderReducer'
 
 
 type DropSliderMap = {
@@ -46,6 +46,7 @@ function WibSliderBlockCnt(): React.ReactNode {
     const timerRef = useRef<boolean>(false);
     const wsOpened = useRef<boolean>(false)
     const isTopActive = useAppSelector(state => state.dropSlider.isTopActive)
+    const isSliderRun = useAppSelector(state => state.dropSlider.isSliderRun)
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -55,7 +56,7 @@ function WibSliderBlockCnt(): React.ReactNode {
         timerRef.current = true;
         const timer = setTimeout(() => {
             console.log(12312321)
-
+            dispatch(clearQueue())
             sendMessage(JSON.stringify(
                 {
                     event: "change_slider_type",
@@ -74,16 +75,23 @@ function WibSliderBlockCnt(): React.ReactNode {
             payload.items[i].price = Number(payload.items[i].price)
         }
         dispatch(setNewSliderData(payload))
+
     }
 
-    const updateGameData = (payload: any) => {
-        console.log(payload)
+    const updateGameData = (payload: { clientsAmount: number, item: CardItemInt }) => {
+        if (!isSliderRun) {
+            return
+        }
+        payload.clientsAmount = Number(payload.clientsAmount)
+        payload.item.price = Number(payload.item.price)
+        dispatch(setUserAmount(payload.clientsAmount))
+        dispatch(addToQueue(payload.item))
     }
 
 
     const eventHandlers: Record<keyof DropSliderMap, (payload: any) => void> = {
         start_data: (payload) => startGameData(payload.data),
-        update_slider_data: (payload) => updateGameData(payload),
+        update_slider_data: (payload) => updateGameData(payload.data),
     };
 
 

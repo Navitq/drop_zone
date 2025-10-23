@@ -66,6 +66,7 @@
       "play_alt": "Play image",
       "stop_alt": "Stop image",
       "start": "start",
+      "stop": "stop",
       "user_icon": "User icon"
     },
     "background": {

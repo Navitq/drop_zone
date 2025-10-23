@@ -30,7 +30,7 @@ function WibStartTop(props: { isActive?: boolean, changeState: () => void }): Re
                 </div>
                 <div className={style.wolSliderStateText}>
                     {
-                        t('start')
+                        isSliderRun ? t('stop') : t('start')
                     }
                 </div>
             </div>
