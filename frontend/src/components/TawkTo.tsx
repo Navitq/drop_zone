@@ -1,8 +1,7 @@
 'use client';
-import React from 'react';
 import Script from 'next/script';
 
-function TawkTo() {
+export default function TawkTo() {
     return (
         <Script
             id="tawkto"
@@ -11,5 +10,3 @@ function TawkTo() {
         />
     );
 }
-
-export default React.memo(TawkTo)
