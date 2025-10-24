@@ -69,6 +69,10 @@
       "stop": "стоп",
       "user_icon": "Иконка пользователя"
   },
+  "shared": {
+      "page_was_not_found": "такой страницы не существует",
+      "smth_go_wrong": "что-то пошло не так...."
+  },
   "background": {
     "season_background_alt": "Фон сезонных кейсов",
     "season_grass_alt": "Фон травы"

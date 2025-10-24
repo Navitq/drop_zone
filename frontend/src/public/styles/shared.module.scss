@@ -15,6 +15,34 @@
     background-color: black !important;
 }
 
+.errorPageCnt {
+    @extend %flexCenter;
+    width: 100%;
+    height: 100%;
+}
+.errorPage {
+    @extend %flexCenter;
+    flex-direction: column;
+}
+.errorPageNumber {
+    font-family: var(--font-headBold);
+    font-size: 400px;
+    line-height: 100%;
+    color: #FF9400;
+    text-shadow: 0px 0px 30px 0px #FF9400;
+}
+
+.errorPageAddText, .errorPageErrText{
+    font-family: var(--font-textRegular);
+    font-size: 35px;
+    line-height: 100%;
+    color: #9C9C9C;
+}
+.errorPageAddText {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
 @media (max-width: 1024px){
     .blockTitle {
         font-size: 30px;
@@ -24,6 +52,17 @@
 @media (max-width: 768px){
     .blockTitle {
         font-size: 20px;
+    }
+    .errorPageNumber {
+        font-size: 175px;
+    }
+
+    .errorPageAddText, .errorPageErrText{
+        font-size: 18px;
+    }
+    .errorPageAddText {
+        margin-top: 5px;
+        margin-bottom: 5px;
     }
 }
 

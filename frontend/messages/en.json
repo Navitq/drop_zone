@@ -69,6 +69,10 @@
       "stop": "stop",
       "user_icon": "User icon"
     },
+    "shared": {
+      "page_was_not_found": "such page does not exist",
+      "smth_go_wrong": "something went wrong...."
+    },
     "background": {
     "season_background_alt": "Season case background",
     "season_grass_alt": "Grass background"

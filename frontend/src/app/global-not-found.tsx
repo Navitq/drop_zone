@@ -1,12 +1,13 @@
-import React from 'react';
+// app/not-found.tsx
+import LocaleLayout from './[locale]/layout';
+import Error404 from '@/components/Error404';
 
-export default function GlobalNotFound(): React.ReactElement {
+export default function GlobalNotFound() {
+    const locale = 'ru'; // fallback для всех страниц
+
     return (
-        <html>
-            <body>
-                <h1>404 - Page Not Found</h1>
-                <p>This page does not exist.</p>
-            </body>
-        </html>
-    )
+        <LocaleLayout params={Promise.resolve({ locale })}>
+            <Error404></Error404>
+        </LocaleLayout>
+    );
 }
