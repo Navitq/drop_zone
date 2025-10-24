@@ -56,7 +56,8 @@
     "to_upgrades": "go to upgrades",
     "go_to": "go to",
     "events": "Events",
-    "events_is_chance": "Each event is a chance to get top skins and bonuses!"
+    "events_is_chance": "Each event is a chance to get top skins and bonuses!",
+    "t_user_agreement": "Dropzone User Agreement"
     },
     "wibBlock": {
       "passive_locator_alt": "Passive locator image",

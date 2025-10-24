@@ -1,5 +1,5 @@
 import React from 'react';
-import style from '@/styles/shared.module.scss'
+import style from '@/styles/error.module.scss'
 import { useTranslations } from 'next-intl';
 
 interface Error404Props {

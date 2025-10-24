@@ -1,3 +1,9 @@
+%flexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .blockTitle {
     font-family: var(--font-headBold);
     font-size: 50px;
@@ -5,42 +11,55 @@
     vertical-align: middle;
     color: rgba(255, 255, 255, 1);
 }
-%flexCenter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 .sortCnt {
     background-color: black !important;
 }
 
-.errorPageCnt {
-    @extend %flexCenter;
+.termsBlock {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1800px;
     width: 100%;
-    height: 100%;
+    padding: 0px 30px;
 }
-.errorPage {
+.termsTitleBlock {
     @extend %flexCenter;
-    flex-direction: column;
-}
-.errorPageNumber {
-    font-family: var(--font-headBold);
-    font-size: 400px;
-    line-height: 100%;
-    color: #FF9400;
-    text-shadow: 0px 0px 30px 0px #FF9400;
+    margin-top: 20px;
+    margin-bottom: 50;
 }
 
-.errorPageAddText, .errorPageErrText{
+.termsUsllTextItem {
     font-family: var(--font-textRegular);
-    font-size: 35px;
-    line-height: 100%;
-    color: #9C9C9C;
+    font-size: 24px;
+    line-height: 130%;
+    color: #FFFFFF;
+    margin-bottom: 20px;
 }
-.errorPageAddText {
-    margin-top: 20px;
-    margin-bottom: 5px;
+.termsBoldTextItem {
+    color: #FF9400;
+}
+.termsGroupTextItem .termsUsllTextItem,.termsGroupTextItem .termsUsllTitleTextItem {
+    margin-bottom: 0px;
+}
+.termsGroupTextItem .termsUsllTextItem:last-child {
+    margin-bottom: 20px;
+}
+.termsHeadTextItem {
+    font-family: var(--font-headBold);
+    font-size: 24px;
+    line-height: 130%;
+    color: #FF9400;
+    margin-bottom: 20px;
+}
+
+.termsUsllTitleTextItem {
+    font-family: var(--font-textRegular);
+    font-style: Regular;
+    font-size: 24px;
+    line-height: 130%;
+    color: #FF9400;
+    margin-bottom: 20px;
 }
 
 @media (max-width: 1024px){
