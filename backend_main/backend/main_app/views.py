@@ -1283,6 +1283,7 @@ async def vk_callback_view(request):
             extra_data=token_data_user
         ))()
     # автоматически использует кастомный сериализатор
+    await sync_to_async(OAuthCodeVerifier.delete)(state)
     refresh = MyRefreshToken.for_user(user, social_account)
     access_token = str(refresh.access_token)
 
