@@ -40,6 +40,7 @@ class OAuthState(HashModel):
 class OAuthCodeVerifier(HashModel):
     code_verifier: str = Field(index=True)  # ✅ индексируем поле
     code_challenge: str = Field(index=True)
+    state: str = Field(index=True)
 
     class Meta:
         database = redis

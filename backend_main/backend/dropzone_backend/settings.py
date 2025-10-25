@@ -40,11 +40,19 @@ SESSION_COOKIE_AGE = 1209600
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
+    'http://127.0.0.1:80',
+    'http://localhost:80',
+    'http://127.0.0.1',
+    'http://localhost',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
+    'http://127.0.0.1:80',
+    'http://localhost:80',
+    'http://127.0.0.1',
+    'http://localhost',
 ]
 
 DATE_FORMAT = "d.m.Y"
@@ -209,8 +217,8 @@ TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 
 USE_TZ = True
-
-
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 

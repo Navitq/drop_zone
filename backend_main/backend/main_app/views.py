@@ -18,7 +18,7 @@ from urllib.parse import quote
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import MyRefreshToken
-from .redis_models import CaseRedisStandart, BlockedTokenRedis, TotalActionAmountRedis, GlobalStateCoeffRedis, ActiveBattleRedis, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
+from .redis_models import CaseRedisStandart, OAuthCodeVerifier, BlockedTokenRedis, TotalActionAmountRedis, GlobalStateCoeffRedis, ActiveBattleRedis, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, ItemRedisStandart, OAuthState, BackgroundMainPageRedis
 from django.db import DatabaseError
 from django.views.decorators.csrf import ensure_csrf_cookie
 from datetime import datetime, timezone, timedelta
@@ -46,7 +46,8 @@ STEAM_DOMEN_REALM = os.getenv("STEAM_DOMEN_REALM")
 STEAM_REDIRECT_URI = os.getenv("STEAM_REDIRECT_URI")
 STEAM_API_WEB_KEY = os.getenv("STEAM_API_WEB_KEY")
 VK_CLIENT_ID = os.getenv("VK_CLIENT_ID")
-
+VK_CLIENT_SECRET = os.getenv("VK_CLIENT_SECRET")
+VK_REDIRECT_URL = os.getenv("VK_REDIRECT_URL")
 
 EXTERIOR_CHOICES = [
     ("factory_new", "Factory New"),
@@ -188,14 +189,26 @@ async def create_code_verified() -> dict:
     data = generate_pkce_pair()
     code_verifier = data["code_verifier"]
     code_challenge = data["code_challenge"]
-
+    data["state"] = secrets.token_urlsafe(64)
     # Асинхронное сохранение в базу
-    await sync_to_async(OAuthState.objects.create)(
+    verifier = OAuthCodeVerifier(
+        state=data["state"],
         code_verifier=code_verifier,
         code_challenge=code_challenge
     )
 
+    await sync_to_async(verifier.save)()  # ✅ обёртка sync_to_async
+
     return data
+
+
+def check_code_verified(state: str):
+    try:
+        obj = OAuthCodeVerifier.find(OAuthCodeVerifier.state == state).first()
+        return obj or False
+    except Exception as e:
+        print("Error checking state:", e)
+        return False
 
 
 async def create_state_token() -> str:
@@ -1032,17 +1045,16 @@ async def me_view(request):
 
 @async_require_methods(["GET"])
 async def vk_login_view(request):
-    state = await create_state_token()
     data = await create_code_verified()
     scope = "openid email profile"
     vk_auth_url = (
         "https://id.vk.com/authorize?response_type=code"
         f"&client_id={VK_CLIENT_ID}"
-        f"&redirect_uri={GOOGLE_REDIRECT_URL}"
+        f"&redirect_uri={VK_REDIRECT_URL}"
         f"&code_challenge={data['code_challenge']}"
         f"&code_challenge_method=S256"
         f"&scope={scope}"
-        f"&state={state}"
+        f"&state={data['state']}"
     )
     return JsonResponse({"auth_url": vk_auth_url})
 
@@ -1089,11 +1101,6 @@ async def google_login_view(request):
 
     return JsonResponse({"auth_url": google_auth_url})
 
-
-@async_require_methods(["GET"])
-async def vk_callback_view(request):
-    pass
-
 # OK CHECKED
 
 
@@ -1122,9 +1129,11 @@ async def steam_callback_view(request):
     if social_account:
         user = await sync_to_async(lambda: social_account.user)()
     else:
-        # Создаём нового пользователя
+        username = f"steam_{steam_id}"
+        username = username[:200]
+
         user = await sync_to_async(User.objects.create)(
-            username=f"steam_{steam_id}"
+            username=username
         )
         # Создаём SocialAccount
         social_account = await sync_to_async(SocialAccount.objects.create)(
@@ -1179,6 +1188,130 @@ async def steam_callback_view(request):
     return response
 
 
+@async_require_methods(["GET"])
+async def vk_callback_view(request):
+    # try:
+    code = request.GET.get("code")
+    state = request.GET.get("state")
+    device_id = request.GET.get("device_id")
+    if not all([code, state, device_id]):
+        return JsonResponse({"error": "Missing required parameters"}, status=400)
+
+    # --- Проверяем корректность state и достаём code_verifier ---
+    status = await sync_to_async(check_code_verified)(state)
+    if not status:
+        return JsonResponse({"error": "Invalid or expired state"}, status=409)
+    print(1111111111111111222222222)
+    # Обмен кода на access_token
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post("https://id.vk.ru/oauth2/auth", data={
+            "client_id": VK_CLIENT_ID,
+            "client_secret": VK_CLIENT_SECRET,
+            "redirect_uri": VK_REDIRECT_URL,
+            "code": code,
+            "grant_type": "authorization_code",
+            "code_verifier": status.code_verifier,
+            "device_id": device_id,
+            "state": state
+        }) as resp:
+            token_data = await resp.json()
+
+    if "error" in token_data:
+        print(123121231231312)
+        return JsonResponse({"error": token_data}, status=400)
+
+    state_2 = token_data.get("state")
+    print("zzzzzzzzzzzzz")
+    status_2 = await sync_to_async(check_code_verified)(state_2)
+    if not status_2:
+        return JsonResponse({"error": "Invalid or expired state"}, status=409)
+    id_token = token_data.get("id_token")
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post("https://id.vk.ru/oauth2/public_info", data={
+            "client_id": VK_CLIENT_ID,
+            "id_token": id_token
+        }) as resp:
+            token_data_user_obj = await resp.json()
+            token_data_user = token_data_user_obj['user']
+            print(token_data_user)
+
+    try:
+        access_token = token_data.get("access_token")
+        refresh_token = token_data.get("refresh_token")
+        social_account = await sync_to_async(
+            lambda: SocialAccount.objects.select_related('user').get(
+                provider='vk', provider_user_id=token_data_user['user_id']
+            )
+        )()
+        # Обновляем токены и данные
+        social_account.access_token = access_token
+        social_account.refresh_token = refresh_token
+        social_account.verified_email = token_data_user['email']
+        social_account.extra_data = token_data_user
+        await sync_to_async(social_account.save)()
+
+        user = await sync_to_async(lambda: social_account.user)()
+        # Можно обновить профиль пользователя
+        user.first_name = token_data_user["first_name"]
+        user.last_name = token_data_user["last_name"]
+        user.avatar_url = token_data_user["avatar"]
+        await sync_to_async(user.save)()
+
+    except SocialAccount.DoesNotExist:
+        # Создаём нового пользователя
+        username = " ".join(filter(None, [token_data_user.get(
+            "first_name"), token_data_user.get("last_name")])).strip() or token_data_user['email'] or f"vk_{token_data_user['user_id']}"
+        username = username[:200]
+        email = token_data_user.get('email') or None
+        user = await sync_to_async(lambda: User.objects.create_user(
+            username=username,
+            email=email,
+            first_name=token_data_user["first_name"],
+            last_name=token_data_user["last_name"],
+            avatar_url=token_data_user["avatar"]
+        ))()
+
+        # Создаём социальный аккаунт
+        social_account = await sync_to_async(lambda: SocialAccount.objects.create(
+            user=user,
+            provider='vk',
+            provider_user_id=token_data_user['user_id'],
+            access_token=access_token,
+            refresh_token=refresh_token,
+            extra_data=token_data_user
+        ))()
+    # автоматически использует кастомный сериализатор
+    refresh = MyRefreshToken.for_user(user, social_account)
+    access_token = str(refresh.access_token)
+
+    response = HttpResponseRedirect(REDIRECT_OAUTH_CLIENT_PATH)
+
+    # HttpOnly cookie для access_token
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True,    # True на HTTPS
+        samesite="Lax",
+        max_age=3600    # 1 час, например
+    )
+
+    # HttpOnly cookie для refresh_token (если нужен)
+    response.set_cookie(
+        key="refresh_token",
+        value=str(refresh),
+        httponly=True,
+        secure=True,
+        samesite="Lax",
+        max_age=7*24*3600  # 7 дней
+    )
+    return response
+    # except Exception as e:
+    #     return JsonResponse({"error": str(e)}, status=500)
+
+
 # OK CHECKED
 @async_require_methods(["GET"])
 async def google_callback_view(request):
@@ -1223,8 +1356,11 @@ async def google_callback_view(request):
 
     except SocialAccount.DoesNotExist:
         # Создаём нового пользователя
+        username = name or email or f"google_{google_id}",
+        username = username[:200]
+
         user = await sync_to_async(lambda: User.objects.create_user(
-            username=name or email or f"google_{google_id}",
+            username=username,
             email=email,
             first_name=first_name,
             last_name=last_name,

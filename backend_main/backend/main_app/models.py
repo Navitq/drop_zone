@@ -37,12 +37,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(
-        max_length=150, unique=True, default="username")
-    email = models.EmailField(unique=True, null=True, blank=True)
+        max_length=200, unique=True, default="username")
+    email = models.EmailField(unique=False, null=True, blank=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     avatar_url = models.URLField(
-        blank=True, null=True, default="/images/avatar.svg")
+        blank=True, null=True, default="/images/avatar.svg", max_length=500)
     roulet_chance = models.FloatField(default=1, null=False, blank=False)
     upgrade_chance = models.FloatField(default=1, null=False, blank=False)
     case_chance = models.FloatField(default=1, null=False, blank=False)

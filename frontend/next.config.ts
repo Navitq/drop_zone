@@ -15,6 +15,14 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: '**.vkuserphoto.ru',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.userapi.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'avatars.steamstatic.com',
       },
       {
