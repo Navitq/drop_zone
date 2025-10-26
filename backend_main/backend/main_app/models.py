@@ -12,6 +12,7 @@ from redis_om.model.model import NotFoundError
 from datetime import datetime, timedelta, timezone as dt_timezone
 from django.db.models.signals import post_save
 from multiselectfield import MultiSelectField
+from decimal import Decimal  # ← вот это добавь
 # ----------------------------
 # Менеджер пользователя (минимальный)
 # ----------------------------
@@ -202,8 +203,43 @@ class SteamItemCs(models.Model):
     item_model = models.CharField(max_length=50, null=False, blank=True)
     item_style = models.CharField(max_length=50, null=False, blank=True)
     name = models.CharField(max_length=70, null=False, blank=True)
+    chance_factory_new = models.DecimalField(
+        max_digits=20,       # всего цифр
+        decimal_places=10,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=Decimal('0.0100000000')
+    )
+    chance_minimal_wear = models.DecimalField(
+        max_digits=20,       # всего цифр
+        decimal_places=10,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=Decimal('0.9900000000')
+    )
+    chance_field_tested = models.DecimalField(
+        max_digits=20,       # всего цифр
+        decimal_places=10,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=Decimal('0.9000000000')
+    )
+    chance_well_worn = models.DecimalField(
+        max_digits=20,       # всего цифр
+        decimal_places=10,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=Decimal('0.2500000000')
+    )
+    chance_battle_scarred = models.DecimalField(
+        max_digits=20,       # всего цифр
+        decimal_places=10,    # знаков после запятой
+        null=False,
+        blank=True,
+        default=Decimal('0.6500000000')
+    )
     price_factory_new = models.DecimalField(
-        max_digits=10,       # всего цифр
+        max_digits=14,       # всего цифр
         decimal_places=2,    # знаков после запятой
         null=False,
         blank=True,
