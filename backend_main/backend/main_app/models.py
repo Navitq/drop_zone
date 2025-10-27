@@ -428,6 +428,7 @@ class Case(models.Model):
         ("season_case", "Сезонный кейс"),
         ("bloger_case", "Блогерский кейс"),
     ]
+    is_active = models.BooleanField(default=True)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # {"en": "Blue Case", "ru": "Синий кейс"}
     name_ru = models.CharField(max_length=70, null=False, blank=False)

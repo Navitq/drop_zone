@@ -240,7 +240,7 @@ def inventory_item_created(sender, instance, created, **kwargs):
     case_img = None
     if case_id:
         try:
-            case = Case.objects.get(id=case_id)
+            case = Case.objects.get(id=case_id, is_active=True)
             case_img = case.icon_url
         except Case.DoesNotExist:
             case_img = None

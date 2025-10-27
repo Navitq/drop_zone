@@ -198,16 +198,14 @@ def sync_spin_roulette_wheel(case):
     # Генерируем рандомное число до 100 и умножаем на шанс пользователя
     roll = random.uniform(0, 100)
     if roll >= 100:
-        items[-1]
+        return items[-1]
     cumulative = 0
     for item in items:
         cumulative += item.drop_chance
         if roll <= cumulative:
-            del item.drop_chance
             return item  # Этот предмет выпал
 
     # На всякий случай — если не попали (редко), возвращаем первый
-    del items[0].drop_chance
     return items[0]
 
 

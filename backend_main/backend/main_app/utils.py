@@ -77,7 +77,7 @@ def load_to_redis():
         ItemRedisStandart.find().delete()
 
         # кейсы
-        for case in Case.objects.prefetch_related("items__steam_item"):
+        for case in Case.objects.filter(is_active=True).prefetch_related("items__steam_item"):
             CaseRedisStandart(
                 id=str(case.id),
                 name=case.name,
@@ -86,7 +86,7 @@ def load_to_redis():
                 price=case.price,
             ).save()
         # предметы
-        for case_item in CaseItem.objects.select_related('steam_item', 'case').all():
+        for case_item in CaseItem.objects.select_related('steam_item', 'case').filter(case__is_active=True):
             ItemRedisStandart(
                 id=str(case_item.steam_item.id),
                 icon_url=case_item.steam_item.icon_url,
@@ -95,7 +95,12 @@ def load_to_redis():
                 item_style=case_item.steam_item.item_style,
                 rarity=case_item.steam_item.rarity,
                 drop_chance=case_item.drop_chance,
-                case_id=str(case_item.case.id)
+                case_id=str(case_item.case.id),
+                price_factory_new=case_item.steam_item.price_factory_new,
+                price_minimal_wear=case_item.steam_item.price_minimal_wear,
+                price_field_tested=case_item.steam_item.price_field_tested,
+                price_well_worn=case_item.steam_item.price_well_worn,
+                price_battle_scarred=case_item.steam_item.price_battle_scarred,
             ).save()
         print("✅ Redis синхронизирован ItemRedisStandart, CaseRedisStandart")
 

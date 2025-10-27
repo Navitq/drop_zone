@@ -72,6 +72,11 @@ class ItemRedisStandart(JsonModel):
     rarity: str
     case_id: str = Field(index=True)
     drop_chance: float
+    price_factory_new: Decimal
+    price_minimal_wear: Decimal
+    price_field_tested: Decimal
+    price_well_worn: Decimal
+    price_battle_scarred: Decimal
 
     class Meta:
         global_key_prefix = "items"
@@ -327,7 +332,7 @@ def push_last_20_items_to_redis():
         case_img = None
         if case_id:
             try:
-                case = Case.objects.get(id=case_id)
+                case = Case.objects.get(id=case_id, is_active=True)
                 case_img = case.icon_url
             except Case.DoesNotExist:
                 case_img = None
@@ -409,7 +414,7 @@ def push_last_20_items_to_redis_crown():
         case_img = None
         if case_id:
             try:
-                case = Case.objects.get(id=case_id)
+                case = Case.objects.get(id=case_id, is_active=True)
                 case_img = case.icon_url
             except Case.DoesNotExist:
                 case_img = None

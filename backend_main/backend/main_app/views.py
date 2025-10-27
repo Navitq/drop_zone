@@ -297,16 +297,14 @@ def sync_spin_roulette_wheel(case, user):
     # Генерируем рандомное число до 100 и умножаем на шанс пользователя
     roll = secrets.randbelow(10000) / 100.0 * user.roulet_chance
     if roll >= 100:
-        items[-1]
+        return items[-1]
     cumulative = 0
     for item in items:
         cumulative += item.drop_chance
         if roll <= cumulative:
-            del item.drop_chance
             return item  # Этот предмет выпал
 
     # На всякий случай — если не попали (редко), возвращаем последний
-    del items[0].drop_chance
     return items[0]
 
 
@@ -328,20 +326,8 @@ async def spin_state_wheel_fake():
 
 
 def sync_spin_state_wheel_fake():
-    # случайное число 0-99, умножаем на шанс пользователя
-    rand_num = int(random.randint(0, 99))
-    if rand_num > 99:
-        return EXTERIOR_CHOICES[-1][0]
-    # ограничиваем максимум 99
-    rand_num = min(rand_num, 99)
-
-    range_size = 100 // len(EXTERIOR_CHOICES)
-    index = rand_num // range_size
-
-    if index >= len(EXTERIOR_CHOICES):
-        index = len(EXTERIOR_CHOICES) - 1
-
-    return EXTERIOR_CHOICES[int(round(index))][0]
+    state_key, state_name = random.choice(EXTERIOR_CHOICES)
+    return state_key
 
 
 # def sync_spin_state_wheel(user):
@@ -364,9 +350,7 @@ def sync_spin_state_wheel_fake():
 def sync_spin_state_wheel(user, item):
     """Синхронная версия: определяет состояние предмета на основе коэффициентов из Redis и шанса пользователя"""
     try:
-        print(item, 12223333)
         if getattr(item, "pk", None):
-            print("99999999999", item.id)
             item_2 = SteamItemCs.objects.get(id=item.id)
             item = item_2
             print(item_2)
@@ -484,14 +468,17 @@ def sync_create_order(item_state: str, item, user, case=None):
     """
     try:
         steam_item = SteamItemCs.objects.get(id=item.id)
+        price_field = f"price_{item_state}"
+        price_value = getattr(steam_item, price_field, None)
         if (
             "price" not in user.best_skin
-            or float(user.best_skin.get("gunPrice", 0)) <= float(item.price)
+            or float(user.best_skin.get("gunPrice", 0)) <= float(price_value)
         ):
+
             user.best_skin = {
                 "id": str(item.id),
                 "imgPath": item.icon_url,
-                "gunPrice": float(item.price or 0),
+                "gunPrice": float(price_value or 0),
                 "gunModel": item.item_model,
                 "gunStyle": item.item_style,
                 "state": item_state,
@@ -579,7 +566,6 @@ def sync_check_user_money(request, case_id):
             return Response({"detail": "Case not found"}, status=404)
         user_id = request.token_data.get("id")
         user = User.objects.select_for_update().get(id=user_id)
-        print(user.money_amount, cases[0].price)
         if user.money_amount < cases[0].price:
             return JsonResponse({"detail": "Insufficient funds"}, status=402)
         return {"user": user, "case": cases[0]}
@@ -617,9 +603,6 @@ def check_user_money_upgrades(request, server_item_id, client_item_id, price):
                 'steam_item').get(owner_id=user.id, id=client_item_id, marketable=True, tradable=True)
             if not client_item or not server_item:
                 return JsonResponse({"detail": "Item not found"}, status=404)
-
-            if user.money_amount < server_item.price:
-                return JsonResponse({"detail": "Insufficient funds"}, status=402)
             return {"user": user, "client_item": client_item, "server_item": server_item}
         elif price is not None or not server_item:
             price = float(price)
@@ -672,52 +655,52 @@ async def get_case_items(case_id):
 
 
 def sync_get_case_items(case_id):
-    """Возвращает список предметов кейса в виде массива словарей."""
+    """Возвращает список предметов кейса в виде массива словарей с учётом состояния (state)."""
     items = list(
         ItemRedisStandart.find(ItemRedisStandart.case_id == case_id).all()
     )
+
     if not items:
         raise NotFoundError("Items not found for this case")
 
-    return [
-        {
+    result = []
+    for item in items:
+        state = sync_spin_state_wheel_fake()  # например, "factory_new"
+        price_field = f"price_{state}"        # динамическое имя поля
+        # fallback если поля нет
+        price_value = getattr(item, price_field, item.price)
+
+        result.append({
             "id": item.id,
             "gunModel": item.item_model,
             "gunStyle": item.item_style,
-            "gunPrice": item.price,
+            "gunPrice": price_value,  # цена с учетом состояния
             "imgPath": item.icon_url,
             "type": item.rarity,
-            "price": item.price,
-            "state": sync_spin_state_wheel_fake()
-        }
-        for item in items
-    ]
+            "price": price_value,     # финальная цена
+            "state": state,           # состояние предмета
+        })
+
+    return result
 
 
 def spin_upgrade(user, server_item, price):
-    print(555555555555)
     ad = GlobalCoefficientRedis.find().first()
     pgrades_global = ad.upgrades_global
-    print(0000000000000, 4442)
-
     honest_chance = (
-        (Decimal("0.9") if Decimal(str(price)) /
+        (Decimal("0.95") if Decimal(str(price)) /
          server_item >= 1 else Decimal(str(price)) / server_item)
         * Decimal(pgrades_global)
         * Decimal(str(user.upgrade_chance))  # конвертируем float → Decimal
     )
-    print(0000000000000, 4442)
-    print(honest_chance)
     rand_num = Decimal(secrets.randbelow(101))
-    print(honest_chance, rand_num)
-    print(0000000000000, 4442)
     if rand_num > honest_chance * Decimal(100):
         return False
     else:
         return True
 
 
-def sync_remover_order(user, client_item):
+def sync_remover_order(client_item):
     client_item.delete()
     return client_item
 
@@ -912,10 +895,12 @@ def get_user_by_id(user_id: str):
 
 def play_upgrade_game(user, server_item, client_item=None, price=None):
     """Игра на апгрейд предмета. Может использовать client_item или деньги (price)."""
-    print(7777777777777)
-    # определяем цену апгрейда
-    upgrade_price = client_item.steam_item.price if client_item else price
-
+    item_state = sync_spin_state_wheel(user, server_item)
+    if client_item:
+        price_field = f"price_{item_state}"
+        upgrade_price = getattr(client_item.steam_item, price_field, None)
+    else:
+        upgrade_price = price
     # запускаем апгрейд
     spin_state = spin_upgrade(
         user=user,
@@ -926,13 +911,12 @@ def play_upgrade_game(user, server_item, client_item=None, price=None):
     TotalActionAmount.increment_total_upgrades()
     user.save()
     if spin_state is True:
-        item_state = sync_spin_state_wheel(user, server_item)
         item = sync_create_order(item_state, server_item, user)
         order_to_send = {
             "id": str(item.id),
             "gunModel": item.steam_item.item_model,
             "gunStyle": item.steam_item.item_style,
-            "gunPrice": item.steam_item.price,
+            "gunPrice": item.price,
             "imgPath": item.steam_item.icon_url,
             "type": item.steam_item.rarity,
             "price": item.steam_item.price,
@@ -950,7 +934,7 @@ def check_user_money_battles(user, cases):
 
     for item in cases:
         # получаем кейс из базы или Redis (асинхронно)
-        case_obj = Case.objects.get(id=item["case"].id)
+        case_obj = Case.objects.get(id=item["case"].id, is_active=True)
         case_amount = item["case_amount"]
         price = case_obj.price * case_amount
 
@@ -1469,35 +1453,39 @@ def get_open_case_view(request, case_id):
                         money_check["user"], prize_item)
                     money_check["user"].total_case_opened += 1
                     TotalActionAmount.increment_total_opened_cases()
-                    print(money_check["user"].best_case.get(
-                        "price", 0),  money_check["case"].price, 67676767)
-                    if (
-                        "price" not in money_check["user"].best_case
-                        or float(money_check["user"].best_case.get("price", 0)) <= float(money_check["case"].price)
-                    ):
-                        money_check["user"].best_case = {
-                            "id": money_check["case"].id,
-                            "imgPath": money_check["case"].icon_url,
-                            "name": money_check["case"].name,
-                            "price": money_check["case"].price,
-                        }
+                    if getattr(prize_item, "pk", None):
+                        item_2 = SteamItemCs.objects.get(id=prize_item.id)
+                        price_field = f"price_{item_state}"
+                        price_value = getattr(item_2, price_field, None)
+                        if (
+                            "price" not in money_check["user"].best_case
+                            or float(money_check["user"].best_case.get("price", 0)) <= float(price_value)
+                        ):
+                            money_check["user"].best_case = {
+                                "id": money_check["case"].id,
+                                "imgPath": money_check["case"].icon_url,
+                                "name": money_check["case"].name,
+                                "price": money_check["case"].price,
+                            }
                     money_check["user"].save()
-                    sync_create_order(item_state, prize_item,
-                                      money_check["user"], money_check["case"])
+                    inventory_item = sync_create_order(
+                        item_state, prize_item, money_check["user"], money_check["case"])
                     prize_dict = {
                         "id": prize_item.id,
                         "gunModel": prize_item.item_model,
                         "gunStyle": prize_item.item_style,
-                        "gunPrice": prize_item.price,
+                        "gunPrice": inventory_item.price,
                         "imgPath": prize_item.icon_url,
                         "type": prize_item.rarity,
-                        "price": prize_item.price,
-                        "state": item_state
+                        "price": inventory_item.price,
+                        "state": item_state,
+                        "inventory_id": inventory_item.id,
                     }
+                    print(prize_dict)
                     items_list = sync_get_case_items(money_check["case"].id)
                     return JsonResponse({"prize_item": prize_dict, "case_items": items_list}, status=200)
                 # Логика открытия кейса
-        return JsonResponse({"Error": "server error"}, status=501)
+        return JsonResponse({"Error": "server error"}, status=404)
     except Exception as e:
         print(e)
         return JsonResponse({"error": str(e)}, status=500)
@@ -1652,7 +1640,7 @@ async def get_inventory_items_view(request):
             "id": str(item.id),
             "gunModel": item.steam_item.item_model,
             "gunStyle": item.steam_item.item_style,
-            "gunPrice": float(item.steam_item.price),
+            "gunPrice": float(item.price),
             "type": item.steam_item.rarity,
             "imgPath": item.steam_item.icon_url,
             "fullName": item.full_name,
@@ -2174,8 +2162,7 @@ def upgrade_item_view(request):
                 if "client_item" in money_check:
                     answer = play_upgrade_game(
                         user=money_check["user"], client_item=money_check["client_item"], server_item=money_check["server_item"])
-                    sync_remover_order(
-                        money_check["user"], money_check["client_item"])
+                    sync_remover_order(money_check["client_item"])
                     return answer
                 else:
                     deduct_user_money_upgrade(
