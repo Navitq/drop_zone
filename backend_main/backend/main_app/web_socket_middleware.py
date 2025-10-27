@@ -15,7 +15,6 @@ class JWTAuthMiddlewareCustom(BaseMiddleware):
     async def __call__(self, scope, receive, send):
         # Получаем путь подключения
         path = scope.get("path", "")
-        print(path)
         # Получаем cookie из scope headers
         cookies = {}
         for header in scope.get("headers", []):

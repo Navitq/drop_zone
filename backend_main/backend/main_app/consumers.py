@@ -293,43 +293,49 @@ def generate_lose_items(battle, players_count):
     return lose_items
 
 
-def sync_spin_state_wheel():
+def sync_spin_state_wheel(id):
     """Синхронная версия: определяет состояние предмета на основе коэффициентов из Redis и шанса пользователя"""
     try:
         # 🧠 Получаем коэффициенты из Redis (синхронно)
-        coeff = GlobalStateCoeffRedis.find().first()
-        print(coeff)
-        if not coeff:
+        item = SteamItemCs.objects.get(id=id)
+        print(item)
+        if not item:
             raise ValueError("❌ GlobalStateCoeffRedis не найден!")
 
         # 🧩 Сортируем коэффициенты от большего к меньшему
-        sorted_coeffs = sorted(
-            [
-                ("battle_scarred", float(coeff.battle_scarred)),
-                ("well_worn", float(coeff.well_worn)),
-                ("field_tested", float(coeff.field_tested)),
-                ("minimal_wear", float(coeff.minimal_wear)),
-                ("factory_new", float(coeff.factory_new)),
-            ],
-            key=lambda x: x[1],
-            reverse=True
-        )
+        required_fields = [
+            'chance_factory_new',
+            'chance_minimal_wear',
+            'chance_field_tested',
+            'chance_well_worn',
+            'chance_battle_scarred',
+        ]
+        for field in required_fields:
+            if not hasattr(item, field):
+                raise ValueError(f"❌ У item нет поля {field}")
+        chances = {
+            "battle_scarred": float(item.chance_battle_scarred),
+            "well_worn": float(item.chance_well_worn),
+            "field_tested": float(item.chance_field_tested),
+            "minimal_wear": float(item.chance_minimal_wear),
+            "factory_new": float(item.chance_factory_new),
+        }
 
         # 🎲 Генерируем случайное число от 0 до 100
         rand_num = secrets.randbelow(
             10000) / 100.0
         rand_num = min(rand_num, 100)
-
+        print(rand_num)
         # 💡 Проверяем, в какой интервал попало число
         cumulative = 0
-        for name, value in sorted_coeffs:
+        for name, value in chances.items():
             cumulative += value
             if rand_num <= cumulative:
                 print(name)
                 return name
 
         # Если число больше всех интервалов (на случай некорректных коэффициентов)
-        return sorted_coeffs[0][0]
+        return item[0][0]
 
     except RedisError as e:
         print(f"❌ Ошибка Redis при получении коэффициентов: {e}")
@@ -384,7 +390,8 @@ def process_results_to_inventory_for_player(results, player_id):
     for element in results:
         drops = element.get("items", [])
         for drop in drops:
-            item_state = sync_spin_state_wheel()  # можно рандомизировать
+            item_state = sync_spin_state_wheel(
+                drop["id"])  # можно рандомизировать
             sync_create_order(item_state, drop, user)
             drop['state'] = item_state
 
@@ -400,7 +407,7 @@ def add_lose_items_to_inventory(player_items):
         lose_items = pi.get("lose_items", [])
         for lose_item in lose_items:
             # item_state можно задать по умолчанию
-            item_state = sync_spin_state_wheel()
+            item_state = sync_spin_state_wheel(lose_item["id"])
             sync_create_order(item_state, lose_item, user)
             lose_item['state'] = item_state
 

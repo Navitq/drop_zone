@@ -222,21 +222,21 @@ class SteamItemCs(models.Model):
         decimal_places=10,    # знаков после запятой
         null=False,
         blank=True,
-        default=Decimal('0.9000000000')
+        default=Decimal('9.0000000000')
     )
     chance_well_worn = models.DecimalField(
         max_digits=20,       # всего цифр
         decimal_places=10,    # знаков после запятой
         null=False,
         blank=True,
-        default=Decimal('0.2500000000')
+        default=Decimal('25.0000000000')
     )
     chance_battle_scarred = models.DecimalField(
         max_digits=20,       # всего цифр
         decimal_places=10,    # знаков после запятой
         null=False,
         blank=True,
-        default=Decimal('0.6500000000')
+        default=Decimal('65.0000000000')
     )
     price_factory_new = models.DecimalField(
         max_digits=14,       # всего цифр
@@ -286,6 +286,24 @@ class SteamItemCs(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def clean(self):
+        """Проверка, что сумма всех шансов = 100."""
+        total = (
+            self.chance_factory_new +
+            self.chance_minimal_wear +
+            self.chance_field_tested +
+            self.chance_well_worn +
+            self.chance_battle_scarred
+        )
+
+        # округляем до 10 знаков, чтобы избежать ошибок округления
+        total = total.quantize(Decimal('0.0000000001'))
+
+        if total != Decimal('100.0000000000'):
+            raise ValidationError(
+                f"Сумма всех шансов должна быть равна 100, сейчас: {total}"
+            )
 
     def save(self, *args, **kwargs):
         item_model_clean = self.item_model.strip() if self.item_model else ""

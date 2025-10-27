@@ -361,43 +361,50 @@ def sync_spin_state_wheel_fake():
 #     return EXTERIOR_CHOICES[int(round(index))][0]
 
 
-def sync_spin_state_wheel(user):
+def sync_spin_state_wheel(user, item):
     """Синхронная версия: определяет состояние предмета на основе коэффициентов из Redis и шанса пользователя"""
     try:
-        # 🧠 Получаем коэффициенты из Redis (синхронно)
-        coeff = GlobalStateCoeffRedis.find().first()
-        print(coeff)
-        if not coeff:
-            raise ValueError("❌ GlobalStateCoeffRedis не найден!")
+        print(item, 12223333)
+        if getattr(item, "pk", None):
+            print("99999999999", item.id)
+            item_2 = SteamItemCs.objects.get(id=item.id)
+            item = item_2
+            print(item_2)
+
+        required_fields = [
+            'chance_factory_new',
+            'chance_minimal_wear',
+            'chance_field_tested',
+            'chance_well_worn',
+            'chance_battle_scarred',
+        ]
+        for field in required_fields:
+            if not hasattr(item, field):
+                raise ValueError(f"❌ У item нет поля {field}")
+
+        chances = {
+            "battle_scarred": float(item.chance_battle_scarred),
+            "well_worn": float(item.chance_well_worn),
+            "field_tested": float(item.chance_field_tested),
+            "minimal_wear": float(item.chance_minimal_wear),
+            "factory_new": float(item.chance_factory_new),
+        }
 
         # 🧩 Сортируем коэффициенты от большего к меньшему
-        sorted_coeffs = sorted(
-            [
-                ("battle_scarred", float(coeff.battle_scarred)),
-                ("well_worn", float(coeff.well_worn)),
-                ("field_tested", float(coeff.field_tested)),
-                ("minimal_wear", float(coeff.minimal_wear)),
-                ("factory_new", float(coeff.factory_new)),
-            ],
-            key=lambda x: x[1],
-            reverse=True
-        )
 
         # 🎲 Генерируем случайное число от 0 до 100
         rand_num = secrets.randbelow(
             10000) / 100.0 * float(user.item_state_chance)
         rand_num = min(rand_num, 100)
-        print(rand_num, 7878, user.item_state_chance)
-
         # 💡 Проверяем, в какой интервал попало число
         cumulative = 0
-        for name, value in sorted_coeffs:
+        for name, value in chances.items():
             cumulative += value
             if rand_num <= cumulative:
                 return name
 
         # Если число больше всех интервалов (на случай некорректных коэффициентов)
-        return sorted_coeffs[0][0]
+        return chances[0][0]
 
     except RedisError as e:
         print(f"❌ Ошибка Redis при получении коэффициентов: {e}")
@@ -919,7 +926,7 @@ def play_upgrade_game(user, server_item, client_item=None, price=None):
     TotalActionAmount.increment_total_upgrades()
     user.save()
     if spin_state is True:
-        item_state = sync_spin_state_wheel(user)
+        item_state = sync_spin_state_wheel(user, server_item)
         item = sync_create_order(item_state, server_item, user)
         order_to_send = {
             "id": str(item.id),
@@ -1458,7 +1465,8 @@ def get_open_case_view(request, case_id):
                 if isFundsWrittenof is True:
                     prize_item = sync_spin_roulette_wheel(
                         money_check["case"], money_check["user"])
-                    item_state = sync_spin_state_wheel(money_check["user"])
+                    item_state = sync_spin_state_wheel(
+                        money_check["user"], prize_item)
                     money_check["user"].total_case_opened += 1
                     TotalActionAmount.increment_total_opened_cases()
                     print(money_check["user"].best_case.get(
@@ -1775,7 +1783,7 @@ def make_contract_view(request):
             remove_inventory_objects(items=inventoryItems)
             print(44444444444444444444444444444444444)
             print(5555555555555555555555555555555555555)
-            state = sync_spin_state_wheel(user_item)
+            state = sync_spin_state_wheel(user_item, won_item)
             print(6666666666666666666666666666666666666666666)
             user_item.total_contracts += 1
             TotalActionAmount.increment_total_contracts()
