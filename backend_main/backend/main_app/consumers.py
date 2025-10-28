@@ -70,13 +70,10 @@ def get_battle_from_game_id_db_game(game_id):
     Возвращает объект битвы или None, если не найдено или не активно.
     """
     try:
-        print(555555555555555555, game_id)
         battle = Battle.objects.select_for_update().filter(
             id=game_id,
             is_active=True
         ).first()
-        print(battle, battle.players.count() <
-              battle.players_amount, "ddddddd")
         if battle:
             return battle
         else:
@@ -203,9 +200,10 @@ def sync_spin_roulette_wheel(case):
     for item in items:
         cumulative += item.drop_chance
         if roll <= cumulative:
+            del item.drop_chance
             return item  # Этот предмет выпал
 
-    # На всякий случай — если не попали (редко), возвращаем первый
+    del items[0].drop_chance
     return items[0]
 
 
@@ -232,12 +230,13 @@ def find_winner(battle, data):
     # Определяем победителя
     max_value = Decimal("0")
     winner_player_id = None
+
     for pi in player_items:
         total_price = sum(
-            item["item"].get("price", Decimal("0"))  # вместо getattr
+            item["item"].get(f"price_{item['item']['state']}",
+                             Decimal("0"))  # вместо getattr
             for item in pi["items"]
         )
-        print('total_price', total_price)
         if total_price > max_value:
             max_value = total_price
             winner_player_id = pi["player"].id
@@ -261,22 +260,18 @@ def generate_lose_items(battle, players_count):
     Количество = players_count - 1
     Цена каждого предмета <= 10% от цены самого дешевого кейса
     """
-    print("players_count", players_count)
     if players_count <= 1:
         return []
 
     # Находим самый дешевый кейс в баттле
     battle_cases = BattleCase.objects.filter(
         battle=battle).select_related("case")
-    print("battle_cases", battle_cases)
     if not battle_cases.exists():
         return []
 
     min_price = min([bc.case.price for bc in battle_cases])
     max_lose_price = (Decimal(min_price) * Decimal("0.1")
                       ).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
-    print("battle_cases", battle_cases)
-    # Получаем все SteamItemCs с ценой <= max_lose_price
     cheap_items_qs = SteamItemCs.objects.filter(price__lte=max_lose_price)
     cheap_items = list(cheap_items_qs.values())
     print("cheap_items", cheap_items)
@@ -288,10 +283,10 @@ def generate_lose_items(battle, players_count):
         item = random.choice(cheap_items)
         lose_items.append(item)
 
-    return lose_items
+    return lose_items, min_price
 
 
-def sync_spin_state_wheel(id):
+def sync_spin_state_wheel(id, min_price=None):
     """Синхронная версия: определяет состояние предмета на основе коэффициентов из Redis и шанса пользователя"""
     try:
         # 🧠 Получаем коэффициенты из Redis (синхронно)
@@ -319,6 +314,33 @@ def sync_spin_state_wheel(id):
             "factory_new": float(item.chance_factory_new),
         }
 
+        if min_price:
+            by_price = {
+                "battle_scarred": float(item.price_battle_scarred),
+                "well_worn": float(item.price_well_worn),
+                "field_tested": float(item.price_field_tested),
+                "minimal_wear": float(item.price_minimal_wear),
+                "factory_new": float(item.price_factory_new),
+            }
+            filtered = {k: chances[k]
+                        for k, v in by_price.items() if v < float(min_price)}
+
+            # 🔹 2. Считаем общую сумму шансов
+            total_chance = sum(filtered.values())
+
+            # 🔹 3. Если сумма не равна 0 — нормализуем до 100%
+            if total_chance > 0:
+                normalized_chances = {
+                    k: (v / total_chance) * 100 for k, v in filtered.items()}
+            else:
+                normalized_chances = {k: 0 for k in filtered}
+            if normalized_chances:
+                keys = list(normalized_chances.keys())
+                weights = list(normalized_chances.values())
+                chosen_state = random.choices(keys, weights=weights, k=1)[0]
+                return chosen_state
+            else:
+                return 'battle_scarred'  # fallback, если ничего не подошло
         # 🎲 Генерируем случайное число от 0 до 100
         rand_num = secrets.randbelow(
             10000) / 100.0
@@ -387,14 +409,11 @@ def process_results_to_inventory_for_player(results, player_id):
 
     for element in results:
         drops = element.get("items", [])
-        for drop in drops:
-            item_state = sync_spin_state_wheel(
-                drop["id"])  # можно рандомизировать
-            sync_create_order(item_state, drop, user)
-            drop['state'] = item_state
+        for drop in drops:  # можно рандомизировать
+            sync_create_order(drop['state'], drop, user)
 
 
-def add_lose_items_to_inventory(player_items):
+def add_lose_items_to_inventory(player_items, min_price):
     """
     Добавляет все lose_items из player_items в Inventory игрока.
     """
@@ -405,30 +424,26 @@ def add_lose_items_to_inventory(player_items):
         lose_items = pi.get("lose_items", [])
         for lose_item in lose_items:
             # item_state можно задать по умолчанию
-            item_state = sync_spin_state_wheel(lose_item["id"])
+            item_state = sync_spin_state_wheel(lose_item["id"], min_price)
             sync_create_order(item_state, lose_item, user)
             lose_item['state'] = item_state
+            lose_item['price'] = lose_item[f"price_{lose_item['state']}"]
 
 
 def start_battle_game(game_id):
     try:
         with transaction.atomic():
-            print("block start")
             battle = get_battle_from_game_id_db_game(game_id)
-            print("get_battle_from_game_id_db_game", battle)
             if battle is None:
                 return None
             battle.game_state = "in_process"
             battle.save()
             results = []  # сюда сохраняем все кейсы и их дропы
-            print('results = []')
             # Получаем все кейсы в этом баттле
             battle_cases = BattleCase.objects.filter(
                 battle=battle).select_related("case")
-            print('battle_cases', battle_cases)
             # Кол-во игроков
             players_count = battle.players.count()
-            print('players_count', players_count)
             for battle_case in battle_cases:
                 # если case_amount > 1 — обрабатываем как отдельные кейсы
                 for _ in range(battle_case.case_amount):
@@ -439,6 +454,10 @@ def start_battle_game(game_id):
                         dropped_item = sync_spin_roulette_wheel(
                             battle_case.case)
                         dropped_item_dict = dropped_item.model_dump()
+                        dropped_item_dict['state'] = sync_spin_state_wheel(
+                            dropped_item_dict['id'])
+                        dropped_item_dict['price'] = dropped_item_dict[
+                            f"price_{dropped_item_dict['state']}"]
                         drops.append(dropped_item_dict)
 
                     results.append({
@@ -447,15 +466,12 @@ def start_battle_game(game_id):
                     })
 
             # Генерируем проигрышные предметы
-            lose_data = generate_lose_items(battle, players_count)
-            print('generate_lose_items', players_count)
+            lose_data, min_price = generate_lose_items(battle, players_count)
             player_items, winner_player_id = find_winner(
                 battle, data={"won_data": results, "lose_data": lose_data})
-            print('winner_player_id', winner_player_id, 6666777766666)
             process_results_to_inventory_for_player(
                 results=results, player_id=winner_player_id)
-            print('player_items', player_items)
-            add_lose_items_to_inventory(player_items)
+            add_lose_items_to_inventory(player_items, min_price)
             for item in player_items:
                 user = item['player']  # объект User
                 item['player'] = {
@@ -467,6 +483,11 @@ def start_battle_game(game_id):
             battle.game_state = "finished"
             battle.is_active = False
             battle.save()
+            print({
+                "players_items": player_items,
+                "winner_id": winner_player_id,
+                "won_data": results
+            })
             return {
                 "players_items": player_items,
                 "winner_id": winner_player_id,

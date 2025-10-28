@@ -15,7 +15,8 @@ interface GunData {
     gunPrice: number
     imgPath: string
     type: "usuall" | "rare" | "elite" | "epic" | "classified",
-    state: items_state
+    state: items_state,
+    inventory_id?: string
 }
 
 

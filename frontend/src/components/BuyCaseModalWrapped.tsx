@@ -12,8 +12,15 @@ import BattleModalBtn from '@/components/BattleModalBtn'
 
 import 'swiper/css';
 import { useTranslations } from 'next-intl';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 import { motion } from "motion/react"
+import { AxiosError } from "axios";
+import { showRafflesStateModal } from '@/redux/modalReducer'
+import { setUserMoney } from '@/redux/userReducer'
+import { BACKEND_PATHS } from '@/utilites/urls'
+import { showUnAuthModal } from '@/redux/modalReducer'
+
+import api from "@/lib/api";
 
 function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode {
     const swiperRef = useRef<any>(null);
@@ -22,6 +29,8 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
     const t = useTranslations("homePage")
     const [showPrize, setShowPrize] = useState(false);
     const isClosetRef = useRef<boolean>(false)
+    const t_prof = useTranslations("profile")
+    const dispatch = useAppDispatch()
 
     const { caseName, items, prize_index, prize_item } = useAppSelector(state => state.modal.rulletCaseModal)
     // 👉 базовый массив предметов
@@ -63,11 +72,6 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
         };
     }, []);
 
-    const stopAll = () => {
-        timeoutsRef.current.forEach((id) => clearTimeout(id));
-        timeoutsRef.current = [];
-        isSpinningRef.current = false;
-    };
 
     // const spinToSlide = (
     //     targetIndex: number,
@@ -114,6 +118,25 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
     //     }
     // };
 
+    async function sellItemNow() {
+        try {
+            console.log(prize_item.inventory_id)
+            const response = await api.post(BACKEND_PATHS.sellItem, {
+                itemId: prize_item.inventory_id
+            });
+            dispatch(setUserMoney(response.data.new_balance))
+        } catch (err) {
+            const error = err as AxiosError;
+            if (error.response?.status === 401) {
+                dispatch(showUnAuthModal())
+            } else if (error.response?.status === 416) {
+                dispatch(showRafflesStateModal({ title: t_prof("err"), sub_title: `${t_prof("marketable_error_text")}` }))
+            } else {
+                console.error("Неизвестная ошибка", error);
+            }
+        }
+    }
+
     const spinToSlide = (target: number, targetId: string) => {
         if (!swiperRef.current || isSpinningRef.current) return;
         isSpinningRef.current = true;
@@ -124,22 +147,18 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
 
         const totalStepsRollet = slides.length * 2 + target; // минимум 30 шагов
         const moveStep = () => {
-            console.log(targetId, 777777777)
 
             if (!swiperRef.current || isClosetRef.current) return;
 
             const currentIndex = swiperRef.current.realIndex;
-            console.log(targetId, 666666666)
 
             // безопасная проверка
             if (currentIndex === undefined || !slides[currentIndex]) {
-                console.log(2222)
                 setTimeout(moveStep, minDuration);
                 return;
             }
 
             const currentSlide = slides[currentIndex];
-            console.log(currentSlide.id, targetId, 6555555)
             // Если нашли нужный слайд после мин. количества шагов
             if (step >= totalStepsRollet && currentSlide.id === targetId) {
                 isSpinningRef.current = false;
@@ -217,16 +236,16 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
                     </div>
                     <div className={style.wonGunBttn}>
                         <div className={style.wonGunBttnTake}>
-                            <CaseBtnText text={t('take')} />
+                            <CaseBtnText onClick={() => { close() }} text={t('take')} />
                         </div>
-                        <BattleModalBtn text={t('sell')} />
+                        <BattleModalBtn text={t('sell')} clickBttn={async () => { await sellItemNow(); close() }} />
                     </div>
                 </motion.div>
             )}
 
 
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            {/* <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                 <button
                     onClick={() => {
                         const target = Math.floor(Math.random() * slides.length);
@@ -234,13 +253,13 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
                     }}
                 >
                     Spin random
-                </button>
+                </button> */}
 
-                {/* <button onClick={() => spinToSlide(0)}>To slide 1</button>
+            {/* <button onClick={() => spinToSlide(0)}>To slide 1</button>
                 <button onClick={() => spinToSlide(slides.length - 1)}>To last</button>
 
                 <button onClick={stopAll}>Stop</button> */}
-            </div>
+            {/* </div> */}
         </div>
     );
 }

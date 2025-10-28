@@ -302,9 +302,10 @@ def sync_spin_roulette_wheel(case, user):
     for item in items:
         cumulative += item.drop_chance
         if roll <= cumulative:
+            del item.drop_chance
             return item  # Этот предмет выпал
 
-    # На всякий случай — если не попали (редко), возвращаем последний
+    del items[0].drop_chance
     return items[0]
 
 
@@ -678,22 +679,26 @@ async def get_case_items(case_id):
     items = await sync_to_async(lambda: list(
         ItemRedisStandart.find(ItemRedisStandart.case_id == case_id).all()
     ))()
+
     if not items:
         raise NotFoundError("Items not found for this case")
 
-    return [
-        {
+    result = []
+    for item in items:
+        state_value = await spin_state_wheel_fake()  # отдельная переменная для await
+        price_for_state = getattr(item, f"price_{state_value}", item.price)
+        result.append({
             "id": item.id,
             "gunModel": item.item_model,
             "gunStyle": item.item_style,
             "gunPrice": item.price,
             "imgPath": item.icon_url,
             "type": item.rarity,
-            "price": item.price,
-            "state": await spin_state_wheel_fake()
-        }
-        for item in items
-    ]
+            "price": price_for_state,
+            "state": state_value
+        })
+
+    return result
 
 
 def sync_get_case_items(case_id):
