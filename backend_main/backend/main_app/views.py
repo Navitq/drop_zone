@@ -347,7 +347,7 @@ def sync_spin_state_wheel_fake():
 #     return EXTERIOR_CHOICES[int(round(index))][0]
 
 
-def sync_spin_state_wheel(user, item):
+def sync_spin_state_wheel(user, item,  min_value=None, max_value=None, prize_value=None):
     """Синхронная версия: определяет состояние предмета на основе коэффициентов из Redis и шанса пользователя"""
     try:
         if getattr(item, "pk", None):
@@ -375,6 +375,48 @@ def sync_spin_state_wheel(user, item):
         }
 
         # 🧩 Сортируем коэффициенты от большего к меньшему
+        if min_value is not None and max_value is not None and prize_value is not None:
+            # 🧩 Верхняя граница диапазона
+            upper_limit = min((prize_value - min_value)
+                              * 2 + min_value, max_value)
+
+            # 🎲 Случайное число (0–100)
+            rand_num = secrets.randbelow(10000) / 100.0
+            rand_num *= float(user.item_state_chance)
+            rand_num = min(rand_num, upper_limit)
+
+            # 💰 Цены по состояниям
+            by_price = {
+                "battle_scarred": float(item.price_battle_scarred),
+                "well_worn": float(item.price_well_worn),
+                "field_tested": float(item.price_field_tested),
+                "minimal_wear": float(item.price_minimal_wear),
+                "factory_new": float(item.price_factory_new),
+            }
+
+            cumulative = 0
+            names = list(chances.keys())
+            values = list(chances.values())
+
+            for i, (name, chance) in enumerate(zip(names, values)):
+                cumulative += chance
+                print(cumulative, min_value, max_value, prize_value,
+                      "cumulative, min_value, max_value, prize_value,")
+                # 🔹 Если рандомное число попало в диапазон вероятности
+                # и цена этого состояния выше минимальной (т.е. предмет "достойный")
+                if rand_num <= cumulative and float(min_value) <= float(by_price[name]) <= float(max_value):
+                    return name
+
+                # 🔸 Дополнительная проверка — если следующая цена уже выше лимита
+                # (например, prize_value близко к max_value)
+                if i + 1 < len(names):
+                    next_name = names[i + 1]
+                    next_price = by_price[next_name]
+                    if next_price > upper_limit and by_price[name] >= float(min_value):
+                        return name
+
+            # ⚙️ Если ничего не подошло (редкий случай) — возвращаем средний вариант
+            return "field_tested"
 
         # 🎲 Генерируем случайное число от 0 до 100
         rand_num = secrets.randbelow(
@@ -738,7 +780,6 @@ def sync_get_user_inventory_items(user, ids: list[str]):
             )
 
         # Асинхронный вызов
-        print(222222222)
         items = fetch_items()
         if not items or len(items) != len(ids):
             return JsonResponse({"status": "ObjectDoesNotExist"}, status=411)
@@ -791,7 +832,6 @@ def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
     Если предметов нет, возвращает JsonResponse с 410.
     """
     # Функция поиска предмета в диапазоне
-    print("7777777777777777",  min_value, prize_value)
 
     def find_item_in_range(min_val, max_val):
         def fetch_items():
@@ -801,21 +841,17 @@ def get_random_item_contracts(prize_value: Decimal, min_value: Decimal):
                 .order_by('price')
             )
         return fetch_items()
-    print("4451231241231",  min_value, prize_value)
     items = find_item_in_range(min_value, prize_value)
-    print("123123",  min_value, prize_value)
     if items:
         # Находим предмет с ценой максимально близкой к prize_value
         closest_item = min(items, key=lambda x: abs(x.price - prize_value))
         return closest_item
-    print("ccccccc")
 
     # Если не найдено, расширяем поиск до min_value*4
     items = find_item_in_range(prize_value, min_value * 4)
     if items:
         closest_item = min(items, key=lambda x: abs(x.price - prize_value))
         return closest_item
-    print("123123")
 
     # Если предметов нет вообще
     return JsonResponse({"detail": "No items found"}, status=410)
@@ -841,16 +877,13 @@ def play_contracts_game(user, items: list):
     Игра "контракты": на вход список InventoryItem, на выход приз.
     """
     # 1. Считаем общую стоимость предметов
-    print("sssssssssssssssssssssssss")
     total_price = sum(
         # допустим, у steam_item есть поле price
-        Decimal(item.steam_item.price) for item in items
+        Decimal(item.price) for item in items
     )
 
     # 2. Получаем глобальный коэффициент из Redis
-    print("--------------------")
     ad = GlobalCoefficientRedis.find().first()
-    print("++++++++++++++++++++")
     pgrades_global = ad.contracts_global
 
     # 3. Берём персональный коэффициент
@@ -859,29 +892,27 @@ def play_contracts_game(user, items: list):
     # 4. Финальный шанс
     final_coeff = Decimal(pgrades_global) * Decimal(personal_coeff)
 
-    # 5. Определяем исход
-    min_value = Decimal(total_price) / Decimal(4)
-    max_value = Decimal(total_price) * Decimal(4)
+    # 3️⃣ Диапазон возможных наград
+    min_value = total_price / Decimal(4)
+    max_value = total_price * Decimal(4)
 
-    # итоговый коэффициент
-    a = Decimal(secrets.randbelow(101)) * final_coeff
-    b = Decimal(secrets.randbelow(101))
-    print(a, b)
-    # защищаем от деления на ноль
-    if b == Decimal(0):
-        b = Decimal(0.1)
+    # 4️⃣ Псевдо-рандом с управляемым распределением
+    roll = Decimal(secrets.randbelow(10001)) / Decimal(10000)  # [0, 1]
+    bias = final_coeff  # регулируемый множитель "везения"
 
-    cof = min(Decimal(a / b), Decimal('1.0'))  # гарантированно в [0, 1]
-    print(cof)
-    print("ddddddddasdaw", min_value, cof, max_value,
-          total_price)
-    # линейная интерполяция
-    prize_value = Decimal(min_value) + (Decimal(max_value) -
-                                        Decimal(min_value)) * Decimal(cof)
-    print("7777777777777777")
+    # 5️⃣ Управление кривизной распределения
+    # чем выше power (<1) — тем больше шанс на дорогой приз
+    # чем выше power (>1) — тем больше шанс на дешёвый
+    power = Decimal(1) / (bias if bias > 0 else Decimal(1))
+    cof = roll ** power
+    cof = min(max(cof, Decimal(0)), Decimal(1))
+
+    # 6️⃣ Линейная интерполяция (честная и контролируемая)
+    prize_value = min_value + (max_value - min_value) * cof
+
     prize_item = get_random_item_contracts(
         prize_value=prize_value, min_value=min_value)
-    return prize_item
+    return prize_item, min_value, max_value, prize_value
 
 
 def get_user_by_id(user_id: str):
@@ -919,7 +950,7 @@ def play_upgrade_game(user, server_item, client_item=None, price=None):
             "gunPrice": item.price,
             "imgPath": item.steam_item.icon_url,
             "type": item.steam_item.rarity,
-            "price": item.steam_item.price,
+            "price": item.price,
             "state": item_state
         }
         return JsonResponse({"status": "client win", 'items': order_to_send}, status=201)
@@ -1755,23 +1786,18 @@ def make_contract_view(request):
 
             item_ids = [str(item["id"])
                         for item in unique_items if "id" in item]
-            print(111111111111111111111111111, user_item.id, item_ids[0])
 
             inventoryItems = sync_get_user_inventory_items(
                 ids=item_ids, user=user_item)
             if isinstance(inventoryItems, JsonResponse):
                 return inventoryItems
-            print(2222222222222222222222222,
-                  inventoryItems[0].steam_item.id)
-            won_item = play_contracts_game(
+            won_item, min_value, max_value, prize_value = play_contracts_game(
                 user=user_item, items=inventoryItems)
-            print(333333333333333333333333333333)
             if isinstance(won_item, JsonResponse):
                 return won_item
             remove_inventory_objects(items=inventoryItems)
-            print(44444444444444444444444444444444444)
-            print(5555555555555555555555555555555555555)
-            state = sync_spin_state_wheel(user_item, won_item)
+            state = sync_spin_state_wheel(
+                user_item, won_item, min_value=min_value, max_value=max_value, prize_value=prize_value)
             print(6666666666666666666666666666666666666666666)
             user_item.total_contracts += 1
             TotalActionAmount.increment_total_contracts()
@@ -1783,10 +1809,10 @@ def make_contract_view(request):
                 "id": str(order.id),
                 "gunModel": order.steam_item.item_model,
                 "gunStyle": order.steam_item.item_style,
-                "gunPrice": order.steam_item.price,
+                "gunPrice": order.price,
                 "imgPath": order.steam_item.icon_url,
                 "type": order.steam_item.rarity,
-                "price": order.steam_item.price,
+                "price": order.price,
                 "state": state
             }
             print(order_to_send)
@@ -1942,7 +1968,7 @@ def sell_inventory_item_view(request):
             item = InventoryItem.objects.select_for_update().get(owner=user, id=item_id)
             if not item.tradable or not item.marketable:
                 return JsonResponse({'error': 'Предмет уже забронирован или недоступен для торговли'}, status=416)
-            user.money_amount += item.steam_item.price
+            user.money_amount += item.price
             user.save(update_fields=['money_amount'])
             item.delete()
             return JsonResponse({'success': True, 'new_balance': user.money_amount})

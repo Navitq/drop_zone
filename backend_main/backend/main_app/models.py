@@ -620,15 +620,11 @@ class Raffles(models.Model):
 
 
 class GlobalCoefficient(models.Model):
-    raffles_global = models.FloatField(
-        default=1.0, verbose_name="Коэф. розыгрышей")
     cases_global = models.FloatField(default=1.0, verbose_name="Коэф. кейсов")
     upgrades_global = models.FloatField(
         default=1.0, verbose_name="Коэф. апгрейдов")
     contracts_global = models.FloatField(
         default=1.0, verbose_name="Коэф. контрактов")
-    battles_global = models.FloatField(
-        default=1.0, verbose_name="Коэф. баттлов")
 
     def save(self, *args, **kwargs):
         self.pk = 1  # всегда одна запись с id=1

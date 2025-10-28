@@ -124,11 +124,10 @@ class RafflesRedis(JsonModel):
 
 
 class GlobalCoefficientRedis(JsonModel):
-    raffles_global: float
     cases_global: float
     upgrades_global: float
     contracts_global: float
-    battles_global: float
+
 
 
 class PlayerInfo(BaseModel):

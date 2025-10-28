@@ -150,11 +150,9 @@ def load_global_coefficient_main():
 
         # Сохраняем только последний объект
         GlobalCoefficientRedis(
-            raffles_global=ad.raffles_global,
             cases_global=ad.cases_global,
             upgrades_global=ad.upgrades_global,
             contracts_global=ad.contracts_global,
-            battles_global=ad.battles_global,
         ).save()
 
         print("✅ Redis синхронизирован: сохранена последняя запись GlobalCoefficientRedis")
