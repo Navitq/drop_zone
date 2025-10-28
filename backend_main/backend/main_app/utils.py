@@ -184,6 +184,7 @@ def load_raffles():
                     "gunModel": raffle.prize_item.item_model,
                     "gunStyle": raffle.prize_item.item_style,
                     "rarity": raffle.prize_item.rarity,
+                    "exterior_wear": raffle.exterior_wear
                 } if raffle.prize_item else {},
                 players_ids=[str(p.id) for p in raffle.players.all()],
                 participate_price=float(raffle.participate_price),

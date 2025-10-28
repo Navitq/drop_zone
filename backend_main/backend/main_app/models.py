@@ -571,12 +571,22 @@ class BackgroundMainPage(models.Model):
 
 
 class Raffles(models.Model):
+    EXTERIOR_CHOICES = [
+        ("factory_new", "Factory New"),
+        ("minimal_wear", "Minimal Wear"),
+        ("field_tested", "Field-Tested"),
+        ("well_worn", "Well-Worn"),
+        ("battle_scarred", "Battle-Scarred"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, null=False, blank=False)
     prize_item = models.ForeignKey(
         SteamItemCs, on_delete=models.SET_NULL, related_name="raffles", null=True, blank=False)
     players = models.ManyToManyField(
         User, related_name="raffles", blank=True)
+    exterior_wear = models.CharField(
+        max_length=20, choices=EXTERIOR_CHOICES, null=False, blank=False, default="field_tested")
     participate_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
