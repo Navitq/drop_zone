@@ -1295,7 +1295,7 @@ async def vk_callback_view(request):
             "first_name"), token_data_user.get("last_name")])).strip() or token_data_user['email'] or f"vk_{token_data_user['user_id']}"
         username = username[:200]
         email = token_data_user.get('email') or None
-        user = await sync_to_async(lambda: User.objects.create_user(
+        user = await sync_to_async(lambda: User.objects.create(
             username=username,
             email=email,
             first_name=token_data_user["first_name"],
@@ -1387,10 +1387,11 @@ async def google_callback_view(request):
 
     except SocialAccount.DoesNotExist:
         # Создаём нового пользователя
-        username = name or email or f"google_{google_id}",
+        print(name)
+        username = name or email or f"google_{google_id}"
         username = username[:200]
-
-        user = await sync_to_async(lambda: User.objects.create_user(
+        print(username, "username")
+        user = await sync_to_async(lambda: User.objects.create(
             username=username,
             email=email,
             first_name=first_name,

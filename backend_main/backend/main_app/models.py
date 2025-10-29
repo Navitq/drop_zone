@@ -18,23 +18,20 @@ from decimal import Decimal  # ← вот это добавь
 # ----------------------------
 
 
+# Пользователь
+# ----------------------------
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, username=None, email=None, password=None, **extra_fields):
         if not username and not email:
             raise ValueError("User must have username or email")
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, **extra_fields)
-        if password:  # дописанное
-            user.set_password(password)  # дописанное
         user.save(using=self._db)
         return user
 
-# ----------------------------
-# Пользователь
-# ----------------------------
 
-
-class User(AbstractBaseUser, PermissionsMixin):
+class User(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     username = models.CharField(
@@ -71,7 +68,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     token_version = models.PositiveIntegerField(
         blank=True, null=False, default=0)
-    objects = CustomUserManager()
     money_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -658,7 +654,7 @@ class GlobalCoefficient(models.Model):
         verbose_name_plural = "Глобальные коэффициенты"
 
     def __str__(self):
-        return f"Коэф: raffles={self.raffles_global}, cases={self.cases_global}, upgrades={self.upgrades_global}"
+        return f"Коэф: cases={self.cases_global}, upgrades={self.upgrades_global}, contracts={self.contracts_global}"
 
 # waiting | in_process | canceled | finished
 

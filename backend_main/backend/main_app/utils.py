@@ -318,7 +318,7 @@ def load_crown_filter():
         try:
             coeff_obj = CrownFilterData.objects.get()
         except CrownFilterData.DoesNotExist:
-            print("❌ В базе нет GlobalStateCoeff")
+            print("❌ В базе нет CrownFilterData")
             return
 
         # создаём объект для Redis и сохраняем

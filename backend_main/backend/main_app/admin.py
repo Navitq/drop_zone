@@ -1,9 +1,11 @@
 from django.contrib import admin
-from .models import SocialAccount,  BattleCase, CrownFilterData, TotalActionAmount, GlobalStateCoeff, Raffles, ItemsOrders, Battle, GlobalCoefficient, BackgroundMainPage, Advertisement, User, SteamItemCs, InventoryItem, ItemsOrders, Case, CaseItem
+from .models import SocialAccount,  BattleCase, CrownFilterData, TotalActionAmount, GlobalStateCoeff, Raffles, ItemsOrders, Battle, GlobalCoefficient, BackgroundMainPage, Advertisement, User as UserCustom, SteamItemCs, InventoryItem, ItemsOrders, Case, CaseItem
 
 # Register your models here.
+
 admin.site.register(SocialAccount)
-admin.site.register(User)
+admin.site.register(UserCustom)
+
 admin.site.register(SteamItemCs)
 admin.site.register(InventoryItem)
 admin.site.register(ItemsOrders)
