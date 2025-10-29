@@ -35,6 +35,21 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percent / 100) * circumference;
+    const [delayedVisible, setDelayedVisible] = useState(false);
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+
+        if (gameState.visible) {
+            // 🕒 включаем с задержкой 0.5 сек
+            timer = setTimeout(() => setDelayedVisible(true), 1300);
+        } else {
+            // сразу скрываем, если gameState.visible = false
+            setDelayedVisible(false);
+        }
+
+        return () => clearTimeout(timer);
+    }, [gameState.visible]);
 
     useEffect(() => {
         dispatch(clearGameState())
@@ -45,8 +60,8 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
             setPercent(0);
         } else {
             const localPersentage = parseFloat((price / (serverPrice * 1.05) * 100).toFixed(2));
-            if (localPersentage > 90) {
-                setPercent(90);
+            if (localPersentage > 95) {
+                setPercent(95);
             } else if (localPersentage < 1) {
                 setPercent(1);
             } else {
@@ -221,7 +236,7 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
                     dominantBaseline="middle"
                     fill="white"
                 >
-                    {gameState.visible && (
+                    {delayedVisible && (
                         <tspan
                             x={center}
                             dy="-25"        // поднимаем вверх только если видим
@@ -232,7 +247,7 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
                             {gameState.text}
                         </tspan>
                     )}
-                    <tspan x={center} dy={gameState.visible ? "40" : "0"} fontSize="32px" fontFamily="var(--font-headBold)">
+                    <tspan x={center} dy={delayedVisible ? "40" : "0"} fontSize="32px" fontFamily="var(--font-headBold)">
                         {percent.toFixed(2)}%
                     </tspan>
                     <tspan
