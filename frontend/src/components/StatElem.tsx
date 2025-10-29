@@ -22,7 +22,7 @@ function StatElem(props: StatElemProps): React.ReactNode {
     return (
         <div className={styles.statElem}>
             <div className={styles.statElemImgCnt}>
-                <Image width={30} height={30} src={`${props.imgPath}`} alt={t(`${props.imgAltKey}`)} />
+                <Image fill src={`${props.imgPath}`} alt={t(`${props.imgAltKey}`)} />
             </div>
             <div className={styles.statElemTextCnt}>
                 <FooterText text={t(props.titleKey) + ":"} sizeClass={'fifteen_sz'}></FooterText>

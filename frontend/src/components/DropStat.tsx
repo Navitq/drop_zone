@@ -38,10 +38,10 @@ function DropStat(): React.ReactNode {
     return (
 
         <>
-            <StatElem message={messages || messages === 0 ? messages.contracts : null} imgPath="/images/luggage.svg" titleKey="contracts_st" imgAltKey="luggage_st"></StatElem>
-            <StatElem message={messages || messages === 0 ? messages.battles : null} imgPath="/images/shooting.svg" titleKey="battles_st" imgAltKey="shooting_st"></StatElem>
-            <StatElem message={messages || messages === 0 ? messages.upgrades : null} imgPath="/images/key.svg" titleKey="upgrades_st" imgAltKey="key_st"></StatElem>
-            <StatElem message={messages || messages === 0 ? messages.cases : null} imgPath="/images/arrow.svg" titleKey="cases_st" imgAltKey="arrow_st"></StatElem>
+            <StatElem message={messages || messages === 0 ? messages.contracts : null} imgPath="/images/luggage_stat_gd.svg" titleKey="contracts_st" imgAltKey="luggage_st"></StatElem>
+            <StatElem message={messages || messages === 0 ? messages.battles : null} imgPath="/images/shooting_stat_gd.svg" titleKey="battles_st" imgAltKey="shooting_st"></StatElem>
+            <StatElem message={messages || messages === 0 ? messages.upgrades : null} imgPath="/images/key_stat_gd.svg" titleKey="upgrades_st" imgAltKey="key_st"></StatElem>
+            <StatElem message={messages || messages === 0 ? messages.cases : null} imgPath="/images/arrow_stat_gd.svg" titleKey="cases_st" imgAltKey="arrow_st"></StatElem>
         </>
     )
 }
