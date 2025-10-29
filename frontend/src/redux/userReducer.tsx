@@ -26,7 +26,7 @@ export const initialState: AuthState = {
         phone: '',
         address: '',
         provider: "",
-        avatar: '/images/user_mock.jpg', // путь к изображению
+        avatar: '/images/avatar.svg', // путь к изображению
         money_amount: 720,
     },
     isAuth: false,

@@ -46,7 +46,7 @@ function AuthHeader(): React.ReactNode {
             </div>
             <div className={style.userIconBlock} onClick={() => { showModal() }}>
                 <div className={style.userIconCnt}>
-                    <Image priority={true} className={style.userIcon} src={avatar || "/images/user_mock.jpg"} height={20} width={20} alt={t("user_icon")}></Image>
+                    <Image priority={true} className={style.userIcon} src={avatar || "/images/avatar.svg"} height={20} width={20} alt={t("user_icon")}></Image>
                 </div>
                 <AnimatePresence initial={false} mode="wait">
                     {
