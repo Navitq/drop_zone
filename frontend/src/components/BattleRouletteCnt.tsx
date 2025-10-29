@@ -90,9 +90,19 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
           : 1;
     return Array.from(
       { length: activeCaseRoulleteItems.length * multiplier },
-      (_, i) => activeCaseRoulleteItems[i % activeCaseRoulleteItems.length]
+      (_, i) => {
+        const item = activeCaseRoulleteItems[i % activeCaseRoulleteItems.length];
+
+        // 🟢 если это предмет игрока — заменяем gunPrice на props.playerData.item.price
+        if (item.id === props.playerData?.item?.id) {
+          return { ...item, gunPrice: props.playerData.item.price };
+        }
+
+        // иначе возвращаем как есть
+        return item;
+      }
     );
-  }, [activeCaseRoulleteItems]);
+  }, [activeCaseRoulleteItems, props.playerData]);
 
 
   useEffect(() => {

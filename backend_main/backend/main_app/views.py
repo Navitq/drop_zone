@@ -687,11 +687,12 @@ async def get_case_items(case_id):
     for item in items:
         state_value = await spin_state_wheel_fake()  # отдельная переменная для await
         price_for_state = getattr(item, f"price_{state_value}", item.price)
+
         result.append({
             "id": item.id,
             "gunModel": item.item_model,
             "gunStyle": item.item_style,
-            "gunPrice": item.price,
+            "gunPrice": price_for_state,
             "imgPath": item.icon_url,
             "type": item.rarity,
             "price": price_for_state,
