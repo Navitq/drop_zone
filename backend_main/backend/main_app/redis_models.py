@@ -126,6 +126,7 @@ class RafflesRedis(JsonModel):
 
 
 class GlobalCoefficientRedis(JsonModel):
+    id: str = Field(index=True)
     cases_global: float
     upgrades_global: float
     contracts_global: float

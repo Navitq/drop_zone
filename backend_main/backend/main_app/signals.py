@@ -9,7 +9,7 @@ from .models import Case, Battle, BattleCase, CrownFilterData, TotalActionAmount
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
-from main_app.redis_models import CaseInfo, AdvertisementRedis, BackgroundMainPageRedis, PlayerInfo, ItemRedisStandart, CaseRedisStandart, CrownFilterDataRedis, add_last_item
+from main_app.redis_models import CaseInfo, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, BackgroundMainPageRedis, PlayerInfo, ItemRedisStandart, CaseRedisStandart, CrownFilterDataRedis, add_last_item
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from redis.exceptions import RedisError
@@ -176,10 +176,9 @@ def advertisement_saved(sender, instance, created, **kwargs):
     if not os.environ.get("RUN_MAIN") == "true":
         return
     try:
-        pass
         load_advertisement()
     except RedisConnectionError:
-        pass
+        print("❌ Redis недоступен при сохранении рекламы")
 
 
 @receiver(post_delete, sender=Advertisement)
@@ -192,15 +191,7 @@ def advertisement_deleted(sender, instance, **kwargs):
         AdvertisementRedis.db().ping()
 
         # Проверяем, есть ли такая запись в Redis
-        deleted_count = AdvertisementRedis.find(
-            AdvertisementRedis.id == str(instance.id)).delete()
-
-        if deleted_count:
-            print(f"🗑️ Удалена реклама из Redis: id={instance.id}")
-        else:
-            print(
-                f"⚠️ Реклама id={instance.id} не найдена в Redis — возможно, уже была удалена")
-
+        load_advertisement()
     except RedisConnectionError:
         print("❌ Redis недоступен при удалении рекламы")
 
@@ -213,10 +204,9 @@ def background_main_saved(sender, instance, created, **kwargs):
     if not os.environ.get("RUN_MAIN") == "true":
         return
     try:
-        pass
         load_background_main()
     except RedisConnectionError:
-        pass
+        print("❌ Redis недоступен при сохранении фона")
 
 
 @receiver(post_delete, sender=BackgroundMainPage)
@@ -229,19 +219,13 @@ def background_main_deleted(sender, instance, **kwargs):
         BackgroundMainPageRedis.db().ping()
 
         # Проверяем, есть ли такая запись в Redis
-        deleted_count = BackgroundMainPageRedis.find(
-            BackgroundMainPageRedis.id == str(instance.id)).delete()
-
-        if deleted_count:
-            print(f"🗑️ Удалена реклама из Redis: id={instance.id}")
-        else:
-            print(
-                f"⚠️ Реклама id={instance.id} не найдена в Redis — возможно, уже была удалена")
-
+        load_background_main()
     except RedisConnectionError:
         print("❌ Redis недоступен при удалении рекламы")
 
 # STOP!!!!!!!!!!
+
+
 @receiver(post_save, sender=GlobalCoefficient)
 def load_global_coefficient_main_saved(sender, instance, created, **kwargs):
     """
@@ -253,18 +237,71 @@ def load_global_coefficient_main_saved(sender, instance, created, **kwargs):
 
         load_global_coefficient_main()
     except RedisConnectionError:
-        pass
+        print("❌ Redis недоступен при сохранении рекламы")
+
+
+@receiver(post_delete, sender=GlobalCoefficient)
+def load_global_coefficient_main_deleted(sender, instance, **kwargs):
+    """Удаление конкретной рекламы из Redis"""
+    if not os.environ.get("RUN_MAIN") == "true":
+        return
+    try:
+        GlobalCoefficientRedis.db().ping()
+        # Проверяем, есть ли такая запись в Redis
+        load_global_coefficient_main()
+    except RedisConnectionError:
+        print("❌ Redis недоступен при удалении глоб коэфф")
+
+
+@receiver(post_delete, sender=Raffles)
+def raffle_deleted(sender, instance, **kwargs):
+    """Удаление конкретного розыгрыша из Redis"""
+    if os.environ.get("RUN_MAIN") != "true":
+        return
+
+    try:
+        # Проверяем доступность Redis
+        RafflesRedis.db().ping()
+
+        # Находим запись по ID
+        RafflesRedis.find(RafflesRedis.id == str(instance.id)).delete()
+        print(f"✅ Розыгрыш {instance.id} удалён из Redis")
+
+    except RedisConnectionError:
+        print("❌ Redis недоступен при удалении розыгрыша")
 
 
 @receiver(post_save, sender=Raffles)
 def raffle_saved(sender, instance, created, **kwargs):
-    # Если объект создан — всегда обрабатываем
     if os.environ.get("RUN_MAIN") != "true":
         return
+
     try:
-        load_raffles()
+        # Проверим доступность Redis
+        RafflesRedis.db().ping()
+
+        raffle = instance  # изменённая запись
+        RafflesRedis(
+            id=str(raffle.id),
+            prize_item={
+                "id": str(raffle.prize_item.id),
+                "imgUrl": raffle.prize_item.icon_url,
+                "gunModel": raffle.prize_item.item_model,
+                "gunStyle": raffle.prize_item.item_style,
+                "rarity": raffle.prize_item.rarity,
+                "exterior_wear": raffle.exterior_wear
+            } if raffle.prize_item else {},
+            players_ids=[str(p.id) for p in raffle.players.all()],
+            participate_price=float(raffle.participate_price),
+            fake_users_amount=raffle.fake_users_amount or 0,
+            max_users_amount=raffle.max_users_amount,
+            end_date=raffle.end_date
+        ).save()
+
+        print(f"✅ Redis обновлён: запись {raffle.id}")
+
     except RedisConnectionError:
-        pass
+        print(f"❌ Redis недоступен при удалении raffles {raffle.id}")
 
 
 # @receiver(post_save, sender=Battle)

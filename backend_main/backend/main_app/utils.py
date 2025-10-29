@@ -152,6 +152,7 @@ def load_global_coefficient_main():
 
         # Сохраняем только последний объект
         GlobalCoefficientRedis(
+            id=str(ad.id),
             cases_global=ad.cases_global,
             upgrades_global=ad.upgrades_global,
             contracts_global=ad.contracts_global,
