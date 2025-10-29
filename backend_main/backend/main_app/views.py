@@ -505,7 +505,7 @@ async def spin_state_wheel(user):
 #     return EXTERIOR_CHOICES[int(round(index))][0]
 
 
-def sync_create_order(item_state: str, item, user, case=None):
+def sync_create_order(item_state: str, item, user, type=None, case=None):
     """
     Создаёт InventoryItem для пользователя и сохраняет в БД.
     """
@@ -533,13 +533,15 @@ def sync_create_order(item_state: str, item, user, case=None):
                 steam_item=steam_item,
                 owner=user,
                 exterior_wear=item_state,
-                case_id=case.id
+                case_id=case.id,
+                created_game=type,
             )
         else:
             return InventoryItem.objects.create(
                 steam_item=steam_item,
                 owner=user,
                 exterior_wear=item_state,
+                created_game=type
             )
     except DatabaseError as e:
         print(f"Ошибка при создании InventoryItem: {e}")
@@ -948,7 +950,7 @@ def play_upgrade_game(user, server_item, client_item=None, price=None):
     TotalActionAmount.increment_total_upgrades()
     user.save()
     if spin_state is True:
-        item = sync_create_order(item_state, server_item, user)
+        item = sync_create_order(item_state, server_item, user, type="upgrade")
         order_to_send = {
             "id": str(item.id),
             "gunModel": item.steam_item.item_model,
@@ -1506,7 +1508,7 @@ def get_open_case_view(request, case_id):
                             }
                     money_check["user"].save()
                     inventory_item = sync_create_order(
-                        item_state, prize_item, money_check["user"], money_check["case"])
+                        item_state, prize_item, money_check["user"], type="case", case=money_check["case"])
                     prize_dict = {
                         "id": prize_item.id,
                         "gunModel": prize_item.item_model,
@@ -1809,7 +1811,7 @@ def make_contract_view(request):
             TotalActionAmount.increment_total_contracts()
             user_item.save()
             order = sync_create_order(
-                item_state=state, item=won_item, user=user_item)
+                item_state=state, item=won_item, user=user_item, type="contract")
             print(77777777777777777777777777777777777777)
             order_to_send = {
                 "id": str(order.id),

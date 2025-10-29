@@ -390,6 +390,7 @@ def sync_create_order(item_state: str, item, user):
             steam_item=steam_item,
             owner=user,
             exterior_wear=item_state,
+            created_game="battle"
         )
     except DatabaseError as e:
         print(f"Ошибка при создании InventoryItem: {e}")

@@ -230,13 +230,12 @@ def raffle_players_changed(sender, instance, action, **kwargs):
 def inventory_item_created(sender, instance, created, **kwargs):
     if not created:
         return  # ##### только при первом создании
-
+    print(1231123213231321213321)
     channel_layer = get_channel_layer()
 
     # Получаем данные кейса
     case_id = getattr(instance, 'case_id', None)
-    if not case_id:
-        return
+
     case_img = None
     if case_id:
         try:
@@ -244,7 +243,17 @@ def inventory_item_created(sender, instance, created, **kwargs):
             case_img = case.icon_url
         except Case.DoesNotExist:
             case_img = None
-
+    else:
+        if instance.created_game == "upgrade":
+            case_img = "/images/profile_arrow.svg"
+        elif instance.created_game == "battle":
+            case_img = "/images/profile_shooting.svg"
+        elif instance.created_game == "contract":
+            case_img = "/images/profile_luggage.svg"
+        elif instance.created_game == "raffles":
+            case_img = "/images/gift.svg"
+        else:
+            case_img = "/images/profile_arrow.svg"
     # Данные пользователя
     user = instance.owner
     user_id = str(user.id)
@@ -253,7 +262,7 @@ def inventory_item_created(sender, instance, created, **kwargs):
 
     # Формируем payload
     payload = {
-        "case_id": case_id,
+        "case_id": case_id or 0,
         "id": str(instance.id),
         "imgPath": instance.steam_item.icon_url or "",
         "gunModel": instance.steam_item.item_model or "",

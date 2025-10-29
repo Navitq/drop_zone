@@ -331,6 +331,14 @@ class InventoryItem(models.Model):
         ("battle_scarred", "Battle-Scarred"),
     ]
 
+    GAME_CHOICES = [
+        ("upgrade", "Upgrade"),
+        ("roulette", "Roulette"),
+        ("case", "Case"),
+        ("battle", "Battle"),
+        ("contract", "Contract"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     steam_item = models.ForeignKey(
         SteamItemCs, on_delete=models.CASCADE, related_name="instances")
@@ -340,7 +348,13 @@ class InventoryItem(models.Model):
         max_length=20, choices=EXTERIOR_CHOICES, null=False, blank=False)
 
     market_hash_name = models.CharField(max_length=250, blank=True, null=True)
-
+    created_game = models.CharField(
+        max_length=20,
+        choices=GAME_CHOICES,
+        default="upgrade",
+        blank=True,
+        null=True,
+    )
     owner = models.ForeignKey(User,
                               on_delete=models.CASCADE, related_name="inventory")
     tradable = models.BooleanField(default=True)

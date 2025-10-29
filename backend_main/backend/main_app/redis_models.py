@@ -129,7 +129,6 @@ class GlobalCoefficientRedis(JsonModel):
     contracts_global: float
 
 
-
 class PlayerInfo(BaseModel):
     id: str
     username: str
@@ -323,9 +322,6 @@ def push_last_20_items_to_redis():
     for instance in last_items:
         case_id = getattr(instance, 'case_id', None)
 
-        if not (case_id):
-            continue  # пропускаем неподходящие
-
         # Данные кейса
 
         case_img = None
@@ -335,6 +331,17 @@ def push_last_20_items_to_redis():
                 case_img = case.icon_url
             except Case.DoesNotExist:
                 case_img = None
+        else:
+            if instance.created_game == "upgrade":
+                case_img = "/images/profile_arrow.svg"
+            elif instance.created_game == "battle":
+                case_img = "/images/profile_shooting.svg"
+            elif instance.created_game == "contract":
+                case_img = "/images/profile_luggage.svg"
+            elif instance.created_game == "raffles":
+                case_img = "/images/gift.svg"
+            else:
+                case_img = "/images/profile_arrow.svg"
 
         # Данные пользователя
         user = instance.owner
@@ -405,7 +412,7 @@ def push_last_20_items_to_redis_crown():
                               None) in filter_obj.exterior_wear
         case_id = getattr(instance, 'case_id', None)
 
-        if not (price_ok and rarity_ok and exterior_ok and case_id):
+        if not (price_ok and rarity_ok and exterior_ok):
             continue  # пропускаем неподходящие
 
         # Данные кейса
@@ -417,6 +424,17 @@ def push_last_20_items_to_redis_crown():
                 case_img = case.icon_url
             except Case.DoesNotExist:
                 case_img = None
+        else:
+            if instance.created_game == "upgrade":
+                case_img = "/images/profile_arrow.svg"
+            elif instance.created_game == "battle":
+                case_img = "/images/profile_shooting.svg"
+            elif instance.created_game == "contract":
+                case_img = "/images/profile_luggage.svg"
+            elif instance.created_game == "raffles":
+                case_img = "/images/gift.svg"
+            else:
+                case_img = "/images/profile_arrow.svg"
 
         # Данные пользователя
         user = instance.owner
