@@ -103,12 +103,10 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     }, [props.textSortValue]);
 
     useEffect(() => {
-        console.log(props.isActiveProfile, props.deleteProfileItem, props.deleteProfileItem?.length == 0)
         if (!props.isActiveProfile || !props.deleteProfileItem || props.deleteProfileItem.length == 0) {
             return;
         }
 
-        console.log(676869656461626366)
         setItems(prevItems => {
             const newItems = prevItems.filter(
                 item => !props.deleteProfileItem!.includes(item.id)
@@ -133,7 +131,6 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
             return
         }
         totalDeletedRef.current.push(props.profileDeletedItems)
-        console.log(totalDeletedRef.current)
     }, [props.profileDeletedItems])
 
     useEffect(() => {
@@ -258,13 +255,11 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
     async function getInventory(page: number = 1) {
         try {
-            console.log(props.targetUrl, hasMoreRef.current)
             if (!props.targetUrl || !hasMoreRef.current) {
                 return
             }
             setLoading(true);
             let filteredDeletedLength = 0;
-            console.log(totalDeletedRef.current, addedItemsListRef)
             if (totalDeletedRef.current.length > 0) {
                 const filteredDeletedIds = totalDeletedRef.current.filter(
                     id => !addedItemsListRef.current.includes(id)
@@ -274,7 +269,6 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                 }
                 totalDeletedRef.current = []
             }
-            console.log(222222222222222222222222)
             const response = await api.post(props.targetUrl, {
                 page,
                 body: props.body,
@@ -282,7 +276,6 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                 sort_by: props.sortType || 1,
                 textSortValue: props.textSortValue || ''
             });
-            console.log(response.data)
             if (response?.status == 204) {
                 setHasMore(false)
                 return;
@@ -293,7 +286,21 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
                 const filteredItems = response.data.items.filter(
                     (item: gunItemModel) => !addedItemsListRef.current.includes(item.id)
                 );
-                return [...state, ...filteredItems];
+                const sortedList = [...state, ...filteredItems]
+                switch (props.sortType) {
+                    case 1: // по новизне (исходный порядок)
+                    case 2: // по имени
+                        break;
+                    case 3: // по цене вверх
+                        sortedList.sort((a, b) => a.price - b.price);
+                        break;
+                    case 4: // по цене вниз
+                        sortedList.sort((a, b) => b.price - a.price);
+                        break;
+                    default:
+                        break;
+                }
+                return sortedList;
             });
         } catch (err) {
             const error = err as AxiosError;
