@@ -73,21 +73,6 @@ class User(models.Model):
         decimal_places=2,
         default=0
     )
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='customuser_set',
-        blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name='groups',
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='customuser_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
-    )
-    USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = []
 
     def save(self, *args, **kwargs):
