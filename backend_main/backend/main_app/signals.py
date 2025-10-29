@@ -9,7 +9,7 @@ from .models import Case, Battle, BattleCase, CrownFilterData, TotalActionAmount
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
-from main_app.redis_models import CaseInfo, AdvertisementRedis, RafflesRedis, GlobalCoefficientRedis, BackgroundMainPageRedis, PlayerInfo, ItemRedisStandart, CaseRedisStandart, CrownFilterDataRedis, add_last_item
+from main_app.redis_models import CaseInfo, AdvertisementRedis, ActiveBattleRedis, RafflesRedis, GlobalCoefficientRedis, BackgroundMainPageRedis, PlayerInfo, ItemRedisStandart, CaseRedisStandart, CrownFilterDataRedis, add_last_item
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from redis.exceptions import RedisError
@@ -332,6 +332,30 @@ def battle_saved(sender, instance, created, **kwargs):
     #     "is_active": instance.is_active})
 
 
+@receiver(post_delete, sender=Battle)
+def battle_deleted(sender, instance, **kwargs):
+    """
+    Удаляет битву из Redis при удалении из базы
+    """
+    if os.environ.get("RUN_MAIN") != "true":
+        return
+
+    try:
+        # Проверяем доступность Redis
+        ActiveBattleRedis.db().ping()
+
+        # Удаляем битву по ID
+        ActiveBattleRedis.find(ActiveBattleRedis.id ==
+                               str(instance.id)).delete()
+
+        print(f"✅ Битва {instance.id} удалена из Redis")
+
+    except RedisConnectionError:
+        print("❌ Redis недоступен при удалении битвы")
+    except Exception as e:
+        print(f"⚠️ Ошибка при удалении битвы из Redis: {e}")
+
+
 @receiver(post_save, sender=TotalActionAmount)
 def total_action_saved(sender, instance, created, **kwargs):
     load_total_data()
@@ -380,10 +404,10 @@ def battle_case_saved(sender, instance, **kwargs):
     sync_update_battle_in_redis(battle_id, {"cases": cases})
 
 
-@receiver(post_save, sender=BattleDrop)
-def battle_drop_saved(sender, instance, **kwargs):
-    # пример: можно добавлять в очередь изменения связанных игроков
-    return
+# @receiver(post_save, sender=BattleDrop)
+# def battle_drop_saved(sender, instance, **kwargs):
+#     # пример: можно добавлять в очередь изменения связанных игроков
+#     return
     # battle_id = str(instance.battle.id)
     # players = [
     #     PlayerInfo(
@@ -398,18 +422,18 @@ def battle_drop_saved(sender, instance, **kwargs):
     # sync_update_battle_in_redis(battle_id, {"players": players})
 
 
-@receiver(post_save, sender=BattleDropItem)
-def battle_drop_item_saved(sender, instance, **kwargs):
-    battle_id = str(instance.battle.id)
-    winner = []
-    if instance.battle.winner:
-        winner.append(PlayerInfo(
-            id=str(instance.battle.winner.id),
-            username=instance.battle.winner.username,
-            imgpath=getattr(instance.battle.winner, "avatar", None),
-            money_amount=0
-        ))
-    sync_update_battle_in_redis(battle_id, {"winner": winner})
+# @receiver(post_save, sender=BattleDropItem)
+# def battle_drop_item_saved(sender, instance, **kwargs):
+#     battle_id = str(instance.battle.id)
+#     winner = []
+#     if instance.battle.winner:
+#         winner.append(PlayerInfo(
+#             id=str(instance.battle.winner.id),
+#             username=instance.battle.winner.username,
+#             imgpath=getattr(instance.battle.winner, "avatar", None),
+#             money_amount=0
+#         ))
+#     sync_update_battle_in_redis(battle_id, {"winner": winner})
 
 
 @receiver(m2m_changed, sender=Raffles.players.through)
