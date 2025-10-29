@@ -85,6 +85,7 @@ class ItemRedisStandart(JsonModel):
 
 
 class AdvertisementRedis(JsonModel):
+    id: str = Field(index=True)
     title_1: dict
     subTitle_1: dict
     imgUrl_1: str
@@ -102,6 +103,7 @@ class AdvertisementRedis(JsonModel):
 
 
 class BackgroundMainPageRedis(JsonModel):
+    id: str = Field(index=True)
     pc_background_url: str
     mobile_background_url: str
     pc_background_grass_url: str

@@ -442,50 +442,50 @@ def sync_spin_state_wheel(user, item,  min_value=None, max_value=None, prize_val
         return "well_worn"
 
 
-async def spin_state_wheel(user):
-    """Определяет состояние предмета на основе коэффициентов из Redis и шанса пользователя"""
-    try:
-        # 🧠 Получаем коэффициенты из Redis
-        coeff = await GlobalStateCoeffRedis.find().first()
-        if not coeff:
-            raise ValueError("❌ GlobalStateCoeffRedis не найден!!!!!!!")
+# async def spin_state_wheel(user):
+#     """Определяет состояние предмета на основе коэффициентов из Redis и шанса пользователя"""
+#     try:
+#         # 🧠 Получаем коэффициенты из Redis
+#         coeff = await GlobalStateCoeffRedis.find().first()
+#         if not coeff:
+#             raise ValueError("❌ GlobalStateCoeffRedis не найден!!!!!!!")
 
-        # 🧩 Сортируем коэффициенты от большего к меньшему
-        sorted_coeffs = sorted(
-            [
-                ("battle_scarred", float(coeff.battle_scarred)),
-                ("well_worn", float(coeff.well_worn)),
-                ("field_tested", float(coeff.field_tested)),
-                ("minimal_wear", float(coeff.minimal_wear)),
-                ("factory_new", float(coeff.factory_new)),
-            ],
-            key=lambda x: x[1],
-            reverse=True
-        )
+#         # 🧩 Сортируем коэффициенты от большего к меньшему
+#         sorted_coeffs = sorted(
+#             [
+#                 ("battle_scarred", float(coeff.battle_scarred)),
+#                 ("well_worn", float(coeff.well_worn)),
+#                 ("field_tested", float(coeff.field_tested)),
+#                 ("minimal_wear", float(coeff.minimal_wear)),
+#                 ("factory_new", float(coeff.factory_new)),
+#             ],
+#             key=lambda x: x[1],
+#             reverse=True
+#         )
 
-        # 🎲 Генерируем случайное число от 0 до 100
-        rand_num = secrets.randbelow(
-            10000) / 100.0 * float(user.item_state_chance)
-        rand_num = min(rand_num, 100)
-        print(rand_num, 7878, user.item_state_chance)
-        # 💡 Проверяем, в какой интервал попало число
-        cumulative = 0
-        for name, value in sorted_coeffs:
-            cumulative += value
-            if rand_num <= cumulative:
-                return name
+#         # 🎲 Генерируем случайное число от 0 до 100
+#         rand_num = secrets.randbelow(
+#             10000) / 100.0 * float(user.item_state_chance)
+#         rand_num = min(rand_num, 100)
+#         print(rand_num, 7878, user.item_state_chance)
+#         # 💡 Проверяем, в какой интервал попало число
+#         cumulative = 0
+#         for name, value in sorted_coeffs:
+#             cumulative += value
+#             if rand_num <= cumulative:
+#                 return name
 
-        # Если число больше всех интервалов (на случай некорректных коэффициентов)
-        return sorted_coeffs[0][0]
+#         # Если число больше всех интервалов (на случай некорректных коэффициентов)
+#         return sorted_coeffs[0][0]
 
-    except RedisError as e:
-        print(f"❌ Ошибка Redis при получении коэффициентов: {e}")
-        # fallback — если Redis не доступен, возвращаем "field_tested" как дефолт
-        return "well_worn"
+#     except RedisError as e:
+#         print(f"❌ Ошибка Redis при получении коэффициентов: {e}")
+#         # fallback — если Redis не доступен, возвращаем "field_tested" как дефолт
+#         return "well_worn"
 
-    except Exception as e:
-        print(f"⚠️ Ошибка в spin_state_wheel: {e}")
-        return "well_worn"
+#     except Exception as e:
+#         print(f"⚠️ Ошибка в spin_state_wheel: {e}")
+#         return "well_worn"
 
 
 # async def spin_state_wheel(user):

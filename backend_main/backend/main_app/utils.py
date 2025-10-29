@@ -27,7 +27,8 @@ def load_advertisement():
             data_and_time=ad.data_and_time,
             title_2=ad.title_2,
             subTitle_2=ad.subTitle_2,
-            imgUrl_2=ad.imgUrl_2
+            imgUrl_2=ad.imgUrl_2,
+            id=str(ad.id)
         ).save()
 
         print("✅ Redis синхронизирован: сохранена последняя запись Advertisement")
@@ -110,11 +111,6 @@ def load_to_redis():
         print("❌ Postgres ещё не готов — ждём…")
 
 
-
-
-
-
-
 def load_background_main():
     try:
         # проверим доступность Redis
@@ -132,6 +128,7 @@ def load_background_main():
             mobile_background_url=ad.mobile_background_url,
             pc_background_grass_url=ad.pc_background_grass_url,
             mobile_background_grass_url=ad.mobile_background_grass_url,
+            id=str(ad.id)
         ).save()
 
         print("✅ Redis синхронизирован: сохранена последняя запись BackgroundMainPageRedis")
@@ -276,36 +273,36 @@ def load_battles_active_main():
         print("❌ Postgres ещё не готов — ждём…")
 
 
-def load_global_state_coeff():
-    try:
-        # проверка доступности Redis
-        GlobalStateCoeffRedis.db().ping()
+# def load_global_state_coeff():
+#     try:
+#         # проверка доступности Redis
+#         GlobalStateCoeffRedis.db().ping()
 
-        # очищаем старые записи в Redis
-        GlobalStateCoeffRedis.find().delete()
+#         # очищаем старые записи в Redis
+#         GlobalStateCoeffRedis.find().delete()
 
-        # забираем единственную запись из базы
-        try:
-            coeff_obj = GlobalStateCoeff.objects.get()
-        except GlobalStateCoeff.DoesNotExist:
-            print("❌ В базе нет GlobalStateCoeff")
-            return
+#         # забираем единственную запись из базы
+#         try:
+#             coeff_obj = GlobalStateCoeff.objects.get()
+#         except GlobalStateCoeff.DoesNotExist:
+#             print("❌ В базе нет GlobalStateCoeff")
+#             return
 
-        # создаём объект для Redis и сохраняем
-        GlobalStateCoeffRedis(
-            factory_new=coeff_obj.factory_new,
-            minimal_wear=coeff_obj.minimal_wear,
-            field_tested=coeff_obj.field_tested,
-            well_worn=coeff_obj.well_worn,
-            battle_scarred=coeff_obj.battle_scarred,
-        ).save()
+#         # создаём объект для Redis и сохраняем
+#         GlobalStateCoeffRedis(
+#             factory_new=coeff_obj.factory_new,
+#             minimal_wear=coeff_obj.minimal_wear,
+#             field_tested=coeff_obj.field_tested,
+#             well_worn=coeff_obj.well_worn,
+#             battle_scarred=coeff_obj.battle_scarred,
+#         ).save()
 
-        print("✅ Redis синхронизирован: GlobalStateCoeff сохранён")
+#         print("✅ Redis синхронизирован: GlobalStateCoeff сохранён")
 
-    except RedisError:
-        print("❌ Redis недоступен")
-    except OperationalError:
-        print("❌ Postgres ещё не готов — ждём…")
+#     except RedisError:
+#         print("❌ Redis недоступен")
+#     except OperationalError:
+#         print("❌ Postgres ещё не готов — ждём…")
 
 
 def load_crown_filter():

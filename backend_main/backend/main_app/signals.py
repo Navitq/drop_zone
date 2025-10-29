@@ -4,12 +4,12 @@ from django.db.backends.signals import connection_created
 from django.dispatch import receiver
 from redis.exceptions import ConnectionError as RedisConnectionError
 from django.db.models.signals import post_save, post_delete
-from .utils import load_to_redis, load_crown_filter, load_advertisement, sync_update_battle_in_redis, load_total_data, load_global_state_coeff, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
+from .utils import load_to_redis, load_crown_filter, load_advertisement, sync_update_battle_in_redis, load_total_data, load_battles_active_main, load_raffles, load_background_main, load_global_coefficient_main
 from .models import Case, Battle, BattleCase, CrownFilterData, TotalActionAmount, InventoryItem, GlobalStateCoeff, BattleDrop, BattleDropItem, CaseItem, SteamItemCs, Advertisement, BackgroundMainPage, Raffles, GlobalCoefficient
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
-from main_app.redis_models import CaseInfo, PlayerInfo, ItemRedisStandart, CaseRedisStandart, CrownFilterDataRedis, add_last_item
+from main_app.redis_models import CaseInfo, AdvertisementRedis, BackgroundMainPageRedis, PlayerInfo, ItemRedisStandart, CaseRedisStandart, CrownFilterDataRedis, add_last_item
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from redis.exceptions import RedisError
@@ -154,18 +154,18 @@ def case_deleted(sender, instance, **kwargs):
         print(f"⚠️ Ошибка синхронизации Redis (delete): {e}")
 
 
-@receiver(post_save, sender=GlobalStateCoeff)
-def load_global_state(sender, instance, created, **kwargs):
-    """
-    Срабатывает при создании или изменении кейса
-    """
-    if not os.environ.get("RUN_MAIN") == "true":
-        return
-    try:
-        pass
-        load_global_state_coeff()
-    except RedisConnectionError:
-        pass
+# @receiver(post_save, sender=GlobalStateCoeff)
+# def load_global_state(sender, instance, created, **kwargs):
+#     """
+#     Срабатывает при создании или изменении кейса
+#     """
+#     if not os.environ.get("RUN_MAIN") == "true":
+#         return
+#     try:
+#         pass
+#         load_global_state_coeff()
+#     except RedisConnectionError:
+#         pass
 
 
 @receiver(post_save, sender=Advertisement)
@@ -182,6 +182,29 @@ def advertisement_saved(sender, instance, created, **kwargs):
         pass
 
 
+@receiver(post_delete, sender=Advertisement)
+def advertisement_deleted(sender, instance, **kwargs):
+    """Удаление конкретной рекламы из Redis"""
+    if not os.environ.get("RUN_MAIN") == "true":
+        return
+
+    try:
+        AdvertisementRedis.db().ping()
+
+        # Проверяем, есть ли такая запись в Redis
+        deleted_count = AdvertisementRedis.find(
+            AdvertisementRedis.id == str(instance.id)).delete()
+
+        if deleted_count:
+            print(f"🗑️ Удалена реклама из Redis: id={instance.id}")
+        else:
+            print(
+                f"⚠️ Реклама id={instance.id} не найдена в Redis — возможно, уже была удалена")
+
+    except RedisConnectionError:
+        print("❌ Redis недоступен при удалении рекламы")
+
+
 @receiver(post_save, sender=BackgroundMainPage)
 def background_main_saved(sender, instance, created, **kwargs):
     """
@@ -196,6 +219,29 @@ def background_main_saved(sender, instance, created, **kwargs):
         pass
 
 
+@receiver(post_delete, sender=BackgroundMainPage)
+def background_main_deleted(sender, instance, **kwargs):
+    """Удаление конкретной рекламы из Redis"""
+    if not os.environ.get("RUN_MAIN") == "true":
+        return
+
+    try:
+        BackgroundMainPageRedis.db().ping()
+
+        # Проверяем, есть ли такая запись в Redis
+        deleted_count = BackgroundMainPageRedis.find(
+            BackgroundMainPageRedis.id == str(instance.id)).delete()
+
+        if deleted_count:
+            print(f"🗑️ Удалена реклама из Redis: id={instance.id}")
+        else:
+            print(
+                f"⚠️ Реклама id={instance.id} не найдена в Redis — возможно, уже была удалена")
+
+    except RedisConnectionError:
+        print("❌ Redis недоступен при удалении рекламы")
+
+# STOP!!!!!!!!!!
 @receiver(post_save, sender=GlobalCoefficient)
 def load_global_coefficient_main_saved(sender, instance, created, **kwargs):
     """
