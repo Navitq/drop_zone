@@ -110,6 +110,11 @@ def load_to_redis():
         print("❌ Postgres ещё не готов — ждём…")
 
 
+
+
+
+
+
 def load_background_main():
     try:
         # проверим доступность Redis

@@ -9,7 +9,7 @@ from .models import Case, Battle, BattleCase, CrownFilterData, TotalActionAmount
 import os
 from django.db.models.signals import m2m_changed
 from main_app.batch_queue import queue_battle_update
-from main_app.redis_models import CaseInfo, PlayerInfo, CrownFilterDataRedis, add_last_item
+from main_app.redis_models import CaseInfo, PlayerInfo, ItemRedisStandart, CaseRedisStandart, CrownFilterDataRedis, add_last_item
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from redis.exceptions import RedisError
@@ -18,20 +18,140 @@ SLIDER_GROUP_NAME_LIVE = "drop_slider_group_live"
 SLIDER_GROUP_NAME_TOP = "drop_slider_group_top"
 
 
+# @receiver(post_save, sender=Case)
+# @receiver(post_save, sender=CaseItem)
+# @receiver(post_save, sender=SteamItemCs)
+# def case_saved(sender, instance, created, **kwargs):
+#     """
+#     Срабатывает при создании или изменении кейса
+#     """
+#     if not os.environ.get("RUN_MAIN") == "true":
+#         return
+#     try:
+#         pass
+#         load_to_redis()
+#     except RedisConnectionError:
+#         pass
+def sync_case_to_redis(case):
+    """Обновляем или удаляем кейс в Redis"""
+    # если кейс выключен — удаляем его
+    if not case.is_active:
+        CaseRedisStandart.find(CaseRedisStandart.id == str(case.id)).delete()
+        print(f"🗑 Удалён кейс из Redis: {case.name}")
+        return
+
+    # удаляем старую запись, если есть
+    existing = CaseRedisStandart.find(CaseRedisStandart.id == str(case.id))
+    if existing.count() > 0:
+        existing.delete()
+
+    # добавляем новую (актуальную)
+    CaseRedisStandart(
+        id=str(case.id),
+        name=case.name,
+        icon_url=case.icon_url,
+        type=case.type,
+        price=case.price,
+    ).save()
+
+    print(f"✅ Обновлён кейс в Redis: {case.name}")
+
+
+def sync_case_item_to_redis(case_item):
+    """Обновляем предмет в Redis"""
+    steam_item = case_item.steam_item
+
+    if not case_item.case.is_active:
+        ItemRedisStandart.find(ItemRedisStandart.id ==
+                               str(steam_item.id)).delete()
+        return
+
+    ItemRedisStandart(
+        id=str(steam_item.id),
+        icon_url=steam_item.icon_url,
+        item_model=steam_item.item_model,
+        price=steam_item.price,
+        item_style=steam_item.item_style,
+        rarity=steam_item.rarity,
+        drop_chance=case_item.drop_chance,
+        case_id=str(case_item.case.id),
+        price_factory_new=steam_item.price_factory_new,
+        price_minimal_wear=steam_item.price_minimal_wear,
+        price_field_tested=steam_item.price_field_tested,
+        price_well_worn=steam_item.price_well_worn,
+        price_battle_scarred=steam_item.price_battle_scarred,
+    ).save()
+
+    print(f"✅ Обновлён предмет в Redis: {steam_item.item_model}")
+
+
 @receiver(post_save, sender=Case)
 @receiver(post_save, sender=CaseItem)
 @receiver(post_save, sender=SteamItemCs)
 def case_saved(sender, instance, created, **kwargs):
-    """
-    Срабатывает при создании или изменении кейса
-    """
+    """Обновляет только изменённый элемент в Redis"""
     if not os.environ.get("RUN_MAIN") == "true":
         return
+
     try:
-        pass
-        load_to_redis()
+        CaseRedisStandart.db().ping()
     except RedisConnectionError:
-        pass
+        print("❌ Redis не доступен")
+        return
+
+    try:
+        if isinstance(instance, Case):
+            sync_case_to_redis(instance)
+
+        elif isinstance(instance, CaseItem):
+            sync_case_item_to_redis(instance)
+
+        elif isinstance(instance, SteamItemCs):
+            related_case_items = CaseItem.objects.filter(steam_item=instance)
+            for ci in related_case_items:
+                sync_case_item_to_redis(ci)
+
+    except Exception as e:
+        print(f"⚠️ Ошибка синхронизации Redis: {e}")
+
+
+@receiver(post_delete, sender=Case)
+@receiver(post_delete, sender=CaseItem)
+@receiver(post_delete, sender=SteamItemCs)
+def case_deleted(sender, instance, **kwargs):
+    """Удаляет только удалённый элемент из Redis"""
+    if not os.environ.get("RUN_MAIN") == "true":
+        return
+
+    try:
+        CaseRedisStandart.db().ping()
+    except RedisConnectionError:
+        print("❌ Redis не доступен")
+        return
+
+    try:
+        if isinstance(instance, Case):
+            CaseRedisStandart.find(
+                CaseRedisStandart.id == str(instance.id)).delete()
+            ItemRedisStandart.find(
+                ItemRedisStandart.case_id == str(instance.id)).delete()
+            print(f"🗑️ Удалён кейс и его предметы из Redis: {instance.name}")
+
+        elif isinstance(instance, CaseItem):
+            ItemRedisStandart.find(ItemRedisStandart.id == str(
+                instance.steam_item.id)).delete()
+            print(
+                f"🗑️ Удалён предмет из Redis: {instance.steam_item.item_model}")
+
+        elif isinstance(instance, SteamItemCs):
+            related_case_items = CaseItem.objects.filter(steam_item=instance)
+            for ci in related_case_items:
+                ItemRedisStandart.find(
+                    ItemRedisStandart.id == str(ci.steam_item.id)).delete()
+            print(f"🗑️ Удалён SteamItem и все связанные предметы из Redis")
+
+    except Exception as e:
+        print(f"⚠️ Ошибка синхронизации Redis (delete): {e}")
 
 
 @receiver(post_save, sender=GlobalStateCoeff)
