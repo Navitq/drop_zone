@@ -68,7 +68,9 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const currentSortValue = useRef<number>(0)
     const [couldObserve, setCouldObserve] = useState<boolean>(false)
     const dispatch = useAppDispatch()
-
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
     useEffect(() => {
         if (!props.sortType || (props.sortType == 1 && currentSortValue.current == 0)) return;
         currentSortValue.current = props.sortType;
@@ -77,6 +79,9 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
         multiplyRef.current = false;
         totalDeletedRef.current = [];
         addedItemsListRef.current = [];
+        if (page === 1) {
+            multiplyRef.current = true;
+        }
         setItems([]);
         setPage(1);
         setHasMore(true);
@@ -88,12 +93,16 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
     useEffect(() => {
         if (!props.textSortValue && props.textSortValue !== '') return;
+        console.log("heh")
         hasMoreRef.current = true;
         loadingRef.current = false;
         multiplyRef.current = false;
         totalDeletedRef.current = [];
         addedItemsListRef.current = [];
         setItems([]);
+        if (page === 1) {
+            multiplyRef.current = true;
+        }
         setPage(1);
         setHasMore(true);
 
@@ -198,6 +207,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     }, [props.addPrize]);
 
     useEffect(() => {
+        console.log(multiplyRef.current)
         if (!multiplyRef.current) {
             multiplyRef.current = true;
             return
@@ -232,8 +242,9 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
 
         const observer = new IntersectionObserver(
             (entries) => {
-
+                console.log("observer")
                 if (entries[0].isIntersecting && !loadingRef.current && hasMoreRef.current) {
+                    console.log("observer_data")
                     setPage(prev => prev + 1);
                 }
             },
