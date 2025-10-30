@@ -1,7 +1,6 @@
 'use client'
 import React, { useEffect, useRef } from 'react'
 import WibSliderBlock from '@/components/WibSliderBlock'
-import style from '@/styles/winInventoryBlock.module.scss'
 import useWebSocket from 'react-use-websocket';
 import { BACKEND_PATHS } from '@/utilites/urls';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -9,7 +8,9 @@ import { setNewSliderData, setUserAmount, addToQueue, clearQueue } from '@/redux
 
 
 type DropSliderMap = {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     start_data: { data: any },
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     update_slider_data: { data: any },
 };
 
@@ -67,7 +68,8 @@ function WibSliderBlockCnt(): React.ReactNode {
         return () => {
             clearTimeout(timer)
         }
-    }, [isTopActive])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isTopActive, dispatch])
 
     const startGameData = (payload: { clientsAmount: number, items: CardItemInt[] }) => {
         payload.clientsAmount = Number(payload.clientsAmount)
@@ -88,14 +90,14 @@ function WibSliderBlockCnt(): React.ReactNode {
         dispatch(addToQueue(payload.item))
     }
 
-
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     const eventHandlers: Record<keyof DropSliderMap, (payload: any) => void> = {
         start_data: (payload) => startGameData(payload.data),
         update_slider_data: (payload) => updateGameData(payload.data),
     };
 
 
-    const { sendMessage, lastJsonMessage, readyState } = useWebSocket(
+    const { sendMessage } = useWebSocket(
         `${BACKEND_PATHS.dropSliderWSS()}`,
         {
             shouldReconnect: (closeEvent) => {
@@ -111,6 +113,7 @@ function WibSliderBlockCnt(): React.ReactNode {
             onClose: () => { },
             onError: (event: WebSocketEventMap['error']) => console.log(event),
             onMessage: (event) => {
+                //eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const data = JSON.parse(event.data) as { event: keyof DropSliderMap; payload: any };
                 const handler = eventHandlers[data.event];
                 if (handler) {

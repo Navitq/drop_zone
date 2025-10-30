@@ -5,7 +5,6 @@ import CaseBtnText from '@/components/CaseBtnText'
 import { useTranslations } from 'next-intl'
 import { useAppDispatch } from '@/lib/hooks'
 import { showPaymentModal } from '@/redux/modalReducer'
-import Image from 'next/image'
 
 function NoMoneyModalWrapped(props: { close: () => void }) {
     const t = useTranslations("header")

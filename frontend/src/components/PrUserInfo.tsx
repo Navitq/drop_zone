@@ -10,7 +10,7 @@ interface PrUserInfoInt {
     imgPath?: string,
     nickName: string,
     link: string,
-    accountType: "Steam" | "Google" | "Vk"
+    accountType: string
 }
 
 

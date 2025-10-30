@@ -1,7 +1,7 @@
 import style from '@/styles/battles.module.scss';
 import TitleHomePage from '@/components/TitleHomePage'
 
-export default function BattlesLayout({ children }) {
+export default function BattlesLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className={style.battles}>
             <div className={style.faqTitleCnt}>

@@ -12,11 +12,6 @@ import Image from 'next/image';
 const Select = dynamic(() => import('react-select'), { ssr: false });
 
 
-interface Options {
-    value: string,
-    label: string
-}
-
 const DropdownIndicator = (props: DropdownIndicatorProps) => {
     const { menuIsOpen } = props.selectProps;
 

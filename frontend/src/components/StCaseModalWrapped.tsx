@@ -6,7 +6,9 @@ import { useAppSelector } from '@/lib/hooks'
 import { useTranslations } from 'next-intl'
 import ScmCaseItem from '@/components/ScmCaseItem'
 
-function StCaseModalWrapped({ close }: () => void): React.ReactNode {
+
+function StCaseModalWrapped(): React.ReactNode {
+
     const { caseId, caseName, caseItems } = useAppSelector(state => state.modal.stCaseModal)
     const t = useTranslations("homePage")
 

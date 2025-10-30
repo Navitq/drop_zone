@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React from 'react';
 import style from '@/styles/upgrades.module.scss';
 
 function SearchByPrice(props: { placeHolderText: string, getDataByPrice: (value: string) => void, value: string }): React.ReactNode {

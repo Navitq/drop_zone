@@ -156,8 +156,8 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
         }
         const start = performance.now();
         const delta = to - from;
-
-        function step(timestamp) {
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
+        function step(timestamp: any) {
             const elapsed = timestamp - start;
             const progress = Math.min(elapsed / duration, 1);
             const eased = easing(progress);
@@ -169,8 +169,8 @@ function ChanceSpinerExchanger({ size = 250, strokeWidth = 12, initialPercent = 
         requestAnimationFrame(step);
     }
 
-    // плавное замедление
-    function easeOutCubic(t) {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function easeOutCubic(t: any) {
         return 1 - Math.pow(1 - t, 3);
     }
 

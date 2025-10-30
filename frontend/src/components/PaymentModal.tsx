@@ -22,7 +22,7 @@ function PaymentModal(): React.ReactNode {
 
                 <ModalCnt modalKey={"modalStCase"} onClose={close}>
 
-                    <PaymentModalWrapped close={close} />
+                    <PaymentModalWrapped />
                 </ModalCnt>
 
             ) : null}

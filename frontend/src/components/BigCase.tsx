@@ -2,7 +2,6 @@
 import React from 'react'
 import style from '@/styles/cases.module.scss'
 
-import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { AxiosError } from "axios";
 
@@ -22,7 +21,6 @@ interface caseInt {
 }
 
 function BigCase(props: caseInt): React.ReactNode {
-    const t = useTranslations("cases")
     const dispatch = useAppDispatch()
 
     async function openRulletCase() {

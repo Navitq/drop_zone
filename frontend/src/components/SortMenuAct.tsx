@@ -37,10 +37,10 @@ const DropdownIndicator = (props: DropdownIndicatorProps<Options, false>) => {
 
 export default function SortMenuAct(props: { options: Options[], callBack: (value: string) => void }) {
     const t = useTranslations("homePage");
-
+    const { callBack } = props;
     useEffect(() => {
-        props.callBack('1');
-    }, []);
+        callBack('1');
+    }, [callBack]);
 
     const handleChange = (newValue: SingleValue<Options>) => {
         props.callBack(newValue?.value || '1');

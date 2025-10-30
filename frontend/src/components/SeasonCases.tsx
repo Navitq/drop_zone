@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import style from '@/styles/homePage.module.scss'
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
@@ -27,13 +27,7 @@ function SeasonCases(): React.ReactNode {
 
     const [seasonCases, setSeasonCases] = useState<caseInt[]>([])
 
-    useEffect(() => {
-        fetchBlogerCases()
-    }, [locale]);
-
-
-    // Функция для получения блогерских кейсов
-    async function fetchBlogerCases() {
+    const fetchBlogerCases = useCallback(async () => {
         try {
             const response = await api.get(BACKEND_PATHS.getCase("season_case"));
             setSeasonCases(() => {
@@ -49,7 +43,15 @@ function SeasonCases(): React.ReactNode {
         } catch (error) {
             console.error("Ошибка при запросе блогерских кейсов:", error);
         }
-    }
+    }, [locale])
+
+    useEffect(() => {
+        fetchBlogerCases()
+    }, [fetchBlogerCases]);
+
+
+    // Функция для получения блогерских кейсов
+
 
     return (
         <div className={style.bgCaseBlock}>

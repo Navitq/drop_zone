@@ -22,6 +22,7 @@ interface GunData {
     gunStyle: string,
     gunPrice: number,
     imgPath: string,
+    price?: number,
     type: "usuall" | "rare" | "elite" | "epic" | "classified",
 }
 
@@ -87,7 +88,7 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
         setItems(state => [...state, item]);
 
         // меняем цвет победителя
-        dispatch(setWinnerColor({ price: Number(item.price), id: props.id }));
+        dispatch(setWinnerColor({ price: Number(item.price || 0), id: props.id }));
 
         // ждём 1 секунду
         await delay(1000);
@@ -113,8 +114,9 @@ function BattlePersonalBox(props: BattlePersonalBoxInt): React.ReactNode {
 
     // Ищем игрока с совпадающим id
     const playerData = useMemo(() => {
-        const currentPersonData = players_items?.find?.(
+        const currentPersonData = players_items?.find?.(  // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (p: any) => p.player?.id === props.id
+
         );
 
         if (loseItemsRef.current.length == 0) {

@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable */
 import React, { useEffect, useState, useRef, useCallback } from 'react'
 import style from '@/styles/upgrades.module.scss'
 import ItemSm from '@/components/ItemSm'

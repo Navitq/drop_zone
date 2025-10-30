@@ -1,4 +1,3 @@
-import { number } from 'motion';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type items_state = 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred'

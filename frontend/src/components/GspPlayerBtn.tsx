@@ -6,7 +6,9 @@ import style from '@/styles/battles.module.scss'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { setPlayersAmount } from '@/redux/battlesCreateReducer'
 
-function GspPlayerBtn(props: { text: number }): React.ReactNode {
+type playersAmountRange = 2 | 3 | 4;
+
+function GspPlayerBtn(props: { text: playersAmountRange }): React.ReactNode {
     const dispatch = useAppDispatch();
     const playersAmount = useAppSelector(state => state.battlesCreate.playersAmount)
     return (

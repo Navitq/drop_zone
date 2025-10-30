@@ -12,6 +12,7 @@ export async function getUser(cookieHeader?: string) {
     });
     return res.data;
   } catch (err) {
+    console.log(err)
     return null;
   }
 }

@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import style from '@/styles/battles.module.scss'
 import BattlePersonalBox from "@/components/BattlePersonalBox"
@@ -12,7 +12,6 @@ import useWebSocket from 'react-use-websocket';
 import { setPlayers, setStartGameData, setActiveCaseData, cleanBattleData } from '@/redux/activeBattleReducer'
 import api from "@/lib/api";
 import { BACKEND_PATHS } from '@/utilites/urls';
-import { setUserMoney } from '@/redux/userReducer'
 interface PlayersInfo {
     id: string;           // UUID
     imgpath: string;      // Ссылка на изображение
@@ -48,6 +47,14 @@ function BattleGameField(): React.ReactNode {
         };
     }, [dispatch]);
 
+    const getCaseData = useCallback(async (case_id: string) => {
+        try {
+            const response = await api.get(BACKEND_PATHS.getCaseItems(case_id));
+            dispatch(setActiveCaseData(response.data.items));
+        } catch (err) {
+            console.log(err);
+        }
+    }, [dispatch]);
 
     useEffect(() => {
         if (active_round <= 0) return;
@@ -62,27 +69,20 @@ function BattleGameField(): React.ReactNode {
 
         lastProcessedRoundRef.current = active_round; // помечаем как обработанный
         getCaseData(item.case_id);
-    }, [active_round, players_items]);
+    }, [active_round, players_items, getCaseData]);
 
-    async function getCaseData(case_id: string) {
-        try {
-            const response = await api.get(BACKEND_PATHS.getCaseItems(case_id));
-            dispatch(setActiveCaseData(response.data.items))
-        } catch (err) {
-            console.log(err)
-        }
-    }
+
 
     type BattleEventMap = {
         players_update: { players: PlayersInfo[] };
-        game_finished: { data: any }; // можешь типизировать точнее, если знаешь структуру
+        game_finished: { data: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
     };
 
     function setPlayersLocal(players: PlayersInfo[]) {
         dispatch(setPlayers(players))
     }
 
-    function startGameData(data: any) {
+    function startGameData(data: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
         data.game_data = JSON.parse(data.game_data, (key, value) => {
             if (key === "price" && typeof value === "string") {
                 return parseFloat(value);
@@ -104,13 +104,13 @@ function BattleGameField(): React.ReactNode {
     }
 
 
-    const eventHandlers: Record<keyof BattleEventMap, (payload: any) => void> = {
+    const eventHandlers: Record<keyof BattleEventMap, (payload: any) => void> = { // eslint-disable-line @typescript-eslint/no-explicit-any
         players_update: (payload) => setPlayersLocal(payload.players),
         game_finished: (payload) => startGameData(payload),
     };
 
 
-    const { sendMessage, lastJsonMessage, readyState } = useWebSocket(
+    useWebSocket(
         // URL создаём только если socketOpened === true
         socketOpened && gameId ? `${BACKEND_PATHS.battleGameWSS(gameId, !guest)}` : null,
         {
@@ -138,7 +138,7 @@ function BattleGameField(): React.ReactNode {
             },
             onError: (event: WebSocketEventMap['error']) => console.log(event),
             onMessage: (event) => {
-                const data = JSON.parse(event.data) as { event: keyof BattleEventMap; payload: any };
+                const data = JSON.parse(event.data) as { event: keyof BattleEventMap; payload: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
                 const handler = eventHandlers[data.event];
                 if (handler) {
                     handler(data);
@@ -152,9 +152,9 @@ function BattleGameField(): React.ReactNode {
         }
     );
 
-    async function getServerGameData() {
+    const getServerGameData = useCallback(async () => {
         try {
-            const response = await api.post(BACKEND_PATHS.getGameData(gameId), { gameId: gameId });
+            const response = await api.post(BACKEND_PATHS.getGameData(gameId ? gameId : ""), { gameId: gameId });
 
             response.data.cases = JSON.parse(response.data.cases || "[]");
             response.data.players = JSON.parse(response.data.players || "[]");
@@ -174,7 +174,7 @@ function BattleGameField(): React.ReactNode {
                 console.error("Неизвестная ошибка", error);
             }
         }
-    }
+    }, [dispatch, gameId])
 
     useEffect(() => {
         if (!isAuth) {
@@ -186,7 +186,7 @@ function BattleGameField(): React.ReactNode {
         if (isAuth) {
             getServerGameData()
         }
-    }, [])
+    }, [isAuth, getServerGameData])
 
     if (!isAuth) {
         return null // пока редирект не сработал — ничего не рендерим

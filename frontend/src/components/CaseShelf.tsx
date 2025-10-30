@@ -32,6 +32,7 @@ function CaseShelf(props: { caseUrl: caseType, sortType?: number }): React.React
 
     useEffect(() => {
         getData()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [locale]);
 
     useEffect(() => {

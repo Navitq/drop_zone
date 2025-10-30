@@ -2,7 +2,6 @@ import React from 'react'
 import style from '@/styles/header.module.scss'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import axios from "axios";
 
 import LibSocialNetworkPoint from '@/components/LibSocialNetworkPoint'
 import HeaderLogInLanguageSm from '@/components/HeaderLogInLanguageSm'

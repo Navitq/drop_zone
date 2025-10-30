@@ -21,7 +21,7 @@ function StCaseModal(): React.ReactNode {
 
                 <ModalCnt modalKey={"modalStCase"} onClose={close}>
 
-                    <StCaseModalWrapped close={close} />
+                    <StCaseModalWrapped />
                 </ModalCnt>
 
             ) : null}

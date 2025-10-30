@@ -1,3 +1,5 @@
+
+import { merge } from 'lodash'
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer, { initialState as userInitialState } from '@/redux/userReducer'
 import modalReducer from '@/redux/modalReducer'
@@ -9,8 +11,7 @@ import contractsReducer from '@/redux/contractsReducer'
 import profileReducer from '@/redux/profileReducer'
 import dropSliderReducer from '@/redux/dropSliderReducer'
 
-import { merge } from 'lodash'
-import { profile } from 'console'
+
 
 // export const makeStore = () => {
 //   return configureStore({

@@ -19,7 +19,8 @@ function BattleActiveGamesCnt(): React.ReactNode {
             const response = await api.get(BACKEND_PATHS.getActiveBattles);
 
             // Каждое сражение распарсим
-            const battles = response.data.active_battles.map(battle => ({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const battles = response.data.active_battles.map((battle: any) => ({
                 ...battle,
                 cases: JSON.parse(battle.cases || "[]"),
                 players: JSON.parse(battle.players || "[]"),
@@ -35,7 +36,7 @@ function BattleActiveGamesCnt(): React.ReactNode {
     useEffect(() => {
         if (isAuth)
             getActiveGames()
-    }, [])
+    }, [isAuth])
 
     return (
         <div className={style.mnBattlesStuffCnt}>
@@ -50,16 +51,18 @@ function BattleActiveGamesCnt(): React.ReactNode {
                     </div>
                 ) : (
                     <div className={style.mnStuffCnt}>
-                        {battlesCollection.map((value: any, index) => {
+                        {battlesCollection.map((value: any) => {  // eslint-disable-line @typescript-eslint/no-explicit-any
                             const totalCost = value.cases.reduce(
                                 (acc: number, c: { price: number; case_amount: number }) => acc + c.price * (c.case_amount ?? 1),
                                 0
                             );
-                            let playersImgPath = value.players.map(player => player.imgpath || "");
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            const playersImgPath = value.players.map((player: any) => player.imgpath || "");
                             while (playersImgPath.length < value.players_amount) {
                                 playersImgPath.push("");
                             }
-                            let battleCasesImg = value.cases.flatMap(caseItem =>
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            const battleCasesImg = value.cases.flatMap((caseItem: any) =>
                                 Array.from({ length: caseItem.case_amount }, () => caseItem.imgpath || "")
                             );
                             return <ActiveBattleCard key={value.id} battleId={value.id} playersImgPath={playersImgPath} totalCost={Number(totalCost.toFixed(2))} battleCases={battleCasesImg}></ActiveBattleCard>

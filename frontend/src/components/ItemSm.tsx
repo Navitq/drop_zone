@@ -23,20 +23,20 @@ interface ItemSmInt {
 
 function ItemSm(props: ItemSmInt): React.ReactNode {
     const t = useTranslations('items')
-
+    const { activateBtn, deleteBtn } = props;
     // мемоизируем колбэк, чтобы не создавать новую функцию
     const handleActivate = useCallback(() => {
-        props.activateBtn()
-    }, [props.activateBtn])
+        activateBtn()
+    }, [activateBtn])
 
     const handleRemove = useCallback(
         () => {
-            if (props.deleteBtn) {
-                props.deleteBtn();
+            if (deleteBtn) {
+                deleteBtn();
             }
             // Если props.removeItem нет — функция просто ничего не делает
         },
-        [props.deleteBtn]
+        [deleteBtn]
     );
 
     return (

@@ -1,4 +1,4 @@
-export default function RafflesLayout({ children }) {
+export default function RafflesLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
             {children}

@@ -1,4 +1,4 @@
-import React, { useTransition } from 'react'
+import React from 'react'
 
 import style from '@/styles/upgrades.module.scss';
 

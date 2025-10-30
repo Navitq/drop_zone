@@ -10,7 +10,7 @@ import ExClientStuffs from '@/components/ExClientStuffs'
 import ShouldAuthStaff from '@/components/ShouldAuthStaff'
 import { BACKEND_PATHS, FRONTEND_PATHS } from '@/utilites/urls'
 import { useAppSelector, useAppDispatch } from '@/lib/hooks'
-import { setClientItemData, removeClientItemData, removeWonItem } from '@/redux/contractsReducer'
+import { setClientItemData, removeClientItemData } from '@/redux/contractsReducer'
 interface gunItemModel {
     id: string,
     imgPath: string,

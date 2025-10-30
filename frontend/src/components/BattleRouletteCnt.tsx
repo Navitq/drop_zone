@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import style from '@/styles/battles.module.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -8,7 +8,6 @@ import ScmCaseItem from '@/components/ScmCaseItem'
 
 import 'swiper/css';
 import { useAppSelector } from '@/lib/hooks';
-import { steps } from 'motion';
 
 
 
@@ -30,25 +29,6 @@ interface WinnerCollectinItemInt {
   case_id: string,
   item: ussualItemInt
 }
-interface GunData {
-  id: string,
-  state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred',
-  gunModel: string,
-  gunStyle: string,
-  gunPrice: number,
-  imgPath: string,
-  type: "usuall" | "rare" | "elite" | "epic" | "classified",
-}
-interface GunData {
-  id: string,
-  state: 'factory_new' | 'minimal_wear' | 'field_tested' | 'well_worn' | 'battle_scarred',
-  gunModel: string,
-  gunStyle: string,
-  gunPrice: number,
-  imgPath: string,
-  type: "usuall" | "rare" | "elite" | "epic" | "classified",
-}
-
 
 
 interface ussualItemIntFront {
@@ -72,7 +52,7 @@ interface propsDataInt {
 }
 
 function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const swiperRef = useRef<any>(null);
   const isSpinningRef = useRef(false);            // быстрый флаг для логики
   const timeoutsRef = useRef<number[]>([]);
@@ -125,12 +105,12 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
     )
       return;
 
-    let checkInterval: any;
 
     const trySpin = () => {
       if (!swiperRef.current) return; // ждем инициализацию
 
       const endSlidePosition = activeCaseRoulleteItems.findIndex(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (slide: any) => slide.id === props.playerData?.item.id
       );
 
@@ -140,10 +120,12 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
       clearInterval(checkInterval);
     };
 
-    checkInterval = setInterval(trySpin, 100); // пробуем каждые 100ms
+    const checkInterval: ReturnType<typeof setInterval> = setInterval(trySpin, 100);
+    // пробуем каждые 100ms
 
     return () => clearInterval(checkInterval);
-  }, [activeCaseRoulleteItems]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCaseRoulleteItems, props.playerData?.item.id]);
 
 
   if (activeCaseRoulleteItems.length == 0) {
@@ -196,8 +178,8 @@ function BattleRouletteCnt(props: propsDataInt): React.ReactNode {
   //     timeoutsRef.current.push(id);
   //   }
   // };
-
-  const spinToSlide = (target, targetId: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const spinToSlide = (target: any, targetId: string) => {
     if (!swiperRef.current || isSpinningRef.current) return;
     isSpinningRef.current = true;
 

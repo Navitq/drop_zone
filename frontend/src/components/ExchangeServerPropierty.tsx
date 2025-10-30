@@ -12,7 +12,6 @@ import { BACKEND_PATHS } from '@/utilites/urls'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { setServerItemToUpgrade } from '@/redux/upgradeReducer'
 import ShouldAuthStaff from '@/components/ShouldAuthStaff'
-import { number } from 'motion'
 
 interface gunItemModel {
     id: string,

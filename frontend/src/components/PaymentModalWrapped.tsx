@@ -8,8 +8,6 @@ import PaymentSystemCard from '@/components/PaymentSystemCard'
 import PmwPriceBlock from '@/components/PmwPriceBlock'
 import CaseBtnText from '@/components/CaseBtnText'
 
-import Image from 'next/image'
-
 
 function PaymentModalWrapped(): React.ReactNode {
     const t = useTranslations('header')

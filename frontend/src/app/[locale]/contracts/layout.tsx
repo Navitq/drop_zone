@@ -1,4 +1,4 @@
-export default function ContractLayout({ children }) {
+export default function ContractLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
             {children}

@@ -18,7 +18,7 @@ interface PrOwnerInfoInt {
     nickName: string,
     balance: number,
     link: string,
-    accountType: "Steam" | "Google" | "Vk"
+    accountType: string
 }
 
 function PrOwnerInfo(props: PrOwnerInfoInt): React.ReactNode {
@@ -41,7 +41,7 @@ function PrOwnerInfo(props: PrOwnerInfoInt): React.ReactNode {
         }
     }, []);
 
-    const { avatar, username, id, provider } = useAppSelector(state => state.user.userData)
+    const { avatar, username, provider } = useAppSelector(state => state.user.userData)
     return (
         <div className={style.prOwnerInfo}>
             <div className={style.prOwnerImageCnt}>

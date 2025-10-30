@@ -18,7 +18,7 @@ interface SquareConfig {
 
 function FooterPageLinks(props: SquareConfig): React.ReactNode {
     const pathname = usePathname()
-    const targetPath = useMemo(() => `${FRONTEND_PATHS[`${props.path}`]}`, [props.path])
+    const targetPath = useMemo(() => `${FRONTEND_PATHS[props.path as keyof typeof FRONTEND_PATHS]}`, [props.path])
     const isActive = useMemo(() => pathname === targetPath, [pathname, targetPath])
     const t = useTranslations('homePage');
     return (

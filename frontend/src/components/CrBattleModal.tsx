@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import style from '@/styles/battles.module.scss'
 import { useTranslations } from 'next-intl';
 import { useAppSelector } from '@/lib/hooks';
@@ -86,11 +86,9 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
         setInputValue('');
     }
 
-    useEffect(() => {
-        fetchAllCases();
-    }, [])
 
-    async function fetchAllCases() {
+
+    const fetchAllCases = useCallback(async () => {
         try {
             const response = await api.get(BACKEND_PATHS.getCase("all"));
             setCases(() => {
@@ -114,7 +112,11 @@ function CrBattleModal(props: CrBattleModalInt): React.ReactNode {
         } catch (error) {
             console.error("Ошибка при запросе блогерских кейсов:", error);
         }
-    }
+    }, [locale])
+
+    useEffect(() => {
+        fetchAllCases();
+    }, [fetchAllCases])
 
 
     const { totalPrice, totalCaseAmount, createBtlData } = useAppSelector(state => state.battlesCreate)

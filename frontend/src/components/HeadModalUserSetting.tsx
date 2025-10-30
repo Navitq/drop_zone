@@ -31,7 +31,9 @@ function HeadModalUserSetting({ close }: { close: () => void }): React.ReactNode
     }, []);
 
     const openChat = () => {
+        // @ts-expect-error: Tawk_API не определён в типах window
         if (typeof window !== 'undefined' && window.Tawk_API && typeof window.Tawk_API.maximize === 'function') {
+            // @ts-expect-error: Tawk_API не определён в типах window
             window.Tawk_API.maximize();
         } else {
             console.warn('Tawk_API не готов — попробуйте позже');

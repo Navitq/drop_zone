@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 import style from '@/styles/upgrades.module.scss'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -8,16 +8,16 @@ import { setPriceBuyTipe, clearPrice } from '@/redux/upgradeReducer';
 function ExchangeClientBalance(): React.ReactNode {
 
     const [value, setValue] = useState<string>('');
-    const inputRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     const money_amont = useAppSelector(state => state.user.userData.money_amount)
     const price = useAppSelector(state => state.upgrade.price)
     const dispatch = useAppDispatch()
 
-    const resizeInput = (): void => {
+    const resizeInput = useCallback((): void => {
         if (inputRef.current) {
             inputRef.current.style.width = `${value.length + 1}ch`;
         }
-    };
+    }, [value]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const newValue = e.target.value.replace(',', '.'); // заменяем запятую на точку
@@ -36,13 +36,14 @@ function ExchangeClientBalance(): React.ReactNode {
 
     useEffect(() => {
         resizeInput();
-    }, [value]);
+    }, [resizeInput]);
 
     useEffect(() => {
         if (price != Number(value)) {
             console.log(123)
             setValue(price.toString())
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [price])
 
 

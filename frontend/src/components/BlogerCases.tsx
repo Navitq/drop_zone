@@ -2,7 +2,6 @@ import React from 'react'
 import CaseShelf from '@/components/CaseShelf'
 import TitleHomePage from '@/components/TitleHomePage'
 import style from '@/styles/homePage.module.scss'
-import { BACKEND_PATHS } from '@/utilites/urls'
 
 function BlogerCases(): React.ReactNode {
     return (

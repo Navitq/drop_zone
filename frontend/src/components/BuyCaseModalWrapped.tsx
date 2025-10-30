@@ -3,9 +3,7 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import style from '@/styles/modal.module.scss';
-import { Virtual } from 'swiper/modules';
 import ScmCaseItem from '@/components/ScmCaseItem';
-import Image from 'next/image';
 import style_two from '@/styles/itemStyle.module.scss'
 import CaseBtnText from '@/components/CaseBtnText'
 import BattleModalBtn from '@/components/BattleModalBtn'
@@ -23,6 +21,7 @@ import { showUnAuthModal } from '@/redux/modalReducer'
 import api from "@/lib/api";
 
 function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const swiperRef = useRef<any>(null);
     const isSpinningRef = useRef(false);
     const timeoutsRef = useRef<number[]>([]);
@@ -60,6 +59,7 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
             return;
         }
         spinToSlide(prize_index, items[prize_index].id)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [prize_index]);
 
 
@@ -120,9 +120,9 @@ function BuyCaseModalWrapped({ close }: { close: () => void }): React.ReactNode 
 
     async function sellItemNow() {
         try {
-            console.log(prize_item.inventory_id)
+
             const response = await api.post(BACKEND_PATHS.sellItem, {
-                itemId: prize_item.inventory_id
+                itemId: prize_item?.inventory_id
             });
             dispatch(setUserMoney(response.data.new_balance))
         } catch (err) {

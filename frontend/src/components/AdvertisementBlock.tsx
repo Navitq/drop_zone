@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import style from '@/styles/homePage.module.scss'
 
 import Bilboard from '@/components/Bilboard'
@@ -17,18 +17,18 @@ function AdvertisementBlock(): React.ReactNode {
     const locale = useLocale()
     const t = useTranslations("homePage")
 
-    async function getAdvertisement() {
+    const getAdvertisement = useCallback(async () => {
         try {
             const response = await api.get(BACKEND_PATHS.advertisement);
-            dispatch(setAdvertisement(response.data))
+            dispatch(setAdvertisement(response.data));
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
-    }
+    }, [dispatch]);
 
     useEffect(() => {
-        getAdvertisement()
-    }, [])
+        getAdvertisement();
+    }, [getAdvertisement]);
 
 
     if (advertisementItems.length < 2) {

@@ -38,7 +38,7 @@ export default function ProfilePage(): React.ReactNode {
   const locale = useLocale()
   const userId = params.userid
 
-  function capitalizeFirstLetter(str: string) {
+  function capitalizeFirstLetter(str: string)  {
     if (!str) return str;
     return str[0].toUpperCase() + str.slice(1);
   }

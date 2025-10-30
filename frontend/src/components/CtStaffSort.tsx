@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 
-import ExBlockTitle from '@/components/ExBlockTitle'
 import { useTranslations } from 'next-intl'
 
 import SortMenuAct from '@/components/SortMenuAct'

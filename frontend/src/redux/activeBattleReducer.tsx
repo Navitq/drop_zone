@@ -179,6 +179,7 @@ export const activerBattleSlice = createSlice({
         cleanBattleData: (state) => {
             Object.assign(state, { ...initialState, cases: [], activeCaseRoulleteItems: [], winner_collection: [], players: [], winner: [], players_ids: [], won_items: [], players_items: [] });
         },
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
         setStartGameData: (state, action: PayloadAction<any>) => {
             state.winner_id = action.payload.winner_id
             state.winner_collection = action.payload.won_data.map((obj: WinnerCollItemInt) => obj.items).flat();

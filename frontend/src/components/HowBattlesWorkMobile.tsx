@@ -1,4 +1,4 @@
-import React, { useTransition } from 'react'
+import React from 'react'
 import style from '@/styles/contracts.module.scss'
 import style_battles from '@/styles/battles.module.scss'
 import { useTranslations } from 'next-intl'

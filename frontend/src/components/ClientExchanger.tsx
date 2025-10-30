@@ -31,7 +31,7 @@ function ClientExchanger(): React.ReactNode {
         <Tabs className={`${style.clientExchanger} ${style.clientExchangerStyled}`} selectedIndex={tabIndex} onSelect={(index) => {
             closeItem()
             setTabIndex(index); // обновляем вкладку
-            return index; // react-tabs требует вернуть индекс
+            return Boolean(index); // !!!!!!!!!!
         }}>
             <TabPanel className={style.exClientPropTab}>
                 <div className={style.exClientProp}>
