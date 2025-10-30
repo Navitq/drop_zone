@@ -418,7 +418,9 @@
 }
 
 :global(.itemWithoutHover) {
-    @extend %flexCenter;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 :global(.itemWithoutHover) .ctSlotCnt:hover .ctSlotCntHover{
