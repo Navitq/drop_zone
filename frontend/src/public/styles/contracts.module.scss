@@ -435,9 +435,6 @@
 }
 
 @media (max-width: 1024px) {
-    :global(.bpbItemsCnt){
-        overflow: visible;
-    }
     :global(.bpbItemsCnt) .ctSlotCnt {
         width: 153px;
         height: 153px;

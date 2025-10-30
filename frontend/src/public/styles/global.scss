@@ -122,6 +122,31 @@ body{
     width: 100%;
 }
 
+//global
+
+.itemWithoutHover {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 1024px) {
+    .bpbItemsCnt{
+        overflow: visible !important;
+    }
+}
+
+.epTab.react-tabs__tab-panel--selected {
+    display: flex !important;
+}
+
+@media (max-width: 1439px)  {
+    .epTab {
+        display: none !important;
+    }
+}
+
+
 
 //fonts
 

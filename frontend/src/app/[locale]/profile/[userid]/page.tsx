@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import style from '@/styles/profile.module.scss'
 
@@ -31,7 +31,7 @@ export default function ProfilePage(): React.ReactNode {
 
   const ownerId = useAppSelector(state => state.user.userData.id)
   const money_amount_owner = useAppSelector(state => state.user.userData.money_amount)
-  const { money_amount, username, avatar_url, provider, best_case, best_skin } = useAppSelector(state => state.profile)
+  const { username, avatar_url, provider, best_case, best_skin } = useAppSelector(state => state.profile)
   const dispatch = useAppDispatch()
   const params = useParams()
   const router = useRouter()
@@ -50,7 +50,7 @@ export default function ProfilePage(): React.ReactNode {
     return str;
   }
 
-  async function getUserPageData() {
+  const getUserPageData = useCallback(async () => {
     try {
       const response = await api.post(BACKEND_PATHS.profile, {
         id: userId
@@ -60,24 +60,24 @@ export default function ProfilePage(): React.ReactNode {
       const error = err as AxiosError;
       console.log(error.status)
       if (error.response?.status === 401) {
-        // router.push(FRONTEND_PATHS.home)
+        router.push(FRONTEND_PATHS.home)
       } else if (error.response?.status === 404) {
-        // router.push(FRONTEND_PATHS.home)
+        router.push(FRONTEND_PATHS.home)
       } else {
-        // router.push(FRONTEND_PATHS.home)
+        router.push(FRONTEND_PATHS.home)
       }
     }
-  }
+  }, [dispatch, userId, router])
 
   useEffect(() => {
     return () => {
       dispatch(clearProfileData());
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     getUserPageData()
-  }, [userId])
+  }, [getUserPageData])
 
 
 

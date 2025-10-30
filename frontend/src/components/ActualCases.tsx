@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import CaseShelf from '@/components/CaseShelf'
 import TitleHomePage from '@/components/TitleHomePage'
 import style from '@/styles/homePage.module.scss'
-import { BACKEND_PATHS } from '@/utilites/urls'
 import SortMenuAct from '@/components/SortMenuAct'
 import { useTranslations } from 'next-intl';
 

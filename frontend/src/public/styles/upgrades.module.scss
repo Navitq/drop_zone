@@ -705,14 +705,10 @@
     .serverExchanger, .exTabsClient {
         margin-top: -2px;
     }
-    :global(.epTab) {
-        display: none !important;
-    }
+
 
   /* показываем только выбранную панель с epTab */
-    :global(.epTab.react-tabs__tab-panel--selected) {
-        display: flex !important;
-    }
+
     .upgrades .clientBlock {
         margin-right: 0px ;
     }
@@ -722,8 +718,8 @@
 
 @media (max-width: 1024px) {
   /* скрываем все панели с epTab */
-
 }
+
 @media (max-width: 768px) {
     .exSearchBlock:first-child {
         margin-right: 10px;

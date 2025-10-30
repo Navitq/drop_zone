@@ -1,4 +1,4 @@
-import style from '@/styles/shared.module.scss';
+// import style from '@/styles/shared.module.scss';
 
 
 
