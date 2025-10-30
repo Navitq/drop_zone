@@ -66,6 +66,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     const multiplyRef = useRef<boolean>(true)
     const addedItemsListRef = useRef<string[]>([])
     const currentSortValue = useRef<number>(0)
+    const currentSortText = useRef<string | undefined>(undefined)
     const [couldObserve, setCouldObserve] = useState<boolean>(false)
     const dispatch = useAppDispatch()
     useEffect(() => {
@@ -92,8 +93,8 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     }, [props.sortType]);
 
     useEffect(() => {
-        if (!props.textSortValue && props.textSortValue !== '') return;
-        console.log("heh")
+        if (!props.textSortValue && props.textSortValue !== '' || (currentSortText.current === undefined && props.textSortValue == '')) return;
+        currentSortText.current = props.textSortValue
         hasMoreRef.current = true;
         loadingRef.current = false;
         multiplyRef.current = false;
@@ -207,7 +208,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
     }, [props.addPrize]);
 
     useEffect(() => {
-        console.log(multiplyRef.current)
+        console.log(multiplyRef.current, page)
         if (!multiplyRef.current) {
             multiplyRef.current = true;
             return
@@ -269,6 +270,7 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
             if (!props.targetUrl || !hasMoreRef.current) {
                 return
             }
+            console.log(11111)
             setLoading(true);
             let filteredDeletedLength = 0;
             if (totalDeletedRef.current.length > 0) {
