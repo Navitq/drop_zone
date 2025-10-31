@@ -43,6 +43,7 @@ function ExchangeClientPropierty(): React.ReactNode {
             return;
         }
         dispatch(removeFinishedItem())
+        console.log(value)
         setSortType(Number(value))
     }
 

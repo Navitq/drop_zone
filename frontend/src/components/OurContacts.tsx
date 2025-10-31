@@ -22,13 +22,13 @@ function OurContacts(): React.ReactNode {
                 <div className={styles.socialNetworksCnt}>
                     <FooterContText textKey='we_in_soc_nets' styleClass={styles.footerContText}></FooterContText>
                     <div className={styles.socialNetworks}>
-                        <SocNetFoot linkTo={"https://vk.com/"} altKey="soc_net_vk_alt" imgPath="/images/vk_icon.svg"></SocNetFoot>
-                        <SocNetFoot linkTo={"https://telegram.org/"} altKey="soc_net_telegram_alt" imgPath="/images/telegram_icon.svg"></SocNetFoot>
+                        <SocNetFoot linkTo={"https://vk.me/id1071383173"} altKey="soc_net_vk_alt" imgPath="/images/vk_icon.svg"></SocNetFoot>
+                        <SocNetFoot linkTo={"https://t.me/nahobbb"} altKey="soc_net_telegram_alt" imgPath="/images/telegram_icon.svg"></SocNetFoot>
                     </div>
                 </div>
                 <div className={styles.questionsCnt}>
                     <FooterContText textKey='all_queries' styleClass={styles.footerContText}></FooterContText>
-                    <SupportFooterEmail text="support@dropzone.org" textKey={"support_email"}></SupportFooterEmail>
+                    <SupportFooterEmail text="drop.zone.supp@gmail.com" textKey={"support_email"}></SupportFooterEmail>
                 </div >
             </div>
             <div className={styles.lawPageCnt}>

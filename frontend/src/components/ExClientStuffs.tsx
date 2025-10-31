@@ -74,7 +74,9 @@ function ExClientStuffs(props: ExClientStuffsInt): React.ReactNode {
         window.scrollTo(0, 0);
     }, []);
     useEffect(() => {
+        console.log(2222, props.sortType)
         if (!props.sortType || (props.sortType == 1 && currentSortValue.current == 0)) return;
+        console.log(33333)
         currentSortValue.current = props.sortType;
         hasMoreRef.current = true;
         loadingRef.current = false;

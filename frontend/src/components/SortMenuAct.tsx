@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { components, DropdownIndicatorProps, SingleValue } from 'react-select';
 import '@/styles/sortStyles.scss';
 import { useTranslations } from 'next-intl';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import type { Props as ReactSelectProps } from 'react-select';
 
@@ -38,8 +38,13 @@ const DropdownIndicator = (props: DropdownIndicatorProps<Options, false>) => {
 export default function SortMenuAct(props: { options: Options[], callBack: (value: string) => void }) {
     const t = useTranslations("homePage");
     const { callBack } = props;
+    const initialized = useRef<boolean>(false);
+
     useEffect(() => {
-        callBack('1');
+        if (!initialized.current) {
+            initialized.current = true;
+            callBack('1');
+        }
     }, [callBack]);
 
     const handleChange = (newValue: SingleValue<Options>) => {
