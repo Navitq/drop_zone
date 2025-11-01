@@ -21,7 +21,7 @@ COPY requirements.txt /app/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-
+# pg_dump -U postgres -d original_db -F c -f /path/to/backup.dump
 # Stage 2: Production stage
 FROM python:3.12-slim
 
@@ -42,7 +42,8 @@ COPY --chown=drop_zone_admin:drop_zone_admin . .
 # Set environment variables to optimize Python
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-
+COPY --chmod=755 entrypoint.sh /entrypoint.sh
+RUN mkdir -p /app/staticfiles && chown -R drop_zone_admin:drop_zone_admin /app/staticfiles
 # Switch to non-root user
 USER drop_zone_admin
 
@@ -50,4 +51,6 @@ USER drop_zone_admin
 EXPOSE 8000
 
 # Start the application using Gunicorn
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "dropzone_backend.asgi:application"]
+
+
+CMD ["/entrypoint.sh"]

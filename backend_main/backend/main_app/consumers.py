@@ -22,7 +22,7 @@ load_dotenv()
 
 REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
 REDIS_DOCKER_PORT = os.getenv("REDIS_DOCKER_PORT")
-print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP)
+print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP, 2222, "132213321321")
 
 
 EXTERIOR_CHOICES = [
@@ -33,12 +33,14 @@ EXTERIOR_CHOICES = [
     ("battle_scarred", "Battle-Scarred"),
 ]
 
-
-redis_opened = redis.Redis(
-    host=REDIS_DOCKER_IP,
-    port=int(REDIS_DOCKER_PORT),
-    decode_responses=True
-)
+try:
+    redis_opened = redis.Redis(
+        host=REDIS_DOCKER_IP,
+        port=REDIS_DOCKER_PORT,
+        decode_responses=True
+    )
+except Exception:
+    print("consumer!!!!!!")
 
 
 async def get_battle_from_game_id(game_id):
@@ -693,3 +695,6 @@ class BattleConsumer(AsyncWebsocketConsumer):
             "event": "error",
             "message": event.get("message", "Unknown error")
         }))
+
+
+print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP, 4444444, "end")

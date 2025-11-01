@@ -1,0 +1,81 @@
+version: '3.9'
+
+services:
+  custom_psql:
+    build: ./add_files/docker/psql
+    container_name: custom_psql
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    networks:
+      - my_network
+
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: redis_main_server
+    environment:
+      REDIS_OM_URL: "redis://redis_main_server:6379/0"
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
+
+  backend:
+    build:
+      context: ./backend_main/backend
+      dockerfile: Dockerfile
+    restart: always
+    container_name: backend
+    ports:
+      - "8002:8000"
+    depends_on:
+      - custom_psql
+      - redis
+    environment:
+      REDIS_DOCKER_IP: redis
+      REDIS_PORT: 6379
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      PORT: 8000
+    networks:
+      - my_network
+    volumes:
+      - shared_volume:/app/staticfiles  # Монтируем том для статики в контейнер backend
+
+
+
+  custom_next:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+    container_name: custom_next
+    environment:
+      - REACT_APP_SERVER_IP=http://custom_nginx:443
+    networks:
+      - my_network
+    volumes:
+      - shared_volume:/app/staticfiles  # Монтируем том для статики в контейнер backend
+
+networks:
+  my_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+volumes:
+  shared_volume:
+    driver: local

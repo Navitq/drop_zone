@@ -12,7 +12,7 @@ load_dotenv()
 
 REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
 REDIS_DOCKER_PORT = os.getenv("REDIS_DOCKER_PORT")
-print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP)
+print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP, 1111111)
 
 
 def try_load_with_retry():
@@ -21,7 +21,9 @@ def try_load_with_retry():
         return
     while True:
         try:
-            # Проверяем Postgres
+            if not os.environ.get("RUN_MAIN") == "true":
+                return
+
             conn = connections['default']
             conn.cursor()  # если не готово — упадёт
             print("✅ Postgres готов")
@@ -31,8 +33,10 @@ def try_load_with_retry():
                             port=int(REDIS_DOCKER_PORT), db=0)
             r.ping()
             print("✅ Redis готов")
-            from .utils import load_to_redis, load_total_data, load_live_slider_drop_crown, load_crown_filter, load_live_slider_drop, load_blocked_users, load_battles_active_main, load_global_coefficient_main, load_raffles, load_advertisement, load_background_main
 
+            from .utils import load_to_redis, load_total_data, load_live_slider_drop_crown, load_crown_filter, load_live_slider_drop, load_blocked_users, load_battles_active_main, load_global_coefficient_main, load_raffles, load_advertisement, load_background_main
+            print("🚀 Запуск Redis миграций...")
+            print("✅ Redis миграции успешно выполнены")
             load_to_redis()
             load_advertisement()
             load_background_main()

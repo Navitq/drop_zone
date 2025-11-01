@@ -18,14 +18,15 @@ load_dotenv()
 
 REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP")
 REDIS_DOCKER_PORT = os.getenv("REDIS_DOCKER_PORT")
-
-
-redis = get_redis_connection(
-    host=REDIS_DOCKER_IP,
-    port=int(REDIS_DOCKER_PORT)
-)
-
-redis.delete('drop_zone_drop_slider_counter')
+print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP, 33333)
+try:
+    redis = get_redis_connection(
+        host=REDIS_DOCKER_IP,
+        port=int(REDIS_DOCKER_PORT)
+    )
+    redis.delete('drop_zone_drop_slider_counter')
+except Exception:
+    print("consumer!!!!!!")
 # Модель для OAuth state
 
 
@@ -35,6 +36,7 @@ class OAuthState(HashModel):
     class Meta:
         database = redis
         global_ttl = 300
+        auto_index = True
 
 
 class OAuthCodeVerifier(HashModel):
@@ -45,6 +47,7 @@ class OAuthCodeVerifier(HashModel):
     class Meta:
         database = redis
         global_ttl = 300
+        auto_index = True
 
 
 class CaseRedisStandart(JsonModel):
@@ -58,6 +61,7 @@ class CaseRedisStandart(JsonModel):
         global_key_prefix = "items"
         model_key_prefix = "caseStandart"
         database = redis
+        auto_index = True
 
     def get_name(self, lang="ru"):
         return self.name.get(lang, next(iter(self.name.values())))
@@ -82,6 +86,7 @@ class ItemRedisStandart(JsonModel):
         global_key_prefix = "items"
         model_key_prefix = "itemStandart"
         database = redis
+        auto_index = True
 
 
 class AdvertisementRedis(JsonModel):
@@ -100,6 +105,7 @@ class AdvertisementRedis(JsonModel):
         global_key_prefix = "Advertisement"
         model_key_prefix = "AdvertisementMain"
         database = redis
+        auto_index = True
 
 
 class BackgroundMainPageRedis(JsonModel):
@@ -113,6 +119,7 @@ class BackgroundMainPageRedis(JsonModel):
         global_key_prefix = "BackgroundMainPage"
         model_key_prefix = "BackgroundMainPage"
         database = redis
+        auto_index = True
 
 
 class RafflesRedis(JsonModel):
@@ -124,12 +131,20 @@ class RafflesRedis(JsonModel):
     max_users_amount: int
     end_date: datetime
 
+    class Meta:
+        database = redis
+        auto_index = True
+
 
 class GlobalCoefficientRedis(JsonModel):
     id: str = Field(index=True)
     cases_global: float
     upgrades_global: float
     contracts_global: float
+
+    class Meta:
+        database = redis
+        auto_index = True
 
 
 class PlayerInfo(BaseModel):
@@ -153,6 +168,10 @@ class GlobalStateCoeffRedis(JsonModel):
     field_tested: float
     well_worn: float
     battle_scarred: float
+
+    class Meta:
+        database = redis
+        auto_index = True
 
 
 class ActiveBattleRedis(JsonModel):
@@ -209,6 +228,7 @@ class ActiveBattleRedis(JsonModel):
         global_key_prefix = "items"
         model_key_prefix = "battle"
         database = redis
+        auto_index = True
 
 
 class BlockedTokenRedis(HashModel):
@@ -219,6 +239,7 @@ class BlockedTokenRedis(HashModel):
 
     class Meta:
         database = redis
+        auto_index = True
 
     @classmethod
     def block_token(cls, jti: str, token_type: str, user_id: str, exp: int):
@@ -242,6 +263,7 @@ class BlockedTokeVersionRedis(HashModel):
 
     class Meta:
         database = redis
+        auto_index = True
 
     @classmethod
     def block_token(cls, token_version: int, user_id: str, exp: int):
@@ -284,6 +306,8 @@ class BlockedUserRedis(HashModel):
 
     class Meta:
         database = redis
+        global_key_prefix = "blocked_user"  # опционально для удобного префикса
+        auto_index = True
 
 
 class TotalActionAmountRedis(HashModel):
@@ -294,6 +318,7 @@ class TotalActionAmountRedis(HashModel):
 
     class Meta:
         database = redis
+        auto_index = True
 
 
 LAST_ITEMS_LIST_KEY = "last_items_live_list"
@@ -482,6 +507,10 @@ class CrownFilterDataRedis(JsonModel):
 
     class Meta:
         database = redis
+        auto_index = True
 
 
-Migrator().run()
+print(REDIS_DOCKER_PORT, REDIS_DOCKER_IP, 33333, "end")
+
+
+# Migrator().run()

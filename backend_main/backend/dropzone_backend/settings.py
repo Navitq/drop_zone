@@ -23,6 +23,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 DATABASE_USER = os.getenv("DATABASE_USER")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
+DATABASE_HOST = os.getenv("DATABASE_HOST")
+DATABASE_PORT = os.getenv("DATABASE_PORT")
+
+REDIS_DOCKER_IP = os.getenv("REDIS_DOCKER_IP", "redis_main_server")
+
 APP_SECRET_KEY = os.getenv("APP_SECRET_KEY")
 
 SESSION_COOKIE_SECURE = True               # только HTTPS
@@ -38,6 +43,13 @@ SESSION_COOKIE_AGE = 1209600
 
 
 CORS_ALLOWED_ORIGINS = [
+    'https://custom_nginx:3000',
+    'https://custom_nginx:3001',
+    'http://custom_nginx:3000',
+    'http://custom_nginx:3001',
+    'https://redis:6379',
+    'http://redis:6379',
+
     'http://127.0.0.1:3000',
     'http://localhost:3000',
     'http://127.0.0.1:80',
@@ -47,8 +59,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://custom_nginx:3000',
+    'https://custom_nginx:3001',
+    'https://redis:6379',
+    'http://redis:6379',
     'http://127.0.0.1:3000',
     'http://localhost:3000',
+
     'http://127.0.0.1:80',
     'http://localhost:80',
     'http://127.0.0.1',
@@ -144,14 +161,35 @@ TEMPLATES = [
     },
 ]
 
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(REDIS_DOCKER_IP, DATABASE_PORT)],
         },
     },
 }
+
+# CACHES = {
+#     "default": {
+#         # Используем Redis в качестве бэкенда кеша
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         # Адрес Redis: имя контейнера "redis", порт 6379, база 1
+#         "LOCATION": "redis://redis:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",  # Клиент Redis
+#         }
+#     }
+# }
 
 
 WSGI_APPLICATION = 'dropzone_backend.wsgi.application'
@@ -161,31 +199,31 @@ WSGI_APPLICATION = 'dropzone_backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": DATABASE_NAME,
-        "USER": DATABASE_USER,
-        "PASSWORD": DATABASE_PASSWORD,
-
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
-    }
-}
-
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('POSTGRES_DB', 'drop_zone'),
-#         'USER': os.getenv('POSTGRES_USER', 'navitq'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'H.7JShPd27idDQr'),
-#         # Имя контейнера с БД
-#         'HOST': os.getenv('POSTGRES_HOST', 'custom_psql'),
-#         # Порт PostgreSQL по умолчанию
-#         'PORT': os.getenv('POSTGRES_PORT', '5432'),
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": DATABASE_NAME,
+#         "USER": DATABASE_USER,
+#         "PASSWORD": DATABASE_PASSWORD,
+
+#         "HOST": "127.0.0.1",
+#         "PORT": "5432",
 #     }
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME', 'drop_zone'),
+        'USER': os.getenv('DATABASE_USER', 'drop_zone_admin'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'H.7JShPd27idDQr'),
+        # Имя контейнера с БД
+        'HOST': os.getenv('POSTGRES_HOST', 'custom_psql'),
+        # Порт PostgreSQL по умолчанию
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
+    }
+}
 
 
 # Password validation
